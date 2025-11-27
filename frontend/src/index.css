@@ -1,8 +1,22 @@
-/* Global Tailwind Styles here if needed */
+@import 'tailwindcss';
 
-/* 
-Primary colors:
-Secondary colors:
-etc...
+/* Global Tailwind Styles */
 
-*/
+@theme {
+  /* Colors */
+  --color-primary-bg: #faf6ed;
+  --color-accent-green: #4c8256;
+  --color-filter-bg: #cfe0c7;
+  --color-nav-bg: #f3e9ce;
+
+  --color-text-base: #101010;
+  --color-text-muted: #585858;
+  --color-text-green: #274a2f;
+
+  /* fonts */
+  /* Shadows */
+}
+
+body {
+  @apply bg-primary-bg text-text-base pt-20 font-sans min-h-screen;
+}
