@@ -11,7 +11,11 @@
 
   --color-text-base: #101010;
   --color-text-muted: #585858;
-  --color-text-green: #274a2f;
+  --color-text-logo: #3b6e47;
+  --color-text-green: #206831;
+
+  --color-nav-stroke: #ddd5c2;
+  --color-filter-stroke: #97b18a;
 
   /* fonts */
   /* Shadows */

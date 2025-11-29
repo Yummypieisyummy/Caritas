@@ -1,8 +1,12 @@
 // Import Directory components and files here
-// import Filters from '../components/directory/Filters';
+import Filters from '../components/ui/Filters';
 
 const DirectoryPage = () => {
-  return <div>Directory Page</div>;
+  return (
+    <div>
+      <Filters />
+    </div>
+  );
 };
 
 export default DirectoryPage;
