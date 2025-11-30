@@ -17,8 +17,16 @@
   --color-nav-stroke: #ddd5c2;
   --color-filter-stroke: #97b18a;
 
+  /* Tag colors */
+  --color-tag-green: #cfe0c7;
+  --color-tag-blue: #b0d7eb;
+  --color-tag-orange: #ebb191;
+  --color-tag-baise: #f3e9ce;
+
   /* fonts */
   /* Shadows */
+  --shadow-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 body {
