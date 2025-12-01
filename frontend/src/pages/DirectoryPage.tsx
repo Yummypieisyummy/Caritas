@@ -19,6 +19,7 @@ const DirectoryPage = () => {
         <div className="flex flex-col gap-6">
           <VolunteerCard />
           <VolunteerCard />
+          <VolunteerCard />
         </div>
       </section>
     </main>
