@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import Button from '../ui/Button';
 import { Search } from 'lucide-react';
 // Import reusable buttons for login signup later
 
@@ -28,30 +28,29 @@ const Navbar = () => {
 
         <div className="flex items-center gap-6 text-xl font-medium">
           {navLinks.map((link) => (
-            <NavLink
+            <Button
+              as="link"
+              variant="textOnly"
+              size="lg"
               key={link.id}
               to={link.to}
               className={({ isActive }) =>
-                'px-3 ' +
-                (isActive
-                  ? 'text-text-green underline hover:opacity-85'
-                  : 'hover:opacity-85')
+                isActive ? 'text-text-green underline' : ''
               }
             >
               {link.id}
-            </NavLink>
+            </Button>
           ))}
         </div>
 
-        {/* Temp login, signup buttons - make reusable later and add navigation */}
         <div className="flex items-center gap-6 ml-16">
-          <button className="text-xl font-semibold bg-white py-2 px-3 rounded-lg border border-accent-green hover:opacity-85">
+          <Button as="link" to="/login" variant="secondary" size="lg">
             Login
-          </button>
+          </Button>
 
-          <button className="text-xl font-medium bg-accent-green py-2 px-3 rounded-lg text-white border border-accent-green hover:opacity-90">
+          <Button as="link" to="/signup" variant="primary" size="lg">
             Signup
-          </button>
+          </Button>
         </div>
       </div>
     </nav>

@@ -2,6 +2,7 @@ import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import sampleMap from '../../assets/sampleMap.png';
+import Button from '../ui/Button';
 
 const VolunteerCard = () => {
   // Mockup data
@@ -24,10 +25,13 @@ const VolunteerCard = () => {
   };
 
   const [expanded, setExpanded] = useState(false);
-  const handleToggle = () => setExpanded((prev) => !prev); // Toggle expanded state based on prev state
+  const handleToggle = () => {
+    setExpanded((prev) => !prev);
+    console.log('shiet clicked');
+  }; // Toggle expanded state based on prev state
 
   return (
-    <article className="bg-white shadow-card-shadow w-full rounded-2xl p-6 flex flex-col">
+    <article className="bg-white shadow-card-shadow w-full rounded-2xl p-6 flex flex-col hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
       {/* Header content */}
       <header className="mb-3">
         <div className="flex justify-between items-start">
@@ -100,27 +104,37 @@ const VolunteerCard = () => {
       <footer className="flex justify-between items-center mt-auto pt-2">
         {/* Bottom left content */}
         <div className="flex items-center gap-3">
-          {/* Make reusable button later */}
-          <button className="bg-accent-green text-white px-3 py-1 rounded-lg hover:opacity-90 cursor-pointer">
+          {/* Naviagtion button */}
+          <Button as="link" variant="primary" size="sm" to={orgData.orgProfile}>
             View Organization
-          </button>
-          <button className="bg-sky-500 px-2.5 py-1 rounded-lg hover:opacity-90 cursor-pointer">
+          </Button>
+          {/* Icon button */}
+          <Button
+            as="button"
+            variant="icon"
+            size="sm"
+            aria-label="Volunteer Hand Raise"
+          >
             🤚
-          </button>
+          </Button>
+
           <span className="text-text-muted">
             Interested: {orgData.interested} people
           </span>
         </div>
 
         {/* Bottom right content */}
-        <div className="relative">
-          <button
-            className="flex items-center gap-1 text-sm hover:opacity-80 cursor-pointer"
+        <div>
+          <Button
+            as="button"
+            variant="textOnly"
+            size="sm"
+            className="gap-1 text-sm"
             onClick={handleToggle}
           >
             {expanded ? 'Show Less' : 'Show More'}
             {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
+          </Button>
         </div>
       </footer>
     </article>
