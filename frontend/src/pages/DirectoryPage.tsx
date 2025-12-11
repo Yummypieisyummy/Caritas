@@ -17,9 +17,9 @@ const DirectoryPage = () => {
         {/* Add filter results summary here */}
 
         <div className="flex flex-col gap-6">
-          <VolunteerCard />
-          <VolunteerCard />
-          <VolunteerCard />
+          {Array.from({ length: 10 }, (_, i) => (
+            <VolunteerCard key={i} /> // For testing
+          ))}
         </div>
       </section>
     </main>

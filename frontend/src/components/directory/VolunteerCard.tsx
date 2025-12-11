@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import sampleMap from '../../assets/sampleMap.png';
 import Button from '../ui/Button';
+import Tag, { TagColor } from '../ui/Tag';
 
 const VolunteerCard = () => {
   // Mockup data
@@ -22,32 +23,37 @@ const VolunteerCard = () => {
     },
     additonalDetails:
       'Volunteers will help sort, shelve, and organize incoming donations to support Habitat ReStore’s community shop. This includes lifting small boxes, tagging items, maintaining the storage area.',
+    tags: [
+      'Requires Credentials',
+      'Heavy Lifting',
+      'Clothing Drive',
+      '18+',
+      'Transportation Needed',
+      'Evenings',
+    ],
   };
 
   const [expanded, setExpanded] = useState(false);
   const handleToggle = () => {
     setExpanded((prev) => !prev);
-    console.log('shiet clicked');
   }; // Toggle expanded state based on prev state
+
+  const tagColors: TagColor[] = ['green', 'blue', 'orange', 'baise', 'purple'];
 
   return (
     <article className="bg-white shadow-card-shadow w-full rounded-2xl p-6 flex flex-col hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
       {/* Header content */}
       <header className="mb-3">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start gap-2">
           <h2 className="font-semibold text-xl">{orgData.title}</h2>
 
-          {/* tags - replace with reusable tag later */}
+          {/* Reusable tags */}
           <div className="flex gap-2">
-            <span className="bg-tag-blue px-3 py-1 rounded-2xl text-sm">
-              Tag
-            </span>
-            <span className="bg-tag-green px-3 py-1 rounded-2xl text-sm">
-              Tag
-            </span>
-            <span className="bg-tag-orange px-3 py-1 rounded-2xl text-sm">
-              Tag
-            </span>
+            {orgData.tags.map((tag, index) => (
+              <Tag key={tag} color={tagColors[index % tagColors.length]}>
+                {tag}
+              </Tag>
+            ))}
           </div>
         </div>
 
@@ -125,6 +131,7 @@ const VolunteerCard = () => {
 
         {/* Bottom right content */}
         <div>
+          {/* Show more text only button */}
           <Button
             as="button"
             variant="textOnly"
