@@ -1,5 +1,5 @@
 // Import Directory components and files here
-import Filters from '../components/ui/Filters';
+import Filters from '../components/directory/Filters';
 import VolunteerCard from '../components/directory/VolunteerCard';
 
 const DirectoryPage = () => {
@@ -9,7 +9,7 @@ const DirectoryPage = () => {
       <Filters />
 
       {/* Right content */}
-      <section className="flex flex-col flex-1 px-6 py-4">
+      <section className="ml-80 flex flex-col flex-1 px-6 py-4">
         <header className="mb-6 ">
           <h1 className="font-medium text-3xl">Local Charity Posts</h1>
         </header>

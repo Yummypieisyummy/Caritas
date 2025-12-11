@@ -1,4 +1,4 @@
-import { Children, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 // Defined colors
 export type TagColor = 'green' | 'blue' | 'orange' | 'baise' | 'purple';
@@ -19,6 +19,7 @@ const Tag = (props: TagProps) => {
   };
 
   const { children, className = '', color = 'green' } = props;
+
   return (
     <span
       className={`px-3 py-1 rounded-2xl text-sm inline-flex items-center justify-center ${colors[color]} ${className}`}

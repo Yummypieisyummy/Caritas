@@ -97,7 +97,7 @@ const VolunteerCard = () => {
                 to="https://maps.google.com/?q=212+Outlet+Way+Greensburg+PA+15601"
                 target="_blank" // Open in new tab
                 rel="noopener noreferrer" // Security and performance improvements for links
-                className="self-start text-text-muted hover:underline hover:text-text-green font-medium px-2 py-1"
+                className="self-start text-text-muted text-sm hover:underline hover:text-text-green font-medium px-2 py-1"
               >
                 🗺️ View full map
               </Link>
@@ -124,7 +124,7 @@ const VolunteerCard = () => {
             🤚
           </Button>
 
-          <span className="text-text-muted">
+          <span className="text-text-muted text-base">
             Interested: {orgData.interested} people
           </span>
         </div>
