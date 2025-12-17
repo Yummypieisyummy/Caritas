@@ -3,20 +3,22 @@ import { UserRoundCheck, Ban, MessageSquareWarning, HeartHandshake } from 'lucid
 import SellingPoints from '../components/home/SellingPoints';
 import FunctionCards from '../components/home/FunctionCards';
 
+const SVC_Basilica = new URL('../assets/SVC_Basilica.jpg', import.meta.url).href;
+
 const HomePage = () => {
   return (
   <main className="flex min-h-[calc(100vh-5rem)]">
-    <div className="w-2/5">
-      <div className="grid grid-rows-2">
+    <div className="flex">
+      <div className="grid grid-rows-2 h-[calc(100vh-5rem)]">
           <section className="row-span-1 flex flex-row flex-1 px-7 py-4 justify-center">
-            <p> Picture </p>
+            <img src={SVC_Basilica} alt="SVC Basilica" className="w-full h-auto object-cover rounded-xl drop-shadow-md" />
           </section>
           <section className="row-start-2 flex flex-row flex-1 px-7 py-4">
             <SellingPoints />
           </section>
       </div>
     </div>
-    <div className="w-3/5 mt-4 mr-4">
+    <div className="flex mt-4 mr-4">
       <FunctionCards />
     </div>
   </main>
