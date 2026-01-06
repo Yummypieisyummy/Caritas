@@ -6,6 +6,9 @@ const OrganizationPage = () => {
   const { id } = useParams();
   const location = useLocation();
   const org = location.state?.org || null;
+
+  const website = org?.contact?.website;
+  const websiteHref = website ? (website.startsWith('http') ? website : `https://${website}`) : null;
   return (
     <main className="flex min-h-[calc(100vh-5rem)]">
       {/* Left sidebar filters */}
@@ -13,7 +16,7 @@ const OrganizationPage = () => {
 
       {/* Right content */}
       <section className="ml-80 flex flex-col flex-1 px-6 py-4">
-        <div className="m-4 p-6 flex flex-col bg-white rounded-xl drop-shadow-md">
+        <div className="m-4 p-6 flex flex-col rounded-xl drop-shadow-md bg-org-bg">
           <section className="row-span-1 flex flex-row flex-1 justify-center bg-gray-200">
             <span className="font-medium text-m m-5">Photo Banner</span>
           </section>
@@ -23,7 +26,39 @@ const OrganizationPage = () => {
 +           </div>
             <span className="font-medium text-3xl ml-6 mt-4">{org?.name ?? id ?? 'Organization'}</span>
           </section>
+          <div className="flex flex-row">
+          <div className="flex flex-col">
+            <section className="bg-white rounded-xl drop-shadow-md row-span-1 flex flex-col flex-1 px-7 py-4">
+              <header className="mb-2 font-medium text-2xl">Details</header>
+              {/* Assuming organization information same as VolunteerCard site address */}
+              <article className="font-small text-m mb-2">📍 {org?.address ?? id ?? 'Address'} </article>
+              <article className="font-small text-m mb-2">🕰️ Hours </article>
+              <article className="font-small text-m mb-2">📞 {org?.contact.phone ?? id ?? 'Phone Number'} </article>
+              <article className="font-small text-m mb-2">📧 {org?.contact.email ?? id ?? 'Email'} </article>
+              <article className="font-small text-m mb-2">
+                🔗{' '}
+                {websiteHref ? (
+                  <a
+                    href={websiteHref}
+                    target="_blank"
+                    rel="noonpener noreferrer"
+                    className="text-blue-600 hover:underline"
+                    >
+                      {org?.contact?.website}
+                    </a>
+                ) : (
+                  id ?? 'Website'
+                )} 
+              </article>
+            </section>
+            <section className="bg-white rounded-xl drop-shadow-md row-span-1 flex flex-col flex-1 px-7 py-4">
+            </section>
+          </div>
+          <section className="bg-white rounded-xl drop-shadow-md row-span-1 flex flex-col flex-1 px-7 py-4">
+          </section>
         </div>
+        </div>
+
       </section>
     </main>
   );
