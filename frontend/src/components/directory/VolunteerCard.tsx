@@ -21,6 +21,7 @@ const VolunteerCard = () => {
     contact: {
       email: 'contact@contact.com',
       phone: '(814) 555-5555',
+      website: 'https://cwhfh.org/restore/',
     },
     additonalDetails:
       'Volunteers will help sort, shelve, and organize incoming donations to support Habitat ReStore’s community shop. This includes lifting small boxes, tagging items, maintaining the storage area.',
