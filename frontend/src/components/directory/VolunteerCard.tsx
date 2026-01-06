@@ -111,10 +111,17 @@ const VolunteerCard = () => {
       <footer className="flex justify-between items-center mt-auto pt-2">
         {/* Bottom left content */}
         <div className="flex items-center gap-3">
-          {/* Navigation button */}
-          <Button as="link" variant="primary" size="sm" to={orgData.orgProfile}>
+          {/* Link instead of button to pass state data */}
+          <Link to={orgData.orgProfile} state={{ org: orgData }} className="block">
+            <article className="rounded-lg bg-accent-green text-white hover:opacity-90">
+              <h3 className="px-2.5 py-1.5">View Organization</h3>
+            </article>
+          </Link>
+          {/*
+          <Button as="link" variant="primary" size="sm"  state={{ org: orgData }} className="block">
             View Organization
           </Button>
+          */}
           {/* Icon button */}
           <Button
             as="button"
