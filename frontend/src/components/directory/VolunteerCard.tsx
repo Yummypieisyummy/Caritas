@@ -8,13 +8,14 @@ import Tag, { TagColor } from '../ui/Tag';
 const VolunteerCard = () => {
   // Mockup data
   const orgData = {
+    id: 'habitat-restore',
     title: 'Stocking, organizing, and sorting donations',
     name: 'Habitat Restore',
     proximity: '8.7 miles away',
     date: 'Saturdays, 10AM-2PM',
     description:
       'Help support Habitat for Humanity by keeping our ReStore organized and welcoming. Volunteers sort incoming donations, stock shelves, and prepare items for display. No experience needed—just a willingness to help and a positive attitude. Your time directly supports local affordable housing projects.',
-    orgProfile: '/something',
+    orgProfile: `/organization/${'habitat-restore'}`,
     interested: 5,
     address: '212 Outlet Way Greensburg, PA 15601',
     contact: {
@@ -110,7 +111,7 @@ const VolunteerCard = () => {
       <footer className="flex justify-between items-center mt-auto pt-2">
         {/* Bottom left content */}
         <div className="flex items-center gap-3">
-          {/* Naviagtion button */}
+          {/* Navigation button */}
           <Button as="link" variant="primary" size="sm" to={orgData.orgProfile}>
             View Organization
           </Button>
