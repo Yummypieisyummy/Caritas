@@ -26,7 +26,7 @@ const Navbar = () => {
           <Search className="absolute right-10 text-text-muted" />
         </div>
 
-        <div className="flex items-center gap-6 text-xl font-medium">
+        <div className="flex items-center gap-8 text-xl font-medium">
           {navLinks.map((link) => (
             <Button
               as="link"

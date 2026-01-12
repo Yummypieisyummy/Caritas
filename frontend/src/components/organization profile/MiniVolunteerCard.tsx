@@ -51,12 +51,12 @@ const VolunteerCard = () => {
           {/* Reusable tags */}
           <div className="flex gap-2">
             {orgData.tags.slice(0, 2).map((tag, index) => (
-                <Tag key={tag} color={tagColors[index % tagColors.length]}>
-                    {tag}
-                </Tag>
+              <Tag key={tag} color={tagColors[index % tagColors.length]}>
+                {tag}
+              </Tag>
             ))}
             {orgData.tags.length > 2 && (
-                <Tag color="baise">+{orgData.tags.length - 2}</Tag>
+              <Tag color="baise">+{orgData.tags.length - 2}</Tag>
             )}
           </div>
         </div>
@@ -76,9 +76,10 @@ const VolunteerCard = () => {
           {/* Icon button */}
           <Button
             as="button"
-            variant="icon"
+            variant="primary"
             size="sm"
             aria-label="Volunteer Hand Raise"
+            className="bg-sky-500"
           >
             🤚
           </Button>
