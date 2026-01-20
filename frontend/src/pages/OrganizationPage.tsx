@@ -2,8 +2,19 @@ import Filters from '../components/directory/Filters';
 import MiniVolunteerCard from '../components/organization profile/MiniVolunteerCard.tsx';
 import orgData from '../components/directory/VolunteerCard.tsx';
 import { useLocation, useParams } from 'react-router-dom';
+import { CircleArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import Button from '../components/ui/Button';
+import { Link } from 'react-router-dom';
 
 const OrganizationPage = () => {
+
+  const Sample_Img = new URL('../assets/Roofing_Shingles_Asphalt.jpg', import.meta.url).href;
+  
+  const navLink = [
+    { id: 'Directory', to: '/directory' },
+  ];
+
   const { id } = useParams();
   const location = useLocation();
   const org = location.state?.org || null;
@@ -20,15 +31,35 @@ const OrganizationPage = () => {
 
       {/* Right content */}
       <section className="ml-80 flex flex-col flex-1 px-6 py-4">
+        <div className="flex items-center justify-left px-4">
+          {navLink.map((link) => (
+            <Button
+              as="link"
+              variant="icon"
+              key={link.id}
+              to={link.to}
+              className={({ isActive }) =>
+                isActive ? 'hover:bg-accent-green/10' : 'bg-tag-green'
+              }
+            >
+              <CircleArrowLeft size={24} color='#4c8256'/>
+              <span className="text-accent-green text-xl whitespace-pre">
+                  {' Back to Directory'}
+              </span>
+            </Button>
+          ))}
+        </div>
         <div className="m-4 p-6 flex flex-col rounded-xl drop-shadow-md bg-org-bg">
-          <section className="row-span-1 flex flex-row flex-1 justify-center bg-gray-200">
-            <span className="font-medium text-m m-5">Photo Banner</span>
+          <section className='row-span-1 flex flex-row flex-1 justify-center'>
+            <section className="w-50 h-50 sm:w-full sm:h-50 bg-gray-200 overflow-hidden">
+              <img src={Sample_Img} alt="Organization" className="w-full h-full object-cover" />
+            </section>
           </section>
-          <section className="row-span-2 m-4 flex flex-row justify-left">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden">
-              <img src="/path/to/image.jpg" alt="Organization" className="w-full h-full object-cover" />
-           </div>
-            <span className="font-medium text-3xl ml-6 mt-4">{org?.name ?? id ?? 'Organization'}</span>
+          <section className="row-span-2 m-4 flex flex-row justify-left items-center">
+            <section className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden">
+              <img src={Sample_Img} alt="Organization" className="w-full h-full object-cover" />
+            </section>
+            <span className="font-medium text-5xl ml-6">{org?.name ?? id ?? 'Organization'}</span>
           </section>
           <div className="flex flex-row">
             <div className="w-4/9 flex flex-col">

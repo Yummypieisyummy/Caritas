@@ -13,7 +13,7 @@ const HomePage = () => {
           <section className="row-span-1 flex flex-row flex-1 py-4 justify-center">
             <img src={SVC_Basilica} alt="SVC Basilica" className="w-full h-auto object-cover rounded-xl drop-shadow-md" />
           </section>
-          <section className="row-start-2 flex flex-row flex-1 py-4">
+          <section className="row-start-2 mt-6 flex flex-row flex-1 min-h-[calc(100vh-25rem)]">
             <SellingPoints />
           </section>
       </div>
