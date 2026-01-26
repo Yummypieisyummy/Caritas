@@ -37,7 +37,7 @@ const SignupPage = () => {
     <main className="flex flex-col justify-center items-center min-h-screen w-full">
       <section className="flex flex-col gap-6 w-120 bg-white rounded-2xl p-8 shadow-card-shadow">
         <h2 className="mx-auto font-semibold text-2xl text-text-green">
-          Login
+          Signup
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input

@@ -6,10 +6,11 @@ import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import OrganizationPage from './pages/OrganizationPage';
+import { FiltersProvider } from './contexts/FiltersContext';
 
 function App() {
   return (
-    <>
+    <FiltersProvider>
       <Router>
         <Navbar />
         <Routes>
@@ -21,7 +22,7 @@ function App() {
           <Route path="/organization/:id" element={<OrganizationPage />} />
         </Routes>
       </Router>
-    </>
+    </FiltersProvider>
   );
 }
 

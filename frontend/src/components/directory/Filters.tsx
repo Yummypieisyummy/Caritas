@@ -1,151 +1,140 @@
 import Button from '../ui/Button';
 import Checkbox from '../ui/Checkbox';
 import Select from '../ui/Select';
-
-const CATEGORY_OPTIONS = [
-  'Community Outreach',
-  'Food Pantry',
-  'Fundraising',
-  'Tutoring / Mentoring',
-  'Elder Care',
-  'Donations',
-];
-
-const DAYS_NEEDED_OPTIONS = ['Weekdays', 'Weekends', 'Custom Date Range'];
-
-const DISTANCE_OPTIONS = ['5 miles', '10 miles', '25 miles', 'Any Distance'];
-
-const FOOD_TYPE_OPTIONS = [
-  'Canned Goods',
-  'Fresh Produce',
-  'Non-perishables',
-  'Packaged Meals',
-  'Baked Goods',
-];
-
-const REQUIREMNETS_OPTIONS = [
-  'Requires Credentials',
-  'Orientation Needed',
-  "Requires Driver's License",
-  'Food Handling Certification',
-];
-
-const PHYSICAL_REQUIREMENTS_OPTIONS = [
-  'Heavy Lifting',
-  'Outdoor Work',
-  'Standing for Long Periods',
-];
-
-const ORGANIZATION_TYPE_OPTIONS = [
-  'Non-Profit',
-  'Community Center',
-  'Religious Organization',
-];
-
-const TIME_COMMITMENT_OPTIONS = [
-  'One-time',
-  '<2 hours',
-  'Half day',
-  'Full day',
-  'Ongoing/weekly',
-];
-
-const SPECIAL_NEEDS_OPTIONS = [
-  'Accessible for Wheelchairs',
-  'Pet-Friendly',
-  'Kid-Friendly',
-];
-
-const URGENCY_OPTIONS = ['Immediate', 'This Week', 'This month'];
+import { useEffect } from 'react';
+import { useFilters } from '../../contexts/FiltersContext';
+import * as filterOptions from '../../config/filterOptions';
+import { XIcon } from 'lucide-react';
 
 const Filters = () => {
+  const { filters, toggleOption, setSelect, clearFilters } = useFilters();
+
+  useEffect(() => {
+    console.log('filters:', filters);
+  }, [filters]);
+
   return (
-    <aside className="fixed h-[calc(100vh-5rem)] w-80 flex flex-col bg-filter-bg border-r border-filter-stroke">
-      <header className="px-6 pt-6 pb-4">
-        <h1 className="font-medium text-3xl">Filters</h1>
+    <aside className="fixed top-20 bottom-0 w-80 flex flex-col bg-filter-bg border-r border-filter-stroke">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 border-b border-filter-stroke/50">
+        <h1 className="font-semibold text-2xl">Filters</h1>
+        <Button as="button" variant="icon" size="sm" onClick={clearFilters}>
+          <XIcon className="w-5 h-5" />
+          {/* add label later, indicating clear filters */}
+        </Button>
       </header>
 
-      {/* Scrollable section */}
-      <section className="flex-1 overflow-y-auto px-6 pb-6">
-        <div className="flex flex-col gap-5 pr-1">
-          {/* Categories - checkbox */}
+      {/* Scrollable Filter Options */}
+      <section className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="flex flex-col gap-5">
+          {/* Category */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-semibold text-lg mb-1">Category</h2>
-            {CATEGORY_OPTIONS.map((cat) => (
-              <Checkbox key={cat} option={cat} />
+            <span className="font-semibold">Category</span>
+            {filterOptions.CATEGORY_OPTIONS.map((cat) => (
+              <Checkbox
+                key={cat}
+                option={cat}
+                checked={filters.category.includes(cat)}
+                onChange={() => toggleOption('category', cat)}
+              />
             ))}
           </div>
-          {/* Distance - dropdown */}
-          <div>
-            <Select label="Distance" options={DISTANCE_OPTIONS} />
-          </div>
-          {/* Days needed - checkbox */}
+
+          {/* Distance */}
+          <Select
+            label="Distance"
+            options={filterOptions.DISTANCE_OPTIONS}
+            value={filters.distance}
+            onChange={(e) => setSelect('distance', e.target.value)}
+          />
+
+          {/* Days Needed */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-semibold text-lg mb-1">Days Needed</h2>
-            {DAYS_NEEDED_OPTIONS.map((days) => (
-              <Checkbox key={days} option={days} />
+            <span className="font-semibold">Days Needed</span>
+            {filterOptions.DAYS_NEEDED_OPTIONS.map((days) => (
+              <Checkbox
+                key={days}
+                option={days}
+                checked={filters.daysNeeded.includes(days)}
+                onChange={() => toggleOption('daysNeeded', days)}
+              />
             ))}
           </div>
-          {/* Food type - checkbox */}
+
+          {/* Food Type */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-semibold text-lg mb-1">Food Type</h2>
-            {FOOD_TYPE_OPTIONS.map((food) => (
-              <Checkbox key={food} option={food} />
+            <span className="font-semibold">Food Type</span>
+            {filterOptions.FOOD_TYPE_OPTIONS.map((food) => (
+              <Checkbox
+                key={food}
+                option={food}
+                checked={filters.foodType.includes(food)}
+                onChange={() => toggleOption('foodType', food)}
+              />
             ))}
           </div>
-          {/* Skills/Certification requirements - checkbox */}
+
+          {/* Skills / Cert Requirements */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-semibold text-lg mb-1">
-              Skills / Cert Requirements
-            </h2>
-            {REQUIREMNETS_OPTIONS.map((req) => (
-              <Checkbox key={req} option={req} />
+            <span className="font-semibold">Skills / Cert Requirements</span>
+            {filterOptions.REQUIREMENTS_OPTIONS.map((req) => (
+              <Checkbox
+                key={req}
+                option={req}
+                checked={filters.requirements.includes(req)}
+                onChange={() => toggleOption('requirements', req)}
+              />
             ))}
           </div>
-          {/* Physical requirements - checkbox */}
+
+          {/* Physical Requirements */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-semibold text-lg mb-1">
-              Physical Requirements
-            </h2>
-            {PHYSICAL_REQUIREMENTS_OPTIONS.map((req) => (
-              <Checkbox key={req} option={req} />
+            <span className="font-semibold">Physical Requirements</span>
+            {filterOptions.PHYSICAL_REQUIREMENTS_OPTIONS.map((req) => (
+              <Checkbox
+                key={req}
+                option={req}
+                checked={filters.physicalRequirements.includes(req)}
+                onChange={() => toggleOption('physicalRequirements', req)}
+              />
             ))}
           </div>
-          {/* Org type - dropdown */}
-          <div>
-            <Select
-              label="Organization Type"
-              options={ORGANIZATION_TYPE_OPTIONS}
-            />
-          </div>
-          {/* Time commitment - dropdown */}
-          <div>
-            <Select label="Time Commitment" options={TIME_COMMITMENT_OPTIONS} />
-          </div>
-          {/* Special needs - checkbox */}
+
+          {/* Organization Type */}
+          <Select
+            label="Organization Type"
+            options={filterOptions.ORGANIZATION_TYPE_OPTIONS}
+            onChange={(e) => setSelect('orgType', e.target.value)}
+          />
+
+          {/* Time Commitment */}
+          <Select
+            label="Time Commitment"
+            options={filterOptions.TIME_COMMITMENT_OPTIONS}
+            onChange={(e) => setSelect('timeOption', e.target.value)}
+          />
+
+          {/* Special Needs / Restrictions */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-semibold text-lg mb-1">
-              Special Needs / Restrictions
-            </h2>
-            {SPECIAL_NEEDS_OPTIONS.map((opt) => (
-              <Checkbox key={opt} option={opt} />
+            <span className="font-semibold">Special Needs / Restrictions</span>
+            {filterOptions.SPECIAL_NEEDS_OPTIONS.map((opt) => (
+              <Checkbox
+                key={opt}
+                option={opt}
+                checked={filters.specialOptions.includes(opt)}
+                onChange={() => toggleOption('specialOptions', opt)}
+              />
             ))}
           </div>
-          {/* Urgency / priority - dropdown */}
-          <div>
-            <Select label="Urgency / Priority" options={URGENCY_OPTIONS} />
-          </div>
+
+          {/* Urgency / Priority */}
+          <Select
+            label="Urgency / Priority"
+            options={filterOptions.URGENCY_OPTIONS}
+            onChange={(e) => setSelect('urgency', e.target.value)}
+          />
         </div>
       </section>
-
-      <footer className="flex gap-4 justify-center px-6 py-4 border-t border-filter-stroke">
-        <Button as="button" variant="secondary" size="sm">
-          Clear Filters
-        </Button>
-        <Button as="button" variant="primary" size="md">
-          Apply Filters
-        </Button>
-      </footer>
     </aside>
   );
 };
