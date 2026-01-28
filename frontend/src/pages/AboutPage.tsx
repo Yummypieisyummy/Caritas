@@ -2,7 +2,7 @@
 
 const AboutPage = () => {
   return (
-    <main className="flex min-h-[calc(100vh-5rem)]">
+    <main data-testid="about-page-container" className="flex min-h-[calc(100vh-5rem)]">
       <div className="grid grid-cols-3">
         {/* First column */}
           <section className=" col-span-1 flex flex-col flex-1 px-7 py-4">

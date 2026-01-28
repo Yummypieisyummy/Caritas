@@ -22,7 +22,7 @@ const Tag = (props: TagProps) => {
 
   return (
     <span
-      className={`px-3 py-1 rounded-2xl text-sm inline-flex items-center justify-center ${colors[color]} ${className}`}
+      className={`px-3 py-2 rounded-2xl text-xs inline-flex items-center justify-center ${colors[color]} ${className}`}
     >
       {children}
     </span>
