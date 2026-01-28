@@ -12,4 +12,12 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
+  test: {
+    coverage: {
+      provider: 'v8'
+    },
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/tests/setupTests.ts',
+  },
 });
