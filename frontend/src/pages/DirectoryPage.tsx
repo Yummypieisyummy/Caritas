@@ -4,7 +4,7 @@ import VolunteerCard from '../components/directory/VolunteerCard';
 
 const DirectoryPage = () => {
   return (
-    <main className="flex min-h-screen">
+    <main data-testid="directory-page-container" className="flex min-h-screen">
       {/* Left sidebar filters */}
       <Filters />
 

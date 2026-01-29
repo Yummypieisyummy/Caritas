@@ -31,7 +31,9 @@ const OrganizationPage = () => {
 
       {/* Right content */}
       <section className="ml-80 flex flex-col flex-1 px-6 py-4">
-        <div className="flex items-center justify-left px-4">
+        
+        <div className="m-4 p-6 flex flex-col rounded-xl drop-shadow-md bg-org-bg">
+          <div className="flex items-center justify-left mb-4">
           {navLink.map((link) => (
             <Button
               as="link"
@@ -49,7 +51,6 @@ const OrganizationPage = () => {
             </Button>
           ))}
         </div>
-        <div className="m-4 p-6 flex flex-col rounded-xl drop-shadow-md bg-org-bg">
           <section className='row-span-1 flex flex-row flex-1 justify-center'>
             <section className="w-50 h-50 sm:w-full sm:h-50 bg-gray-200 overflow-hidden">
               <img src={Sample_Img} alt="Organization" className="w-full h-full object-cover" />

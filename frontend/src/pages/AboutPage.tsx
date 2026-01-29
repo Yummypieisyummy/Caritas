@@ -36,7 +36,7 @@ const AboutPage = () => {
           </header>
           <article className="bg-white w-full rounded-xl p-3 flex flex-col mb-6">
             <p className="text-2xl mb-4">
-              The Latin word “caritas” means <span className="italic"> a selfless love for humankind </span> or <span className="italic"> charity</span>.
+              The Latin word “caritas” means <span className="italic">a selfless love for humankind</span> or <span className="italic">charity</span>.
             </p>
             <p className="text-2xl mb-4">
               Caritas is a tool that thoughtfully infuses this definition into its design. Cutting through the confusion of other platforms, Caritas aims to provide a simple avenue for connecting community organizations with charity recipients.
