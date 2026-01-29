@@ -1,11 +1,22 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import usersRoutes from './src/routes/users.routes';
 import postsRoutes from './src/routes/posts.routes';
 import organizationsRoutes from './src/routes/org.routes';
 import authRoutes from './src/routes/auth.routes';
 
 const app = express();
+
+const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+// CORS Configuration
+app.use(
+  cors({
+    origin: FRONTEND,
+    credentials: true,
+  }),
+);
 
 // Middleware
 app.use(express.json());

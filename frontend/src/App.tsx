@@ -6,23 +6,26 @@ import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import OrganizationPage from './pages/OrganizationPage';
+import { AuthProvider } from './contexts/AuthContext';
 import { FiltersProvider } from './contexts/FiltersContext';
 
 function App() {
   return (
-    <FiltersProvider>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/directory" element={<DirectoryPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/organization/:id" element={<OrganizationPage />} />
-        </Routes>
-      </Router>
-    </FiltersProvider>
+    <AuthProvider>
+      <FiltersProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/directory" element={<DirectoryPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/organization/:id" element={<OrganizationPage />} />
+          </Routes>
+        </Router>
+      </FiltersProvider>
+    </AuthProvider>
   );
 }
 

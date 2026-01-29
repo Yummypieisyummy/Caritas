@@ -3,30 +3,43 @@ import Button from '../components/ui/Button';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignupPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); // Disable button while submitting
   const [showPassword, setShowPassword] = useState(false);
+
+  const { register } = useAuth();
   const navigate = useNavigate();
 
-  const orgNameRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const orgNameRef = useRef<HTMLInputElement | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Stop the page from reloading - default form action
 
-    const orgName = orgNameRef.current?.value;
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
+    const email = emailRef.current?.value.trim();
+    const password = passwordRef.current?.value.trim();
+    const orgName = orgNameRef.current?.value.trim();
 
-    console.log('Form Submitted:', orgName, email, password);
+    if (!email || !password || !orgName) {
+      // set error message later and provide feedback for invalid fields
+      return;
+    }
+
+    const input = {
+      email,
+      password,
+      orgName,
+    };
 
     try {
       setIsSubmitting(true);
-      // Post to login endpoint
+      await register(input);
       navigate(-1); // Return to previous page on success
-    } catch (err) {
+      // Navigate to signup success page later prompting user to verify email
+    } catch (err: any) {
       console.error(err); // add custom error message later
     } finally {
       setIsSubmitting(false);
@@ -39,7 +52,7 @@ const SignupPage = () => {
         <h2 className="mx-auto font-semibold text-2xl text-text-green">
           Signup
         </h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleRegister} className="flex flex-col gap-4">
           <Input
             ref={orgNameRef}
             type="text"

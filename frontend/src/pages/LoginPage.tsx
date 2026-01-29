@@ -3,28 +3,39 @@ import Button from '../components/ui/Button';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); // Disable button while submitting
   const [showPassword, setShowPassword] = useState(false);
+
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Stop the page from reloading - default form action
 
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
+    const email = emailRef.current?.value.trim();
+    const password = passwordRef.current?.value.trim();
 
-    console.log('Form Submitted:', email, password);
+    if (!email || !password) {
+      // set error message later and provide feedback for invalid fields
+      return;
+    }
+
+    const input = {
+      email,
+      password,
+    };
 
     try {
       setIsSubmitting(true);
-      // Post to login endpoint
+      await login(input);
       navigate(-1); // Return to previous page on success
-    } catch (err) {
+    } catch (err: any) {
       console.error(err); // add custom error message later
     } finally {
       setIsSubmitting(false);
@@ -37,7 +48,7 @@ const LoginPage = () => {
         <h2 className="mx-auto font-semibold text-2xl text-text-green">
           Login
         </h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <Input
             ref={emailRef}
             type="email"

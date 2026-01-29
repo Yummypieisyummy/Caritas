@@ -2,7 +2,7 @@ import * as authServices from '../services/auth.service';
 
 export const register = async (req, res) => {
   const { user, org } = await authServices.register(req.body);
-  res.status(201).json(user, org);
+  res.status(201).json({ user, org });
 };
 
 export const login = async (req, res) => {
@@ -16,7 +16,9 @@ export const login = async (req, res) => {
     maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expiration
   });
 
-  res.status(200).json(tokens.accessToken, user, org);
+  const accessToken = tokens.accessToken;
+
+  res.status(200).json({ accessToken, user, org });
 };
 
 export const logout = async (req, res) => {
@@ -43,5 +45,7 @@ export const refresh = async (req, res) => {
     maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expiration
   });
 
-  res.status(200).json(tokens.accessToken, user, org);
+  const accessToken = tokens.accessToken;
+
+  res.status(200).json({ accessToken, user, org });
 };
