@@ -36,6 +36,15 @@ export const logoutRequest = async (): Promise<void> => {
   }
 };
 
+export const refreshRequest = async (): Promise<LoginResponse> => {
+  try {
+    const res = await api.post<LoginResponse>('/auth/refresh');
+    return res.data;
+  } catch (err: any) {
+    throw err.response?.data || err;
+  }
+};
+
 export const verifyEmailRequest = async (emailToken: string): Promise<void> => {
   try {
     await api.get('/auth/verify-email', { params: { emailToken } });

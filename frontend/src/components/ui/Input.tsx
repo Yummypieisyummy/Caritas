@@ -20,7 +20,7 @@ const Input = (props: InputProps) => {
       <input
         id={id}
         ref={ref}
-        className={`bg-white border-2 border-nav-stroke rounded-xl px-4 py-3 w-full outline-none transition-all duration-200 focus:border-accent-green focus:shadow-sm placeholder:text-text-muted hover:border-filter-stroke ${className}`}
+        className={`bg-white border-2 border-nav-stroke rounded-full px-4 py-2.5 w-full outline-none transition-all duration-200 focus:border-accent-green focus:shadow-sm placeholder:text-text-muted placeholder:text-sm hover:border-filter-stroke ${className}`}
         {...rest}
       />
     </div>
