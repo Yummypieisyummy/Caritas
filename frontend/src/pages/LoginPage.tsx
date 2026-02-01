@@ -35,7 +35,7 @@ const LoginPage = () => {
       setIsSubmitting(true);
       await login(input);
       navigate(-1); // Return to previous page on success
-    } catch (err: any) {
+    } catch (err) {
       console.error(err); // add custom error message later
     } finally {
       setIsSubmitting(false);
@@ -45,9 +45,9 @@ const LoginPage = () => {
   return (
     <main className="flex flex-col justify-center items-center min-h-screen w-full">
       <section className="flex flex-col gap-6 w-120 bg-white rounded-2xl p-8 shadow-card-shadow">
-        <h2 className="mx-auto font-semibold text-2xl text-text-green">
+        <h1 className="mx-auto font-semibold text-3xl text-text-green">
           Login
-        </h2>
+        </h1>
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <Input
             ref={emailRef}
@@ -88,20 +88,20 @@ const LoginPage = () => {
             variant="primary"
             size="lg"
             aria-label="Login"
-            className="py-3 mt-8"
+            className="py-3 mt-6"
           >
             {isSubmitting ? 'Logging in...' : 'Login'}
           </Button>
         </form>
 
         <div className="flex items-center justify-center">
-          <p className="text text-text-muted">Need an account?</p>
+          <p className="text-text-muted">Need an account?</p>
           <Button
             as="link"
             to="/signup"
             variant="textOnly"
             size="md"
-            className="text-md"
+            className="text-text-green font-medium hover:underline"
           >
             Signup
           </Button>

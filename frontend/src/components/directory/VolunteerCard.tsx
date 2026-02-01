@@ -30,7 +30,6 @@ const VolunteerCard = () => {
       'Heavy Lifting',
       'Clothing Drive',
       '18+',
-      'Transportation Needed',
       'Evenings',
     ],
   };
@@ -71,9 +70,9 @@ const VolunteerCard = () => {
       <section className="mb-3">
         <p>{orgData.description}</p>
 
+        {/* expanded content */}
         {expanded && (
           <div className="flex gap-6 mt-4">
-            {/* Left expanded content */}
             <div className="flex-1 flex flex-col gap-2">
               <p>
                 <span className="font-medium">📍 Address: </span>
@@ -88,7 +87,7 @@ const VolunteerCard = () => {
               <p>{orgData.additonalDetails}</p>
             </div>
 
-            {/* Right map */}
+            {/* Map */}
             <div className="w-100 flex flex-col gap-2">
               <img
                 src={sampleMap}
@@ -110,37 +109,44 @@ const VolunteerCard = () => {
 
       {/* Footer content */}
       <footer className="flex justify-between items-center mt-auto pt-2">
-        {/* Bottom left content */}
         <div className="flex items-center gap-3">
           {/* Link instead of button to pass state data */}
-          <Link to={orgData.orgProfile} state={{ org: orgData }} className="block">
-            <article className="rounded-lg bg-accent-green text-white hover:opacity-90">
+          <Link
+            to={orgData.orgProfile}
+            state={{ org: orgData }}
+            className="block"
+          >
+            <article className="rounded-xl bg-accent-green text-white hover:opacity-90">
               <h3 className="px-2.5 py-1.5">View Organization</h3>
             </article>
           </Link>
-          {/*
-          <Button as="link" variant="primary" size="sm"  state={{ org: orgData }} className="block">
+
+          {/* <Button
+            as="link"
+            variant="primary"
+            size="sm"
+            state={{ org: orgData }}
+            className="block"
+          >
             View Organization
-          </Button>
-          */}
-          {/* Icon button */}
+          </Button> */}
+
           <Button
             as="button"
             variant="icon"
             size="sm"
             aria-label="Volunteer Hand Raise"
+            className="bg-sky-500"
           >
             🤚
           </Button>
 
-          <span className="text-text-muted text-base">
+          <span className="text-text-muted">
             Interested: {orgData.interested} people
           </span>
         </div>
 
-        {/* Bottom right content */}
         <div>
-          {/* Show more text only button */}
           <Button
             as="button"
             variant="textOnly"

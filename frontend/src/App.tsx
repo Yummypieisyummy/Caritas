@@ -6,6 +6,8 @@ import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import OrganizationPage from './pages/OrganizationPage';
+import SignupSuccessPage from './pages/SignupSuccessPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { FiltersProvider } from './contexts/FiltersContext';
 
@@ -22,6 +24,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/organization/:id" element={<OrganizationPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="signup-success" element={<SignupSuccessPage />} />
           </Routes>
         </Router>
       </FiltersProvider>

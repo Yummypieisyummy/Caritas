@@ -6,6 +6,7 @@ type AuthContextValue = {
   register: (input: RegisterInput) => Promise<void>;
   login: (input: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
+  verifyEmail: (emailToken: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -17,7 +18,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (input: RegisterInput) => {
     try {
       const data = await authServices.registerRequest(input);
-      console.log('register response:', data);
     } catch (err) {
       throw err; // Send error up the call stack
     }
@@ -26,8 +26,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (input: LoginInput) => {
     try {
       const data = await authServices.loginRequest(input);
-      console.log('login response:', data);
-
       setUser(data.user);
       setAccessToken(data.accessToken);
       // Set org data from some sort of org context file
@@ -46,8 +44,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const verifyEmail = async (emailToken: string) => {
+    try {
+      await authServices.verifyEmailRequest(emailToken);
+    } catch (err) {
+      throw err;
+    }
+  };
+
   return (
-    <AuthContext value={{ register, login, logout }}>{children}</AuthContext>
+    <AuthContext value={{ register, login, logout, verifyEmail }}>
+      {children}
+    </AuthContext>
   );
 };
 

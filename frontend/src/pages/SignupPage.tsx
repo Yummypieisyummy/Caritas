@@ -37,9 +37,8 @@ const SignupPage = () => {
     try {
       setIsSubmitting(true);
       await register(input);
-      navigate(-1); // Return to previous page on success
-      // Navigate to signup success page later prompting user to verify email
-    } catch (err: any) {
+      navigate('/signup-success', { state: { email: input.email } });
+    } catch (err) {
       console.error(err); // add custom error message later
     } finally {
       setIsSubmitting(false);
@@ -49,7 +48,7 @@ const SignupPage = () => {
   return (
     <main className="flex flex-col justify-center items-center min-h-screen w-full">
       <section className="flex flex-col gap-6 w-120 bg-white rounded-2xl p-8 shadow-card-shadow">
-        <h2 className="mx-auto font-semibold text-2xl text-text-green">
+        <h2 className="mx-auto font-semibold text-3xl text-text-green">
           Signup
         </h2>
         <form onSubmit={handleRegister} className="flex flex-col gap-4">
@@ -100,7 +99,7 @@ const SignupPage = () => {
             variant="primary"
             size="lg"
             aria-label="Login"
-            className="py-3 mt-8"
+            className="py-3 mt-6 disabled:hover:opacity-100"
           >
             {isSubmitting ? 'Creating Account...' : 'Signup'}
           </Button>
@@ -113,7 +112,7 @@ const SignupPage = () => {
             to="/login"
             variant="textOnly"
             size="md"
-            className="text-md"
+            className="text-text-green font-medium hover:underline"
           >
             Login
           </Button>

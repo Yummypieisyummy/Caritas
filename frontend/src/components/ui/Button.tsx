@@ -13,8 +13,7 @@ interface BaseButtonProps {
 }
 
 interface ButtonAsButtonProps
-  extends BaseButtonProps,
-    ButtonHTMLAttributes<HTMLButtonElement> {
+  extends BaseButtonProps, ButtonHTMLAttributes<HTMLButtonElement> {
   //
   as?: 'button'; // Discriminator for regular buttons
   className?: string;
@@ -51,12 +50,6 @@ const Button = (props: ButtonProps) => {
     return sizesMap[size];
   };
 
-  const sizes = {
-    sm: 'px-2.5 py-1.5',
-    md: 'px-3 py-2 text-lg',
-    lg: 'px-6 py-2.5 text-xl font-semibold',
-  };
-
   const variant = props.variant || 'primary';
   const size = props.size || 'md';
   const sizeStyle = getSizes(variant, size);
@@ -72,7 +65,7 @@ const Button = (props: ButtonProps) => {
           typeof className === 'function'
             ? (navProps) =>
                 `${baseStyles} ${variants[variant]} ${sizeStyle} ${className(
-                  navProps
+                  navProps,
                 )}`
             : `${baseStyles} ${variants[variant]} ${sizeStyle} ${className}`
         }

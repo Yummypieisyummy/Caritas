@@ -30,7 +30,15 @@ export const loginRequest = async (
 
 export const logoutRequest = async (): Promise<void> => {
   try {
-    await api.post<LoginResponse>('/auth/logout');
+    await api.post('/auth/logout');
+  } catch (err: any) {
+    throw err.response?.data || err;
+  }
+};
+
+export const verifyEmailRequest = async (emailToken: string): Promise<void> => {
+  try {
+    await api.get('/auth/verify-email', { params: { emailToken } });
   } catch (err: any) {
     throw err.response?.data || err;
   }
