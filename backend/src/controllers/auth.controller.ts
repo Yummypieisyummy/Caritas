@@ -49,3 +49,10 @@ export const refresh = async (req, res) => {
 
   res.status(200).json({ accessToken, user, org });
 };
+
+export const verifyEmail = async (req, res) => {
+  const emailToken = req.query.emailToken;
+  await authServices.verifyEmail(emailToken);
+
+  res.status(200).json({ message: 'Email verfied successfully' });
+};

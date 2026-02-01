@@ -47,6 +47,7 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     org_id UUID REFERENCES organizations(id) ON DELETE SET NULL,
     email TEXT UNIQUE NOT NULL,
+    email_verified_at TIMESTAMP WITHOUT TIME ZONE,
     password_hash TEXT NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()

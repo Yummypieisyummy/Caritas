@@ -1,5 +1,8 @@
 import { query } from '../config/db';
 
+// Switched to return data or null here and let the service/auth decide how to handle null
+// Probably will need revised
+
 export async function createOrg(data: any) {
   const { name, email, about, contact_info, pfp_url, banner_url } = data;
 
@@ -23,8 +26,8 @@ export async function getOrgById(id: string) {
   const { rows } = await query(`SELECT * FROM organizations WHERE id = $1`, [
     id,
   ]);
-  if (!rows.length) throw new Error('Organization not found');
-  return rows[0];
+  // if (!rows.length) throw new Error('Organization not found');
+  return rows[0] || null;
 }
 
 export async function listOrgs() {

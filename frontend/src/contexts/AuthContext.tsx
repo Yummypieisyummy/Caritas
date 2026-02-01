@@ -1,6 +1,7 @@
 import { createContext, use, ReactNode, useState } from 'react';
 import * as authServices from '../services/auth.api';
 import { LoginInput, RegisterInput, User } from '../types/auth';
+import { ClockFading } from 'lucide-react';
 
 type AuthContextValue = {
   register: (input: RegisterInput) => Promise<void>;
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (input: LoginInput) => {
     try {
       const data = await authServices.loginRequest(input);
+      console.log('login data:', data);
       setUser(data.user);
       setAccessToken(data.accessToken);
       // Set org data from some sort of org context file

@@ -26,13 +26,16 @@ const VerifyEmailPage = () => {
 
       try {
         setStatus('verifying');
-        await verifyEmail(emailToken);
+
+        // The code pauses here until both the api call and 1 second delay are finished
+        const minDelay = new Promise((resolve) => setTimeout(resolve, 1000));
+        await Promise.all([verifyEmail(emailToken), minDelay]);
         setStatus('success');
 
         // redirect to login after 2 seconds
         setTimeout(() => {
           navigate('/login');
-        }, 5000);
+        }, 2000);
       } catch (err: any) {
         setStatus('error');
         setErrorMessage(

@@ -98,7 +98,7 @@ const SignupPage = () => {
             as="button"
             variant="primary"
             size="lg"
-            aria-label="Login"
+            aria-label="Signup"
             className="py-3 mt-6 disabled:hover:opacity-100"
           >
             {isSubmitting ? 'Creating Account...' : 'Signup'}

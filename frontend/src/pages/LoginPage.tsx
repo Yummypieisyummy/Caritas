@@ -34,7 +34,7 @@ const LoginPage = () => {
     try {
       setIsSubmitting(true);
       await login(input);
-      navigate(-1); // Return to previous page on success
+      navigate('/'); // Go to home page on success
     } catch (err) {
       console.error(err); // add custom error message later
     } finally {
@@ -88,7 +88,7 @@ const LoginPage = () => {
             variant="primary"
             size="lg"
             aria-label="Login"
-            className="py-3 mt-6"
+            className="py-3 mt-6 disabled:hover:opacity-100"
           >
             {isSubmitting ? 'Logging in...' : 'Login'}
           </Button>
