@@ -29,12 +29,12 @@ type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps; // ButtonProps can b
 
 const Button = (props: ButtonProps) => {
   const baseStyles =
-    'rounded-2xl cursor-pointer inline-flex items-center justify-center transition-opacity duration-200';
+    'rounded-xl cursor-pointer inline-flex items-center justify-center transition-opacity duration-200';
 
   const variants = {
     primary: 'bg-accent-green text-white shadow-sm hover:opacity-90',
     secondary:
-      'bg-white border-1 border-accent-green shadow-sm hover:text-text-green hover:opacity-90',
+      'bg-white border-2 border-accent-green shadow-sm hover:text-text-green hover:opacity-90',
     icon: 'hover:opacity-85',
     textOnly: 'hover:opacity-85',
   };

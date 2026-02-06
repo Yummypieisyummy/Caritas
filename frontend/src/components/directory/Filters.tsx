@@ -18,14 +18,10 @@ const Filters = () => {
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-filter-stroke/50">
         <h1 className="font-semibold text-2xl">Filters</h1>
-        <Button as="button" variant="icon" size="sm" onClick={clearFilters}>
-          <XIcon className="w-5 h-5" />
-          {/* add label later, indicating clear filters */}
-        </Button>
       </header>
 
       {/* Scrollable Filter Options */}
-      <section className="flex-1 overflow-y-auto px-6 py-6">
+      <section className="flex-1 overflow-y-auto p-6">
         <div className="flex flex-col gap-5">
           {/* Category */}
           <div className="flex flex-col gap-2">
@@ -135,6 +131,18 @@ const Filters = () => {
           />
         </div>
       </section>
+      <footer className="flex items-center justify-center h-20 border-t border-filter-stroke/50 p-6">
+        <Button
+          as="button"
+          variant="primary"
+          size="sm"
+          onClick={clearFilters}
+          className="w-full flex gap-1 items-center"
+        >
+          <XIcon size={18} strokeWidth={3} />
+          <p className="text-lg font font-semibold">Clear All</p>
+        </Button>
+      </footer>
     </aside>
   );
 };
