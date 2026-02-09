@@ -5,9 +5,12 @@ import sampleMap from '../../assets/sampleMap.png';
 import Button from '../ui/Button';
 import Tag, { TagColor } from '../ui/Tag';
 
+type Props = { post?: any };
+
 const VolunteerCard = () => {
   // Mockup data
-  const orgData = {
+  const orgData = 
+  {
     id: 'habitat-restore',
     title: 'Stocking, organizing, and sorting donations',
     name: 'Habitat Restore',

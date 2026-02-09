@@ -4,7 +4,11 @@ import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
 import Tag, { TagColor } from '../ui/Tag';
 
-const VolunteerCard = () => {
+type Props = {
+  onOpen?: ( orgData : any ) => void;
+};
+
+const MiniVolunteerCard = ({ onOpen }: Props) => {
   // Mockup data
   const orgData = {
     id: 'habitat-restore',
@@ -33,11 +37,6 @@ const VolunteerCard = () => {
       'Evenings',
     ],
   };
-
-  /*const [expanded, setExpanded] = useState(false);
-  const handleToggle = () => {
-    setExpanded((prev) => !prev);
-  }; // Toggle expanded state based on prev state*/
 
   const tagColors: TagColor[] = ['green', 'blue', 'orange', 'baise', 'purple'];
 
@@ -88,9 +87,21 @@ const VolunteerCard = () => {
             Interested: {orgData.interested} people
           </span>
         </div>
+        
+        {/* Button for opening modal */}
+        <div>
+          <button
+            onClick={() => {
+              onOpen?.(orgData);
+            }}
+            className="rounded-md bg-accent-green py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-accent-green focus:shadow-none active:bg-accent-green hover:bg-nav-bg active:shadow-none ml-2"
+          >
+            See Full Post
+          </button>
+        </div>  
       </footer>
     </article>
   );
 };
 
-export default VolunteerCard;
+export default MiniVolunteerCard;
