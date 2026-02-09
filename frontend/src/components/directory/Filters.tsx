@@ -100,6 +100,7 @@ const Filters = () => {
           <Select
             label="Organization Type"
             options={filterOptions.ORGANIZATION_TYPE_OPTIONS}
+            value={filters.orgType}
             onChange={(e) => setSelect('orgType', e.target.value)}
           />
 
@@ -107,6 +108,7 @@ const Filters = () => {
           <Select
             label="Time Commitment"
             options={filterOptions.TIME_COMMITMENT_OPTIONS}
+            value={filters.timeOption}
             onChange={(e) => setSelect('timeOption', e.target.value)}
           />
 
@@ -127,6 +129,7 @@ const Filters = () => {
           <Select
             label="Urgency / Priority"
             options={filterOptions.URGENCY_OPTIONS}
+            value={filters.urgency}
             onChange={(e) => setSelect('urgency', e.target.value)}
           />
         </div>
