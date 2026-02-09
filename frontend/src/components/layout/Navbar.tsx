@@ -31,8 +31,8 @@ const Navbar = () => {
                 to={link.to}
                 className={({ isActive }) =>
                   isActive
-                    ? "text-text-green font-medium"
-                    : "text-text-muted hover:text-text-base font-medium transition-colors duration-200 hover:opacity-100"
+                    ? 'text-text-green font-medium'
+                    : 'text-text-muted hover:text-text-base font-medium transition-colors duration-200 hover:opacity-100'
                 }
               >
                 {link.id}
@@ -71,7 +71,7 @@ const Navbar = () => {
             <div className="flex items-center gap-4">
               <Button
                 as="link"
-                to={org?.verified ? `/organization/${org.id}` : "/"}
+                to={org?.verified ? `/organization/${org.id}` : '/'}
                 variant="textOnly"
               >
                 <User
@@ -99,7 +99,7 @@ const Navbar = () => {
             <Button
               as="button"
               variant="icon"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={() => setIsSearchOpen((prev) => !prev)}
             >
               {isSearchOpen ? (
                 <X className="w-6 h-6 text-text-base" />
@@ -114,7 +114,7 @@ const Navbar = () => {
             as="button"
             variant="icon"
             className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setIsMenuOpen((prev) => !prev)}
           >
             {isMenuOpen ? (
               <X className="w-6 h-6 text-text-base" />
@@ -155,8 +155,8 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
                 className={({ isActive }) =>
                   isActive
-                    ? "text-text-green font-medium text-left"
-                    : "text-text-muted hover:text-text-base font-medium transition-colors duration-200 text-left"
+                    ? 'text-text-green font-medium text-left'
+                    : 'text-text-muted hover:text-text-base font-medium transition-colors duration-200 text-left'
                 }
               >
                 {link.id}
@@ -190,14 +190,13 @@ const Navbar = () => {
                 <div className="flex flex-col gap-2">
                   <Button
                     as="link"
-                    to={org?.verified ? `/organization/${org.id}` : "/"}
+                    to={org?.verified ? `/organization/${org.id}` : '/'} // Make this a protected route - verfify access token middleware -> allow nav
                     variant="secondary"
                     size="sm"
                     className="w-full"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User className="w-4 h-4 mr-2" />
-                    Profile
                   </Button>
 
                   <Button
@@ -205,7 +204,7 @@ const Navbar = () => {
                     variant="secondary"
                     size="sm"
                     onClick={() => {
-                      logout();
+                      logout;
                       setIsMenuOpen(false);
                     }}
                     className="w-full font-medium"

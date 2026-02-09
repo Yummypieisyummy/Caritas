@@ -107,10 +107,6 @@ export async function login({ email, password }: LoginInput) {
     throw new Error('Organization not found');
   }
 
-  // if (!org.verified) {
-  //   throw new Error('Organization is not verified');
-  // }
-
   // Create access token payload
   const fullPayload = createTokenPayload(user, org, orgUser);
 
@@ -155,16 +151,12 @@ export async function refresh(refreshToken: string) {
     throw new Error('Organization not found');
   }
 
-  if (!org.verified) {
-    throw new Error('Organization is not verified');
-  }
-
   // Create access token payload
   const fullPayload = createTokenPayload(user, org, orgUser);
 
   // Generate new access and refresh tokens
   const newAccessToken = signAccessToken(fullPayload);
-  const newRefreshToken = signRefreshToken(user.id);
+  const newRefreshToken = signRefreshToken({ user_id: user.id });
 
   return {
     tokens: { accessToken: newAccessToken, refreshToken: newRefreshToken },

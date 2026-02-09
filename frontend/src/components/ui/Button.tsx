@@ -14,7 +14,6 @@ interface BaseButtonProps {
 
 interface ButtonAsButtonProps
   extends BaseButtonProps, ButtonHTMLAttributes<HTMLButtonElement> {
-  //
   as?: 'button'; // Discriminator for regular buttons
   className?: string;
 }
@@ -23,6 +22,7 @@ interface ButtonAsLinkProps extends BaseButtonProps {
   as: 'link'; // Discriminator for link buttons - required
   to: string; // required destination
   className?: string | ((props: { isActive: boolean }) => string); // Special type
+  onClick?: () => void;
 }
 
 type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps; // ButtonProps can be either a normal button or a link
@@ -34,7 +34,7 @@ const Button = (props: ButtonProps) => {
   const variants = {
     primary: 'bg-accent-green text-white shadow-sm hover:opacity-90',
     secondary:
-      'bg-white border-2 border-accent-green shadow-sm hover:text-text-green hover:opacity-90',
+      'bg-white ring-2 ring-accent-green ring-inset shadow-sm hover:text-text-green hover:opacity-90',
     icon: 'hover:opacity-85',
     textOnly: 'hover:opacity-85',
   };
