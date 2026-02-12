@@ -2,9 +2,6 @@
 
 const AboutPage = () => {
 
-  const bg_footer = new URL('../assets/About_Footer-cropped.svg', import.meta.url).href;
-  console.log('bg_footer url:', bg_footer);
-
   return (
     <main data-testid="about-page-container" className="flex justify-center w-screen overflow-hidden">
       <div className="grid grid-flow-row auto-rows-max">
@@ -88,8 +85,6 @@ const AboutPage = () => {
           </section>
         </div>
         <div className="w-full overflow-hidden">
-
-         {/* Contact card over footer - centered, pulled up with negative translate */}
          <section className="justify-self-center w-full">
            <article className="bg-tag-green w-full h-50 rounded-xl flex flex-col px-4 py-4 shadow-lg">
              {/*<h1 className="font-medium text-4xl mt-0 mb-2 text-center">Contact Us</h1>*/}
