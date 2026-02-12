@@ -13,10 +13,6 @@ interface FiltersProps {
 const Filters = ({ onClose }: FiltersProps) => {
   const { filters, toggleOption, setSelect, clearFilters } = useFilters();
 
-  useEffect(() => {
-    console.log('filters:', filters);
-  }, [filters]);
-
   return (
     <aside className="h-full flex flex-col bg-filter-bg border-r border-filter-stroke">
       {/* Header */}
