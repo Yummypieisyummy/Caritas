@@ -99,7 +99,10 @@ const Navbar = () => {
             <Button
               as="button"
               variant="icon"
-              onClick={() => setIsSearchOpen((prev) => !prev)}
+              onClick={() => {
+                setIsSearchOpen((prev) => !prev);
+                if (isMenuOpen) setIsMenuOpen(false);
+              }}
             >
               {isSearchOpen ? (
                 <X className="w-6 h-6 text-text-base" />
@@ -114,7 +117,10 @@ const Navbar = () => {
             as="button"
             variant="icon"
             className="md:hidden"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
+            onClick={() => {
+              setIsMenuOpen((prev) => !prev);
+              if (isSearchOpen) setIsSearchOpen(false);
+            }}
           >
             {isMenuOpen ? (
               <X className="w-6 h-6 text-text-base" />

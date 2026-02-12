@@ -6,7 +6,11 @@ import { useFilters } from '../../contexts/FiltersContext';
 import * as filterOptions from '../../config/filterOptions';
 import { XIcon } from 'lucide-react';
 
-const Filters = () => {
+interface FiltersProps {
+  onClose?: () => void; // Optional prop for mobile close button
+}
+
+const Filters = ({ onClose }: FiltersProps) => {
   const { filters, toggleOption, setSelect, clearFilters } = useFilters();
 
   useEffect(() => {
@@ -14,10 +18,15 @@ const Filters = () => {
   }, [filters]);
 
   return (
-    <aside className="fixed top-20 bottom-0 w-80 flex flex-col bg-filter-bg border-r border-filter-stroke">
+    <aside className="h-full flex flex-col bg-filter-bg border-r border-filter-stroke">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-filter-stroke/50">
         <h1 className="font-semibold text-2xl">Filters</h1>
+        {onClose && (
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <XIcon size={24} />
+          </button>
+        )}
       </header>
 
       {/* Scrollable Filter Options */}
