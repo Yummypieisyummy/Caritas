@@ -7,22 +7,17 @@ import { CircleArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import Button from '../components/ui/Button';
 import { Link } from 'react-router-dom';
+import { XIcon } from 'lucide-react';
 
 const OrganizationPage = () => {
 
   // Modal state for post details
-
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openPostModal = (orgData: any) => {
-    setSelectedPost(orgData);
-    setIsModalOpen(true);
+  const handleModalClick = () => {
+    setIsModalOpen((prev) => !prev);
   };
-  const closePostModal = () => {
-    setIsModalOpen(false);
-    setSelectedPost(null);
-  }
 
   // Sample banner and profile image
 
@@ -129,7 +124,7 @@ const OrganizationPage = () => {
                 <header className="mb-2 font-medium text-2xl">Recent Posts</header>
                 <div className="flex flex-col gap-6">
                   {Array.from({ length: 2 }, (_, i) => (
-                      <MiniVolunteerCard key={i} onOpen={openPostModal}/>
+                      <MiniVolunteerCard key={i} onOpen={handleModalClick}/>
                   ))}
                 </div>
               </section>
@@ -139,19 +134,26 @@ const OrganizationPage = () => {
       </section>
 
       {/* Modal for full post details */}
-      {isModalOpen && selectedPost && (
+      {isModalOpen && (
         <div
           role="dialog"
           aria-modal="true"
           className="fixed inset-0 z-50 grid place-items-center backdrop-blur bg-opacity-60"
-          onClick={closePostModal}
+          onClick={handleModalClick}
         >
           <div
             className="bg-white rounded-lg w-11/12 max-w-3xl p-6 mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start">
-              <button aria-label="Close" onClick={closePostModal} className="text-xl">x</button>
+              <Button 
+                aria-label="Close" 
+                onClick={handleModalClick} 
+                variant="icon" 
+                className="text-xl"
+              >
+                <XIcon/>
+              </Button>
             </div>
             <VolunteerCard/>
           </div>
