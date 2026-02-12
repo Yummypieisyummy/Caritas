@@ -4,10 +4,13 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Turnstile from '../components/ui/Turnstile';
+
 
 const SignupPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); // Disable button while submitting
   const [showPassword, setShowPassword] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -23,7 +26,7 @@ const SignupPage = () => {
     const password = passwordRef.current?.value.trim();
     const orgName = orgNameRef.current?.value.trim();
 
-    if (!email || !password || !orgName) {
+    if (!email || !password || !orgName || !turnstileToken) {
       // set error message later and provide feedback for invalid fields
       return;
     }
@@ -32,6 +35,7 @@ const SignupPage = () => {
       email,
       password,
       orgName,
+      turnstileToken,
     };
 
     try {
@@ -40,6 +44,7 @@ const SignupPage = () => {
       navigate('/signup-success', { state: { email: input.email } });
     } catch (err) {
       console.error(err); // add custom error message later
+      setTurnstileToken(null); //if an error, user must re verify they are not a bot
     } finally {
       setIsSubmitting(false);
     }
@@ -90,6 +95,10 @@ const SignupPage = () => {
                 <EyeOff className="w-5 h-5" />
               )}
             </Button>
+          </div>
+
+           <div className="mt-2">
+            <Turnstile onToken={setTurnstileToken} />
           </div>
 
           <Button

@@ -2,6 +2,7 @@ export type RegisterInput = {
   email: string;
   password: string;
   orgName: string;
+  turnstileToken: string;
 };
 
 export type LoginInput = {
