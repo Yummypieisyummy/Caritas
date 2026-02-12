@@ -1,7 +1,7 @@
 import { SelectHTMLAttributes } from 'react';
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  label: string;
+  label?: string;
   options: string[];
   className?: string;
 }
@@ -10,10 +10,10 @@ const Select = (props: SelectProps) => {
   const { label, options, className = '', ...rest } = props;
 
   return (
-    <label className="flex flex-col gap-2">
-      <span className="font-semibold">{label}</span>
+    <label className={`${label ? 'flex flex-col gap-2' : ''}`}>
+      {label && <span className="font-semibold">{label}</span>}
       <select
-        className={`border border-filter-stroke px-3 py-2 rounded-lg bg-white focus:outline-none focus:border-accent-green text-text-muted ${className}`}
+        className={`border border-filter-stroke px-3 py-2 rounded-xl bg-white focus:outline-none focus:border-accent-green text-text-muted h-10 ${className}`}
         {...rest}
       >
         {options.map((opt) => (

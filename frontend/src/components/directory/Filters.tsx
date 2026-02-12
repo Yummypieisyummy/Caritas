@@ -9,10 +9,6 @@ import { XIcon } from 'lucide-react';
 const Filters = () => {
   const { filters, toggleOption, setSelect, clearFilters } = useFilters();
 
-  useEffect(() => {
-    console.log('filters:', filters);
-  }, [filters]);
-
   return (
     <aside className="fixed top-20 bottom-0 w-80 flex flex-col bg-filter-bg border-r border-filter-stroke">
       {/* Header */}

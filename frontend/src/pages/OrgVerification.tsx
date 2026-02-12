@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+import FileInput from '../components/ui/FileInput';
 
 const verificationSchema = z.object({
   primaryContact: z
@@ -19,7 +20,7 @@ const verificationSchema = z.object({
 
 type VerificationForm = z.infer<typeof verificationSchema>;
 
-const OrgSetupPage = () => {
+const OrgVerification = () => {
   const {
     register,
     handleSubmit,
@@ -66,6 +67,9 @@ const OrgSetupPage = () => {
             placeholder="Enter the year your organization was established"
             error={errors.yearEstablished?.message}
           ></Input>
+
+          <FileInput id="test" label="Upload Documentation"></FileInput>
+
           {/* footer */}
           <Button
             disabled={isSubmitting}
@@ -83,4 +87,4 @@ const OrgSetupPage = () => {
   );
 };
 
-export default OrgSetupPage;
+export default OrgVerification;
