@@ -20,7 +20,7 @@ const verificationSchema = z.object({
 
 type VerificationForm = z.infer<typeof verificationSchema>;
 
-const OrgVerification = () => {
+const SetupVerificationPage = () => {
   const {
     register,
     handleSubmit,
@@ -39,7 +39,7 @@ const OrgVerification = () => {
     <main className="flex flex-col justify-center items-center min-h-screen w-full">
       <section className="flex flex-col gap-6 max-w-md w-full bg-white rounded-2xl p-8 shadow-card-shadow hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
         <h1 className="text-3xl text-text-green font-semibold mb-6 mx-auto">
-          Org Verification
+          Organization Verification
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -48,38 +48,49 @@ const OrgVerification = () => {
             id="primaryContact"
             name="primaryContact"
             label="Primary Contact Person"
-            placeholder="Enter the name of your primary contact person"
+            placeholder="John Doe"
             error={errors.primaryContact?.message}
-          ></Input>
+          />
+
           <Input
             {...register('phoneNumber')}
             id="phoneNumber"
             name="phoneNumber"
             label="Phone Number"
-            placeholder="Enter your organization's phone number"
+            type="tel"
+            placeholder="(555) 123-4567"
             error={errors.phoneNumber?.message}
-          ></Input>
+          />
+
           <Input
             {...register('yearEstablished')}
             id="yearEstablished"
             name="yearEstablished"
             label="Year Established"
-            placeholder="Enter the year your organization was established"
+            placeholder="2000"
             error={errors.yearEstablished?.message}
-          ></Input>
+          />
 
-          <FileInput id="test" label="Upload Documentation"></FileInput>
+          <FileInput
+            id="taxExempt"
+            label="Tax Exempt Status Document"
+            accept=".pdf,.doc,.docx"
+          />
 
-          {/* footer */}
+          <FileInput
+            id="proofIncorporation"
+            label="Proof of Incorporation"
+            accept=".pdf,.doc,.docx"
+          />
+
           <Button
-            disabled={isSubmitting}
             as="button"
-            size="lg"
-            variant="primary"
             type="submit"
-            className="mt-6 w-full disabled:hover:opacity-100"
+            size="md"
+            disabled={isSubmitting}
+            className="w-full mt-4"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+            {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
           </Button>
         </form>
       </section>
@@ -87,4 +98,4 @@ const OrgVerification = () => {
   );
 };
 
-export default OrgVerification;
+export default SetupVerificationPage;

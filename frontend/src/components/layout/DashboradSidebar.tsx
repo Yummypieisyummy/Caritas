@@ -8,7 +8,7 @@ const DashboradSidebar = () => {
       <section className="flex flex-col gap-6">
         <Button
           as="link"
-          to="/organization/overview"
+          to="/dashboard/overview"
           variant="textOnly"
           className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
         >
@@ -16,7 +16,7 @@ const DashboradSidebar = () => {
         </Button>
         <Button
           as="link"
-          to="/organization/myposts"
+          to="/dashboard/posts"
           variant="textOnly"
           className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
         >
@@ -32,7 +32,7 @@ const DashboradSidebar = () => {
         </Button>
         <Button
           as="link"
-          to="/overview"
+          to="/dashboard/team"
           variant="textOnly"
           className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
         >

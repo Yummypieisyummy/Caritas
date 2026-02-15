@@ -6,14 +6,16 @@ import DirectoryPage from './pages/DirectoryPage';
 import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-import OrganizationPage from './pages/OrganizationPage'; // Public org profile page
-import OrgOverviewPage from './pages/OrgOverviewPage'; // Manage org profile, posts, team, see verification status
-import OrgVerification from './pages/OrgVerification'; // Initial form after email verification and no verification info submitted
-import OrgPostsPage from './pages/OrgPostsPage';
+import OrganizationProfilePage from './pages/OrganizationProfilePage';
+import DashboardOverviewPage from './pages/DashboardOverviewPage';
+import SetupVerificationPage from './pages/SetupVerificationPage';
+import ManagePostsPage from './pages/ManagePostsPage';
+import CreatePostPage from './pages/CreatePostPage';
 import SignupSuccessPage from './pages/SignupSuccessPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { FiltersProvider } from './contexts/FiltersContext';
+import TeamAccessPage from './pages/TeamAccessPage';
 
 function App() {
   return (
@@ -21,27 +23,39 @@ function App() {
       <FiltersProvider>
         <Router>
           <Routes>
-            {/* Pages with navbar */}
+            {/* Pages with navbar + Public Routes */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/directory" element={<DirectoryPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
-              <Route path="/organization/:id" element={<OrganizationPage />} />
+              <Route
+                path="/organizations/:id"
+                element={<OrganizationProfilePage />}
+              />
             </Route>
+
             {/* Pages without navbar */}
-
-            <Route path="organization/setup" element={<OrgVerification />} />
+            <Route
+              path="/dashboard/setup"
+              element={<SetupVerificationPage />}
+            />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
-            <Route path="signup-success" element={<SignupSuccessPage />} />
+            <Route path="/signup-success" element={<SignupSuccessPage />} />
 
+            {/* Organization dashboard pages + Private routes */}
             <Route element={<DashboardLayout />}>
               <Route
-                path="organization/overview"
-                element={<OrgOverviewPage />}
+                path="/dashboard/overview"
+                element={<DashboardOverviewPage />}
               />
-              <Route path="/organization/myposts" element={<OrgPostsPage />} />
+              <Route path="/dashboard/posts" element={<ManagePostsPage />} />
+              <Route
+                path="/dashboard/posts/create"
+                element={<CreatePostPage />}
+              />
+              <Route path="/dashboard/team" element={<TeamAccessPage />} />
             </Route>
           </Routes>
         </Router>

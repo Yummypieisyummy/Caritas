@@ -43,7 +43,7 @@ const Button = (props: ButtonProps) => {
     if (variant === 'textOnly') return 'px-1 py-0';
 
     const sizesMap = {
-      sm: 'px-2.5 py-2 text-sm font-medium',
+      sm: 'px-3 py-2 text-sm font-medium',
       md: 'px-4 py-2 text-lg font-semibold',
       lg: 'px-6 py-2.5 text-xl font-semibold',
     };

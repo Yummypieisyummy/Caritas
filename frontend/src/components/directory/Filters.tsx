@@ -1,7 +1,6 @@
 import Button from '../ui/Button';
 import Checkbox from '../ui/Checkbox';
 import Select from '../ui/Select';
-import { useEffect } from 'react';
 import { useFilters } from '../../contexts/FiltersContext';
 import * as filterOptions from '../../config/filterOptions';
 import { XIcon } from 'lucide-react';
@@ -19,9 +18,9 @@ const Filters = ({ onClose }: FiltersProps) => {
       <header className="flex items-center justify-between px-6 py-4 border-b border-filter-stroke/50">
         <h1 className="font-semibold text-2xl">Filters</h1>
         {onClose && (
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <Button variant="icon" onClick={onClose}>
             <XIcon size={24} />
-          </button>
+          </Button>
         )}
       </header>
 
