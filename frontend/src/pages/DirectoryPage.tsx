@@ -5,27 +5,26 @@ import VolunteerCard from '../components/directory/VolunteerCard';
 import Button from '../components/ui/Button';
 
 const DirectoryPage = () => {
-
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   return (
     <main data-testid="directory-page-container" className="flex min-h-screen">
       {/* Left sidebar filters */}
 
-        {/* Mobile filters panel */}
-        {isFiltersOpen && (
-          <>
-            {/* Backdrop */}
-            <div 
-              className="md:hidden fixed inset-0 bg-black/50 z-40"
-              onClick={() => setIsFiltersOpen(false)}
-            />
-            {/* Filters panel sliding from right */}
-            <div className="md:hidden fixed top-20 right-0 bottom-0 w-80 max-w-full bg-white shadow-lg z-50 overflow-y-auto">
-              <Filters onClose={() => setIsFiltersOpen(false)} />
-            </div>
-          </>
-        )}
+      {/* Mobile filters panel */}
+      {isFiltersOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="md:hidden fixed inset-0 bg-black/50 z-40"
+            onClick={() => setIsFiltersOpen(false)}
+          />
+          {/* Filters panel sliding from right */}
+          <div className="md:hidden fixed top-20 right-0 bottom-0 w-80 max-w-full bg-white shadow-lg z-50 overflow-y-auto">
+            <Filters onClose={() => setIsFiltersOpen(false)} />
+          </div>
+        </>
+      )}
 
       {/* Desktop sidebar filters */}
       <div className="hidden md:flex fixed top-20 left-0 w-64 bottom-0 bg-gray-100">
@@ -35,11 +34,11 @@ const DirectoryPage = () => {
       {/* Right content */}
       <section className="md:ml-64 flex flex-col flex-1 p-6">
         <header className="mb-6 flex items-center justify-between">
-          <h1 className="font-medium text-3xl">Local Charity Posts</h1>
-          
+          <h1 className="font-semibold text-3xl">Local Charity Posts</h1>
+
           {/* Mobile filters button */}
           <div className="md:hidden">
-            <Button 
+            <Button
               as="button"
               variant="primary"
               size="md"

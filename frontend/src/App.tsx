@@ -16,6 +16,7 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { FiltersProvider } from './contexts/FiltersContext';
 import TeamAccessPage from './pages/TeamAccessPage';
+import ManageOrgProfilePage from './pages/ManageOrgProfilePage';
 
 function App() {
   return (
@@ -31,7 +32,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route
-                path="/organizations/:id"
+                path="/organization/:id"
                 element={<OrganizationProfilePage />}
               />
             </Route>
@@ -51,6 +52,10 @@ function App() {
                 element={<DashboardOverviewPage />}
               />
               <Route path="/dashboard/posts" element={<ManagePostsPage />} />
+              <Route
+                path="/dashboard/profile"
+                element={<ManageOrgProfilePage />}
+              />
               <Route
                 path="/dashboard/posts/create"
                 element={<CreatePostPage />}

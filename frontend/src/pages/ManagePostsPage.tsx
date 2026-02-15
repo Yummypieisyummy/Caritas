@@ -28,7 +28,7 @@ const ManagePostsPage = () => {
   ];
 
   return (
-    <main className="min-h-screen w-full flex p-6 flex-col items-center justify-center bg-nav-bg">
+    <main className="min-h-screen w-full flex p-6 flex-col items-center justify-center">
       {/* <section className="flex items-center justify-between w-full border-b border-nav-stroke px-8 py-4">
         <p className="font-medium text-lg">Dashboard {'>'} Posts</p>
         <div className="flex items-center gap-4">
@@ -44,7 +44,7 @@ const ManagePostsPage = () => {
         </div>
       </section> */}
 
-      <article className="w-full max-w-4xl bg-white rounded-2xl my-8 p-8 shadow-card-shadow hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
+      <section className="w-full max-w-4xl bg-white rounded-2xl my-8 p-8 shadow-card-shadow hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
         <div className="flex justify-between items-center mb-6">
           <h2 className="font-semibold text-2xl ">Manage Posts</h2>
           <Button
@@ -127,7 +127,7 @@ const ManagePostsPage = () => {
             </tbody>
           </table>
         </div>
-      </article>
+      </section>
     </main>
   );
 };

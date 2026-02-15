@@ -1,7 +1,5 @@
 const DashboardOverviewPage = () => {
-  return (
-    <main className="flex w-full bg-nav-bg min-h-screen">Org Overview</main>
-  );
+  return <main className="flex min-h-screen w-full">Org Overview</main>;
 };
 
 export default DashboardOverviewPage;

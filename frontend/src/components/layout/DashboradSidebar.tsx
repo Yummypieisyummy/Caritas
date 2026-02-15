@@ -24,7 +24,7 @@ const DashboradSidebar = () => {
         </Button>
         <Button
           as="link"
-          to="/organization/myposts"
+          to="/dashboard/profile"
           variant="textOnly"
           className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
         >
