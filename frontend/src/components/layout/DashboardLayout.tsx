@@ -5,7 +5,7 @@ const DashboardLayout = () => {
   return (
     <>
       <DashboradSidebar />
-      <main className="ml-80 bg-nav-bg">
+      <main className="ml-80 bg-gray-50">
         <Outlet /> {/* Render children pages with nav*/}
       </main>
     </>

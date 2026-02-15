@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import Button from '../ui/Button';
+import Input from '../ui/Input';
+import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Search, Building2, User, Menu, X } from 'lucide-react';
 
@@ -42,15 +43,18 @@ const Navbar = () => {
         </div>
 
         <div className="hidden lg:flex flex-1 max-w-md mx-8">
-          <div className="flex items-center relative w-full">
-            <input
+          <div className="flex items-center relative w-full group">
+            <Input
               type="search"
+              id="search"
               placeholder="Find charities, causes, or volunteer events..."
-              aria-label="Search"
-              className="bg-white border-2 border-nav-stroke rounded-full px-4 py-2.5 w-full outline-none transition-all duration-200 focus:border-accent-green focus:shadow-sm placeholder:text-text-muted hover:border-filter-stroke"
-            />
-            <Button as="button" variant="icon">
-              <Search className="absolute right-12 top-1/2 -translate-y-1/2 text-text-muted/80 w-5 h-5" />
+              className="rounded-full"
+            ></Input>
+            <Button
+              variant="icon"
+              className="absolute right-1 top-1/2 -translate-y-1/2"
+            >
+              <Search className="text-text-muted/80 w-5 h-5 group-hover:text-accent-green transition-colors" />
             </Button>
           </div>
         </div>

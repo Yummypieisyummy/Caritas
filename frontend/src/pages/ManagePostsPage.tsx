@@ -59,8 +59,14 @@ const ManagePostsPage = () => {
 
         <div className="flex gap-6 mb-6 justify-between items-center">
           <div className="flex gap-2">
-            <Select options={['All', 'Past-week', 'Past-month']} />
-            <Select options={['Filter', 'Most recent', 'Oldest']} />
+            <Select
+              options={['All', 'Past-week', 'Past-month']}
+              variant="gray"
+            />
+            <Select
+              options={['Filter', 'Most recent', 'Oldest']}
+              variant="gray"
+            />
           </div>
 
           <div className="relative w-80">
