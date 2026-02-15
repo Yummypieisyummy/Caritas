@@ -9,7 +9,6 @@ const DirectoryPage = () => {
 
   return (
     <main data-testid="directory-page-container" className="flex min-h-screen">
-      {/* Left sidebar filters */}
 
       {/* Mobile filters panel */}
       {isFiltersOpen && (
@@ -27,12 +26,12 @@ const DirectoryPage = () => {
       )}
 
       {/* Desktop sidebar filters */}
-      <div className="hidden md:flex fixed top-20 left-0 w-64 bottom-0 bg-gray-100">
+      <div className="hidden md:flex fixed top-20 left-0 w-80 bottom-0 bg-gray-100">
         <Filters />
       </div>
 
       {/* Right content */}
-      <section className="md:ml-64 flex flex-col flex-1 p-6">
+      <section className="md:ml-80 flex flex-col flex-1 p-6">
         <header className="mb-6 flex items-center justify-between">
           <h1 className="font-semibold text-3xl">Local Charity Posts</h1>
 

@@ -13,7 +13,7 @@ const Filters = ({ onClose }: FiltersProps) => {
   const { filters, toggleOption, setSelect, clearFilters } = useFilters();
 
   return (
-    <aside className="h-full flex flex-col bg-filter-bg border-r border-filter-stroke">
+    <aside className="w-full h-full flex flex-col bg-filter-bg border-r border-filter-stroke">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-filter-stroke/50">
         <h1 className="font-semibold text-2xl">Filters</h1>
