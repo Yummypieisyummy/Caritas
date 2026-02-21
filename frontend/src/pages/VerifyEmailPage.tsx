@@ -77,7 +77,8 @@ const VerifyEmailPage = () => {
             <p className="text-text-muted text-sm">{errorMessage}</p>
             <Button
               variant="textOnly"
-              className="text-red-600 font-medium hover:underline text-sm"
+              size="sm"
+              className="text-red-600 hover:underline"
             >
               Click to resend
             </Button>

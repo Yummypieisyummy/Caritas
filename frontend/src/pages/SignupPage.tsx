@@ -131,7 +131,7 @@ const SignupPage = () => {
             to="/login"
             variant="textOnly"
             size="md"
-            className="text-text-green font-medium hover:underline"
+            className="text-text-green hover:underline"
           >
             Login
           </Button>

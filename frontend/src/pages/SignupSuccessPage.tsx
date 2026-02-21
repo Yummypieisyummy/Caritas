@@ -47,7 +47,8 @@ const SignupSuccessPage = () => {
             <p className="text-sm text-text-muted">Didn't receive the email?</p>
             <Button
               variant="textOnly"
-              className="text-text-green font-medium hover:underline text-sm"
+              size="sm"
+              className="text-text-green hover:underline"
             >
               Click to resend
             </Button>

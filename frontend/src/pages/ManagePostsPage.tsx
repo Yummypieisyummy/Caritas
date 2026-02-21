@@ -44,9 +44,15 @@ const ManagePostsPage = () => {
         </div>
       </section> */}
 
-      <section className="w-full max-w-4xl bg-white rounded-2xl my-8 p-8 shadow-card-shadow hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="font-semibold text-2xl ">Manage Posts</h2>
+      <div className="w-full max-w-4xl flex items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-3xl font-semibold">Manage Posts</h1>
+          <p className="mt-1 text-sm text-text-muted">
+            Manage your organization's posts.
+          </p>
+        </div>
+
+        <div className="flex gap-4">
           <Button
             as="link"
             to="/dashboard/posts/create"
@@ -56,7 +62,9 @@ const ManagePostsPage = () => {
             Create Post
           </Button>
         </div>
+      </div>
 
+      <section className="w-full max-w-4xl bg-white rounded-2xl p-8 shadow-card-shadow hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
         <div className="flex gap-6 mb-6 justify-between items-center">
           <div className="flex gap-2">
             <Select
@@ -69,13 +77,9 @@ const ManagePostsPage = () => {
             />
           </div>
 
-          <div className="relative w-80">
+          <div className="relative flex items-center w-80">
             <Input id="searchPosts" placeholder="Search" variant="secondary" />
-            <Button
-              as="button"
-              variant="icon"
-              className="absolute right-3 top-1/2 -translate-y-1/2"
-            >
+            <Button as="button" variant="icon" className="absolute right-0">
               <Search className="text-text-muted/80 w-5 h-5" />
             </Button>
           </div>

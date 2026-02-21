@@ -27,7 +27,7 @@ const Select = (props: SelectProps) => {
     <label className={`w-full ${label ? 'flex flex-col gap-2' : ''}`}>
       {label && <span className="font-semibold">{label}</span>}
       <select
-        className={`${variants[variant]} border border-filter-stroke px-3 py-2 rounded-xl focus:outline-none hover:border-accent-green/50 focus:border-accent-green focus:ring-2 focus:ring-accent-green/10 placeholder:text-text-muted text-text-muted h-10 transition-all duration-200 ${className}`}
+        className={`w-full ${variants[variant]} border border-filter-stroke px-3 py-2 rounded-xl focus:outline-none hover:border-accent-green/50 focus:border-accent-green focus:ring-2 focus:ring-accent-green/10 placeholder:text-text-muted text-text-muted h-10 transition-all duration-200 ${className}`}
         {...rest}
       >
         {options.map((opt) => (

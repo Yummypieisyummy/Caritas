@@ -40,15 +40,27 @@ const Button = (props: ButtonProps) => {
   };
 
   const getSizes = (variant: ButtonVariant, size: ButtonSize) => {
-    if (variant === 'textOnly') return 'px-1 py-0';
+    if (variant === 'icon') {
+      const iconSizes = { sm: 'p-1.5', md: 'p-2', lg: 'p-3' };
+      return iconSizes[size];
+    }
 
-    const sizes = {
+    if (variant === 'textOnly') {
+      const textSizes = {
+        sm: 'px-2 py-1 text-sm font-medium',
+        md: 'px-2 py-1 font-medium',
+        lg: 'px-2 py-1 text-lg font-medium',
+      };
+      return textSizes[size];
+    }
+
+    const standardSizes = {
       sm: 'px-3 py-2 text-sm font-medium',
-      md: 'px-4 py-2 text-lg font-semibold',
-      lg: 'px-6 py-2.5 text-xl font-semibold',
+      md: 'px-4 py-2 text-base font-semibold',
+      lg: 'px-6 py-2.5 text-lg font-semibold',
     };
 
-    return sizes[size];
+    return standardSizes[size];
   };
 
   const variant = props.variant || 'primary';

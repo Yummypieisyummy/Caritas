@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
-import FileInput from '../components/ui/FileInput';
+// import FileInput from '../components/ui/FileInput';
 
 const verificationSchema = z.object({
   primaryContact: z
@@ -70,7 +70,7 @@ const SetupVerificationPage = () => {
             placeholder="2000"
             error={errors.yearEstablished?.message}
           />
-
+          {/* 
           <FileInput
             id="taxExempt"
             label="Tax Exempt Status Document"
@@ -81,7 +81,7 @@ const SetupVerificationPage = () => {
             id="proofIncorporation"
             label="Proof of Incorporation"
             accept=".pdf,.doc,.docx"
-          />
+          /> */}
 
           <Button
             as="button"

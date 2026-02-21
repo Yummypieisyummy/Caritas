@@ -10,7 +10,8 @@ const DashboradSidebar = () => {
           as="link"
           to="/dashboard/overview"
           variant="textOnly"
-          className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
+          size="lg"
+          className="text-white hover:opacity-100 hover:bg-white/10 py-4"
         >
           Overview
         </Button>
@@ -18,7 +19,8 @@ const DashboradSidebar = () => {
           as="link"
           to="/dashboard/posts"
           variant="textOnly"
-          className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
+          size="lg"
+          className="text-white hover:opacity-100 hover:bg-white/10 py-4"
         >
           My Posts
         </Button>
@@ -26,7 +28,8 @@ const DashboradSidebar = () => {
           as="link"
           to="/dashboard/profile"
           variant="textOnly"
-          className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
+          size="lg"
+          className="text-white hover:opacity-100 hover:bg-white/10 py-4"
         >
           Org Profile
         </Button>
@@ -34,7 +37,8 @@ const DashboradSidebar = () => {
           as="link"
           to="/dashboard/team"
           variant="textOnly"
-          className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
+          size="lg"
+          className="text-white hover:opacity-100 hover:bg-white/10 py-4"
         >
           Team Access
         </Button>
@@ -42,7 +46,8 @@ const DashboradSidebar = () => {
           as="link"
           to="/overview"
           variant="textOnly"
-          className="text-white text-xl font-medium hover:opacity-100 hover:bg-white/10 py-4"
+          size="lg"
+          className="text-white hover:opacity-100 hover:bg-white/10 py-4"
         >
           Settings
         </Button>
@@ -53,7 +58,8 @@ const DashboradSidebar = () => {
           as="link"
           to="/organization/:id"
           variant="textOnly"
-          className="text-white font-medium"
+          size="md"
+          className="text-white"
         >
           View Public page
         </Button>
@@ -61,7 +67,8 @@ const DashboradSidebar = () => {
           as="link"
           to="/organization/:id"
           variant="textOnly"
-          className="text-white font-medium"
+          size="md"
+          className="text-white"
         >
           Logout
         </Button>
