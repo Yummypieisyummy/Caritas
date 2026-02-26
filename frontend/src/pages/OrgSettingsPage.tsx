@@ -24,7 +24,7 @@ const OrgSettingsPage = () => {
 
   return (
     <main className="min-h-screen w-full flex flex-col p-6 items-center justify-center">
-      <div className="w-full max-w-3xl flex flex-col justify-start gap-4 mb-6">
+      <div className="w-full max-w-3xl flex flex-col justify-start mb-6">
         <h1 className="text-3xl font-semibold">Manage Settings</h1>
         <p className="mt-1 text-sm text-text-muted">
           Handle Organization Settings and Preferences
