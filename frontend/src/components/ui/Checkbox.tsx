@@ -5,9 +5,7 @@ interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
 }
 
-const Checkbox = (props: CheckboxProps) => {
-  const { option, className = '', ...rest } = props;
-
+const Checkbox = ({ option, className = '', ...rest }: CheckboxProps) => {
   return (
     <label
       className={`flex items-center gap-2 cursor-pointer select-none ${className}`}

@@ -9,7 +9,7 @@ interface TagProps {
   className?: string;
 }
 
-const Tag = (props: TagProps) => {
+const Tag = ({ children, className = '', color = 'green' }: TagProps) => {
   const colors = {
     green: 'bg-tag-green',
     blue: 'bg-tag-blue',
@@ -17,8 +17,6 @@ const Tag = (props: TagProps) => {
     baise: 'bg-tag-baise',
     purple: 'bg-tag-purple',
   };
-
-  const { children, className = '', color = 'green' } = props;
 
   return (
     <span

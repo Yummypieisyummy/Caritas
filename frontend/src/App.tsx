@@ -9,6 +9,7 @@ import SignupPage from './pages/SignupPage';
 import OrganizationProfilePage from './pages/OrganizationProfilePage';
 import DashboardOverviewPage from './pages/DashboardOverviewPage';
 import SetupVerificationPage from './pages/SetupVerificationPage';
+import OrgSettingsPage from './pages/OrgSettingsPage';
 import ManagePostsPage from './pages/ManagePostsPage';
 import CreatePostPage from './pages/CreatePostPage';
 import SignupSuccessPage from './pages/SignupSuccessPage';
@@ -61,6 +62,7 @@ function App() {
                 element={<CreatePostPage />}
               />
               <Route path="/dashboard/team" element={<TeamAccessPage />} />
+              <Route path="/dashboard/settings" element={<OrgSettingsPage />} />
             </Route>
           </Routes>
         </Router>

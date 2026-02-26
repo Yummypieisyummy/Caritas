@@ -47,12 +47,6 @@ const TeamAccessPage = () => {
           </Button>
         </div>
       </div>
-
-      <InviteMemberModal
-        isOpen={isInviteOpen}
-        onClose={() => setIsInviteOpen(false)}
-      ></InviteMemberModal>
-
       <section className="flex flex-col justify-center gap-4 bg-white max-w-4xl w-full shadow-card-shadow p-8 rounded-2xl">
         <div className="flex gap-6 mb-6 justify-between items-center">
           <div className="flex gap-2">
@@ -95,19 +89,7 @@ const TeamAccessPage = () => {
                   key={member.id}
                   className="border-b border-filter-stroke hover:bg-gray-50"
                 >
-                  <td className="p-4">
-                    {/* <span
-                      className={`px-3 py-1 rounded-full text-white text-xs font-medium ${
-                        member.status === 'Active'
-                          ? 'bg-accent-green'
-                          : 'bg-gray-500'
-                      }`}
-                    >
-                      {member.status}
-                    </span> */}
-
-                    {member.name}
-                  </td>
+                  <td className="p-4">{member.name}</td>
                   <td className="p-4">{member.email}</td>
                   <td className="p-4">{member.role}</td>
                   <td className="p-4 text-text-muted">{member.status}</td>
@@ -126,6 +108,12 @@ const TeamAccessPage = () => {
           </table>
         </div>
       </section>
+
+      {/* Invite Member Modal */}
+      <InviteMemberModal
+        isOpen={isInviteOpen}
+        onClose={() => setIsInviteOpen(false)}
+      />
     </main>
   );
 };

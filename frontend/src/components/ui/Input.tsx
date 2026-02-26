@@ -15,17 +15,15 @@ interface InputProps extends Omit<
   className?: string;
 }
 
-const Input = (props: InputProps) => {
-  const {
-    label,
-    error,
-    id,
-    className = '',
-    size = 'md',
-    variant = 'primary',
-    ...rest
-  } = props;
-
+const Input = ({
+  label,
+  error,
+  id,
+  className = '',
+  size = 'md',
+  variant = 'primary',
+  ...rest
+}: InputProps) => {
   const baseStyles =
     'outline-none transition-all duration-200 placeholder:text-text-muted';
 

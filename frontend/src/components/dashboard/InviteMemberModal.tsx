@@ -2,14 +2,10 @@ import Modal from '../ui/Modal';
 import Input from '../ui/Input';
 import Select from '../ui/Select';
 import Button from '../ui/Button';
+import { ModalProps } from '../../types/modal';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-
-interface InviteMemberModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
 
 const inviteMemberSchema = z.object({
   name: z
@@ -25,7 +21,7 @@ const inviteMemberSchema = z.object({
 
 type InviteMemberForm = z.infer<typeof inviteMemberSchema>;
 
-const InviteMemberModal = ({ isOpen, onClose }: InviteMemberModalProps) => {
+const InviteMemberModal = ({ isOpen, onClose }: ModalProps) => {
   const {
     register,
     handleSubmit,
@@ -44,7 +40,7 @@ const InviteMemberModal = ({ isOpen, onClose }: InviteMemberModalProps) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col justify-center gap-6">
         <div className="mb-2">
-          <h2 className="font-semibold text-xl">Invite Member</h2>
+          <h2 className="font-semibold text-xl mb-1">Invite Member</h2>
           <p className="text-sm text-text-muted">
             Send an invitation to join your organization.
           </p>
