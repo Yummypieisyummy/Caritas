@@ -17,14 +17,14 @@ const ManageOrgProfilePage = () => {
         <div className="flex gap-4">
           <Button variant="secondary">Cancel</Button>
           <Button variant="primary">
-            <Save size={16} className="w-4 h-4 mr-2" />
+            <Save className="w-4 h-4 mr-2" />
             Save Changes
           </Button>
         </div>
       </div>
 
       {/* Main Content Card */}
-      <div className="grid grid-cols-[0.8fr_1.2fr] gap-8 w-full max-w-5xl bg-white rounded-2xl p-8 shadow-card-shadow hover:shadow-card-hover">
+      <div className="grid grid-cols-[0.8fr_1.2fr] gap-8 w-full max-w-5xl bg-white rounded-2xl p-8 shadow-card-shadow">
         {/* left column - Branding */}
         <section className="space-y-6">
           <div>

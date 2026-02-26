@@ -1,7 +1,7 @@
 import Select from '../components/ui/Select';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import { Search } from 'lucide-react';
+import { Search, Ellipsis } from 'lucide-react';
 
 const ManagePostsPage = () => {
   const posts = [
@@ -64,7 +64,7 @@ const ManagePostsPage = () => {
         </div>
       </div>
 
-      <section className="w-full max-w-4xl bg-white rounded-2xl p-8 shadow-card-shadow hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
+      <section className="w-full max-w-4xl bg-white rounded-2xl p-8 shadow-card-shadow">
         <div className="flex gap-6 mb-6 justify-between items-center">
           <div className="flex gap-2">
             <Select
@@ -124,12 +124,11 @@ const ManagePostsPage = () => {
                   </td>
                   <td className="p-4 text-text-muted">{post.datePosted}</td>
                   <td className="p-4 text-center">
-                    <Button
-                      size="sm"
-                      variant="icon"
-                      className="flex items-center"
-                    >
-                      ...
+                    <Button size="sm" variant="icon">
+                      <Ellipsis
+                        strokeWidth={1.5}
+                        className="w-5 h-5 text-text-muted"
+                      />
                     </Button>
                   </td>
                 </tr>

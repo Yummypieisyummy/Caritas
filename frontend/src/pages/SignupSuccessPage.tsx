@@ -12,7 +12,7 @@ const SignupSuccessPage = () => {
 
   return (
     <main className="flex min-h-screen w-full items-center justify-center">
-      <section className="bg-white w-full max-w-md shadow-card-shadow rounded-2xl flex flex-col items-center text-center p-8 hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
+      <section className="bg-white w-full max-w-md shadow-card-shadow rounded-2xl flex flex-col items-center text-center p-8">
         {/* Header Section */}
         <div className="flex flex-col items-center gap-4 mb-6">
           <div className="p-3 rounded-full bg-text-muted/5">

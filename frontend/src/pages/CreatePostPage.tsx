@@ -88,7 +88,7 @@ const CreatePostPage = () => {
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center p-6">
-      <section className="w-full max-w-4xl bg-white rounded-2xl p-8 my-8 shadow-card-shadow hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
+      <section className="w-full max-w-4xl bg-white rounded-2xl p-8 my-8 shadow-card-shadow">
         <h2 className="font-semibold text-2xl mb-6">Create New Post</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">

@@ -51,7 +51,7 @@ const VerifyEmailPage = () => {
   return (
     <main className="flex min-h-screen w-full items-center justify-center">
       <section
-        className={`bg-white w-full max-w-md shadow-card-shadow rounded-2xl flex flex-col items-center text-center p-8 hover:shadow-card-hover transition-shadow duration-300 ease-in-out ${status === 'error' && 'border-2 border-red-600'} ${status === 'success' && 'border-2 border-accent-green'}`}
+        className={`bg-white w-full max-w-md shadow-card-shadow rounded-2xl flex flex-col items-center text-center p-8 ${status === 'error' && 'border-2 border-red-600'} ${status === 'success' && 'border-2 border-accent-green'}`}
       >
         {/* Verifying */}
         {status === 'verifying' && (

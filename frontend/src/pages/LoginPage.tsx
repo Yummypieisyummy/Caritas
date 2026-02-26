@@ -48,7 +48,7 @@ const LoginPage = () => {
 
   return (
     <main className="flex flex-col justify-center items-center min-h-screen w-full">
-      <section className="flex flex-col gap-6 max-w-md w-full bg-white rounded-2xl p-8 shadow-card-shadow hover:shadow-card-hover transition-shadow duration-300 ease-in-out">
+      <section className="flex flex-col gap-6 max-w-md w-full bg-white rounded-2xl p-8 shadow-card-shadow">
         <h1 className="mx-auto font-semibold text-3xl text-text-green">
           Login
         </h1>
