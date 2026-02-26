@@ -1,31 +1,31 @@
 import Button from '../ui/Button';
 import Checkbox from '../ui/Checkbox';
 import Select from '../ui/Select';
-import { useEffect } from 'react';
 import { useFilters } from '../../contexts/FiltersContext';
 import * as filterOptions from '../../config/filterOptions';
 import { XIcon } from 'lucide-react';
 
-const Filters = () => {
+interface FiltersProps {
+  onClose?: () => void; // Optional prop for mobile close button
+}
+
+const Filters = ({ onClose }: FiltersProps) => {
   const { filters, toggleOption, setSelect, clearFilters } = useFilters();
 
-  useEffect(() => {
-    console.log('filters:', filters);
-  }, [filters]);
-
   return (
-    <aside className="fixed top-20 bottom-0 w-80 flex flex-col bg-filter-bg border-r border-filter-stroke">
+    <aside className="w-full h-full flex flex-col bg-filter-bg border-r border-filter-stroke">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-filter-stroke/50">
         <h1 className="font-semibold text-2xl">Filters</h1>
-        <Button as="button" variant="icon" size="sm" onClick={clearFilters}>
-          <XIcon className="w-5 h-5" />
-          {/* add label later, indicating clear filters */}
-        </Button>
+        {onClose && (
+          <Button variant="icon" onClick={onClose}>
+            <XIcon size={24} />
+          </Button>
+        )}
       </header>
 
       {/* Scrollable Filter Options */}
-      <section className="flex-1 overflow-y-auto px-6 py-6">
+      <section className="flex-1 overflow-y-auto p-6">
         <div className="flex flex-col gap-5">
           {/* Category */}
           <div className="flex flex-col gap-2">
@@ -104,6 +104,7 @@ const Filters = () => {
           <Select
             label="Organization Type"
             options={filterOptions.ORGANIZATION_TYPE_OPTIONS}
+            value={filters.orgType}
             onChange={(e) => setSelect('orgType', e.target.value)}
           />
 
@@ -111,6 +112,7 @@ const Filters = () => {
           <Select
             label="Time Commitment"
             options={filterOptions.TIME_COMMITMENT_OPTIONS}
+            value={filters.timeOption}
             onChange={(e) => setSelect('timeOption', e.target.value)}
           />
 
@@ -131,10 +133,23 @@ const Filters = () => {
           <Select
             label="Urgency / Priority"
             options={filterOptions.URGENCY_OPTIONS}
+            value={filters.urgency}
             onChange={(e) => setSelect('urgency', e.target.value)}
           />
         </div>
       </section>
+      <footer className="flex items-center justify-center h-20 border-t border-filter-stroke/50 p-6">
+        <Button
+          as="button"
+          variant="primary"
+          size="sm"
+          onClick={clearFilters}
+          className="w-full flex gap-1 items-center"
+        >
+          <XIcon size={18} strokeWidth={3} />
+          <p className="text-lg font font-semibold">Clear All</p>
+        </Button>
+      </footer>
     </aside>
   );
 };

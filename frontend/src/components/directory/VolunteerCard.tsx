@@ -5,6 +5,8 @@ import sampleMap from '../../assets/sampleMap.png';
 import Button from '../ui/Button';
 import Tag, { TagColor } from '../ui/Tag';
 
+type Props = { post?: any };
+
 const VolunteerCard = () => {
   // Mockup data
   const orgData = {
@@ -146,18 +148,20 @@ const VolunteerCard = () => {
           </span>
         </div>
 
-        <div>
-          <Button
-            as="button"
-            variant="textOnly"
-            size="sm"
-            className="gap-1 text-sm"
-            onClick={handleToggle}
-          >
-            {expanded ? 'Show Less' : 'Show More'}
-            {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </Button>
-        </div>
+        <Button
+          as="button"
+          variant="textOnly"
+          size="sm"
+          className="text-text-muted"
+          onClick={handleToggle}
+        >
+          {expanded ? 'Show Less' : 'Show More'}
+          {expanded ? (
+            <ChevronUp className="w-5 h-5 ml-1" />
+          ) : (
+            <ChevronDown className="w-5 h-5 ml-1" />
+          )}
+        </Button>
       </footer>
     </article>
   );

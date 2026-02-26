@@ -7,18 +7,23 @@ const SVC_Basilica = new URL('../assets/SVC_Basilica.jpg', import.meta.url).href
 
 const HomePage = () => {
   return (
-  <main className="flex min-h-[calc(100vh-5rem)]">
-    <div className="flex px-7">
-      <div className="grid grid-rows-2 h-[calc(100vh-5rem)]">
-          <section className="row-span-1 flex flex-row flex-1 py-4 justify-center">
-            <img src={SVC_Basilica} alt="SVC Basilica" className="w-full h-auto object-cover rounded-xl drop-shadow-md" />
+  <main className="flex">
+    <div className="w-1/2 flex px-7">
+      <div className="grid grid-flow-row auto-row-max justify-between">
+        <article className="bg-tag-green w-full h-fit rounded-xl mb-2 flex flex-col px-10 mt-4">
+          <section className="row-start-1 flex flex-row flex-1 py-4 justify-center">
+            <p className="font-normal text-2xl mt-2 text-center">Caritas is a tool that thoughtfully infuses love for humankind into its design. Cutting through the confusion of other platforms, Caritas aims to provide a simple avenue for connecting community organizations with charity recipients.</p>
           </section>
-          <section className="row-start-2 mt-6 flex flex-row flex-1 min-h-[calc(100vh-25rem)]">
-            <SellingPoints />
-          </section>
+        </article>
+        <section className="row-start-2 flex flex-row flex-1">
+          <img src={SVC_Basilica} alt="SVC Basilica" className="w-full h-auto object-cover rounded-xl drop-shadow-md" />
+        </section>
+        {/*<section className="row-start-3 mt-3 mb-6 flex flex-row flex-1 items-center">
+          <SellingPoints />
+        </section>*/}
       </div>
     </div>
-    <div className="flex mt-4 mr-4">
+    <div className="w-1/2 flex mt-4 mr-4">
       <FunctionCards />
     </div>
   </main>

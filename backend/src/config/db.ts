@@ -8,9 +8,8 @@ const pool = new Pool({
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
-  port: Number(process.env.POSTGRES_PORT),
+  port: 5432,
 });
-
 
 // Start database connection
 export async function connect(): Promise<void> {
