@@ -8,6 +8,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Turnstile from '../components/ui/Turnstile';
+
 
 export const signupSchema = z.object({
   orgName: z
@@ -30,6 +32,7 @@ export const signupSchema = z.object({
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const { register: signup } = useAuth();
   const navigate = useNavigate();
@@ -45,14 +48,24 @@ const SignupPage = () => {
   });
 
   const onSignup: SubmitHandler<RegisterInput> = async (data) => {
-    try {
-      await signup(data);
+     try {
+      if (!turnstileToken) {
+        setError("root", {
+          type: "manual",
+          message: "Please complete the CAPTCHA.",
+        });
+        return;
+      }
+      await signup({...data, turnstileToken });
       navigate('/signup-success', { state: { email: data.email } });
     } catch (err) {
       console.error(err); // add custom error message later
-      setError('root', {
-        message: 'Unable to create account',
-      });
+      setTurnstileToken(null);
+
+      setError("root", {
+      type: "server",
+      message: "Unable to create account",
+    });
     }
   };
 
@@ -106,6 +119,11 @@ const SignupPage = () => {
               )}
             </Button>
           </div>
+
+           <div className="mt-2">
+            <Turnstile onToken={setTurnstileToken} />
+          </div>
+
           {errors.root && (
             <div className="text-red-500 text-sm text-center">
               {errors.root.message}
