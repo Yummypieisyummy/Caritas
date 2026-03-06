@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/96</span>
+                <span class='fraction'>0/107</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/96</span>
+                <span class='fraction'>0/107</span>
             </div>
         
             
@@ -159,7 +159,29 @@
 <a name='L94'></a><a href='#L94'>94</a>
 <a name='L95'></a><a href='#L95'>95</a>
 <a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -261,7 +283,11 @@
 <span class="cstat-no" title="statement not covered" >import Button from '../ui/Button';</span>
 <span class="cstat-no" title="statement not covered" >import Tag, { TagColor } from '../ui/Tag';</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >const VolunteerCard = () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >type Props = {</span>
+<span class="cstat-no" title="statement not covered" >  onOpen?: ( orgData : any ) =&gt; void;</span>
+<span class="cstat-no" title="statement not covered" >};</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >const MiniVolunteerCard = ({ onOpen }: Props) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >  // Mockup data</span>
 <span class="cstat-no" title="statement not covered" >  const orgData = {</span>
 <span class="cstat-no" title="statement not covered" >    id: 'habitat-restore',</span>
@@ -290,11 +316,6 @@
 <span class="cstat-no" title="statement not covered" >      'Evenings',</span>
 <span class="cstat-no" title="statement not covered" >    ],</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  /*const [expanded, setExpanded] = useState(false);</span>
-<span class="cstat-no" title="statement not covered" >  const handleToggle = () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    setExpanded((prev) =&gt; !prev);</span>
-<span class="cstat-no" title="statement not covered" >  }; // Toggle expanded state based on prev state*/</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  const tagColors: TagColor[] = ['green', 'blue', 'orange', 'baise', 'purple'];</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -345,12 +366,24 @@
 <span class="cstat-no" title="statement not covered" >            Interested: {orgData.interested} people</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        </span>
+<span class="cstat-no" title="statement not covered" >        {/* Button for opening modal */}</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;button</span>
+<span class="cstat-no" title="statement not covered" >            onClick={() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >              onOpen?.(orgData);</span>
+<span class="cstat-no" title="statement not covered" >            }}</span>
+<span class="cstat-no" title="statement not covered" >            className="rounded-md bg-accent-green py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-accent-green focus:shadow-none active:bg-accent-green hover:bg-nav-bg active:shadow-none ml-2"</span>
+<span class="cstat-no" title="statement not covered" >          &gt;</span>
+<span class="cstat-no" title="statement not covered" >            See Full Post</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/button&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;  </span>
 <span class="cstat-no" title="statement not covered" >      &lt;/footer&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/article&gt;</span>
 <span class="cstat-no" title="statement not covered" >  );</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export default VolunteerCard;</span>
+<span class="cstat-no" title="statement not covered" >export default MiniVolunteerCard;</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -358,7 +391,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-29T22:08:16.585Z
+                at 2026-03-06T02:28:03.123Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
