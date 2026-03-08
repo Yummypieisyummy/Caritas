@@ -41,7 +41,11 @@ export async function query<T extends QueryResultRow = any>(
 }
 
 // Close database connection
+let isDisconnecting = false;
+
 export async function disconnect(): Promise<void> {
+  if (isDisconnecting) return;
+  isDisconnecting = true;
   await pool.end();
   console.log("Disconnected from the database");
 }
