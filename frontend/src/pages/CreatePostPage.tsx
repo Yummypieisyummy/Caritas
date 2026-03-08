@@ -1,50 +1,50 @@
-import Input from '../components/ui/Input';
-import Button from '../components/ui/Button';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useState } from 'react';
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useState } from "react";
 
 const DAYS_OF_WEEK = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
 ];
 
 const postSchema = z.object({
   title: z
     .string()
-    .min(5, 'Title must be at least 5 characters')
-    .max(100, 'Title must be less than 100 characters'),
+    .min(5, "Title must be at least 5 characters")
+    .max(100, "Title must be less than 100 characters"),
   description: z
     .string()
-    .min(20, 'Description must be at least 20 characters')
-    .max(1000, 'Description must be less than 1000 characters'),
-  eventType: z.enum(['one-time', 'recurring']),
-  startDate: z.string().min(1, 'Start date is required'),
+    .min(20, "Description must be at least 20 characters")
+    .max(1000, "Description must be less than 1000 characters"),
+  eventType: z.enum(["one-time", "recurring"]),
+  startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().optional(),
   recurringDays: z.array(z.string()).optional(),
-  address: z.string().min(5, 'Address is required'),
+  address: z.string().min(5, "Address is required"),
   email: z
     .string()
     .trim()
     .toLowerCase()
-    .pipe(z.email('Please enter a valid email')),
+    .pipe(z.email("Please enter a valid email")),
   phoneNumber: z
     .string()
-    .regex(/^[\d\s()+-]{10,}$/, 'Please enter a valid phone number'),
+    .regex(/^[\d\s()+-]{10,}$/, "Please enter a valid phone number"),
   additionalDetails: z.string().optional(),
 });
 
 type PostForm = z.infer<typeof postSchema>;
 
 const CreatePostPage = () => {
-  const [eventType, setEventType] = useState<'one-time' | 'recurring'>(
-    'one-time',
+  const [eventType, setEventType] = useState<"one-time" | "recurring">(
+    "one-time",
   );
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
@@ -56,19 +56,19 @@ const CreatePostPage = () => {
     formState: { errors, isSubmitting },
   } = useForm<PostForm>({
     resolver: zodResolver(postSchema),
-    mode: 'onBlur',
+    mode: "onBlur",
     defaultValues: {
-      eventType: 'one-time',
+      eventType: "one-time",
     },
   });
 
-  const handleEventTypeChange = (type: 'one-time' | 'recurring') => {
+  const handleEventTypeChange = (type: "one-time" | "recurring") => {
     setEventType(type);
-    setValue('eventType', type);
+    setValue("eventType", type);
 
-    if (type === 'one-time') {
+    if (type === "one-time") {
       setSelectedDays([]);
-      setValue('recurringDays', []);
+      setValue("recurringDays", []);
     }
   };
 
@@ -77,7 +77,7 @@ const CreatePostPage = () => {
       ? selectedDays.filter((d) => d !== day)
       : [...selectedDays, day];
     setSelectedDays(updatedDays);
-    setValue('recurringDays', updatedDays);
+    setValue("recurringDays", updatedDays);
   };
 
   const onSubmit: SubmitHandler<PostForm> = async (data) => {
@@ -93,7 +93,7 @@ const CreatePostPage = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <Input
-            {...register('title')}
+            {...register("title")}
             id="title"
             name="title"
             label="Title"
@@ -107,7 +107,7 @@ const CreatePostPage = () => {
               Description
             </label>
             <textarea
-              {...register('description')}
+              {...register("description")}
               id="description"
               name="description"
               className="border-2 border-nav-stroke rounded-2xl px-4 py-2.5 w-full transition-all duration-200 focus:border-accent-green focus:shadow-sm placeholder:text-text-muted placeholder:text-sm hover:border-filter-stroke resize-none bg-white outline-none"
@@ -128,13 +128,13 @@ const CreatePostPage = () => {
               {/* One-time Button */}
               <button
                 type="button"
-                onClick={() => handleEventTypeChange('one-time')}
+                onClick={() => handleEventTypeChange("one-time")}
                 className={`
                   px-6 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200
                   ${
-                    eventType === 'one-time'
-                      ? 'bg-accent-green text-white'
-                      : 'text-text-muted hover:text-text-base'
+                    eventType === "one-time"
+                      ? "bg-accent-green text-white"
+                      : "text-text-muted hover:text-text-base"
                   }
                 `}
               >
@@ -144,13 +144,13 @@ const CreatePostPage = () => {
               {/* Recurring Button */}
               <button
                 type="button"
-                onClick={() => handleEventTypeChange('recurring')}
+                onClick={() => handleEventTypeChange("recurring")}
                 className={`
                   px-6 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200
                   ${
-                    eventType === 'recurring'
-                      ? 'bg-accent-green text-white'
-                      : 'text-text-muted hover:text-text-base'
+                    eventType === "recurring"
+                      ? "bg-accent-green text-white"
+                      : "text-text-muted hover:text-text-base"
                   }
                 `}
               >
@@ -158,23 +158,23 @@ const CreatePostPage = () => {
               </button>
             </div>
             {/* Hidden to validate react form */}
-            <input type="hidden" {...register('eventType')} value={eventType} />
+            <input type="hidden" {...register("eventType")} value={eventType} />
           </div>
 
           {/* Date Selection */}
           <div className="flex gap-4">
             <Input
-              {...register('startDate')}
+              {...register("startDate")}
               id="startDate"
               name="startDate"
-              label={eventType === 'one-time' ? 'Event Date' : 'Start Date'}
+              label={eventType === "one-time" ? "Event Date" : "Start Date"}
               type="date"
               variant="primary"
               error={errors.startDate?.message}
             />
-            {eventType === 'recurring' && (
+            {eventType === "recurring" && (
               <Input
-                {...register('endDate')}
+                {...register("endDate")}
                 id="endDate"
                 name="endDate"
                 label="End Date (Optional)"
@@ -186,7 +186,7 @@ const CreatePostPage = () => {
           </div>
 
           {/* Recurring Days Selection */}
-          {eventType === 'recurring' && (
+          {eventType === "recurring" && (
             <div className="flex flex-col gap-3">
               <label className="font-medium">Select Days</label>
               <div className="grid grid-cols-4 gap-3">
@@ -214,7 +214,7 @@ const CreatePostPage = () => {
           )}
 
           <Input
-            {...register('address')}
+            {...register("address")}
             id="address"
             name="address"
             label="Address"
@@ -224,7 +224,7 @@ const CreatePostPage = () => {
           />
 
           <Input
-            {...register('email')}
+            {...register("email")}
             id="email"
             name="email"
             label="Contact Email"
@@ -235,7 +235,7 @@ const CreatePostPage = () => {
           />
 
           <Input
-            {...register('phoneNumber')}
+            {...register("phoneNumber")}
             id="phoneNumber"
             name="phoneNumber"
             label="Phone Number"
@@ -250,7 +250,7 @@ const CreatePostPage = () => {
               Additional Details (Optional)
             </label>
             <textarea
-              {...register('additionalDetails')}
+              {...register("additionalDetails")}
               id="additionalDetails"
               name="additionalDetails"
               className="border-2 border-nav-stroke rounded-2xl px-4 py-2.5 w-full transition-all duration-200 focus:border-accent-green focus:shadow-sm placeholder:text-text-muted placeholder:text-sm hover:border-filter-stroke resize-none bg-white outline-none"
@@ -269,7 +269,7 @@ const CreatePostPage = () => {
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Creating...' : 'Create Post'}
+              {isSubmitting ? "Creating..." : "Create Post"}
             </Button>
           </div>
         </form>

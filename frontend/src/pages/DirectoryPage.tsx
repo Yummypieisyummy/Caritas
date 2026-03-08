@@ -1,15 +1,14 @@
 // Import Directory components and files here
-import { useState } from 'react';
-import Filters from '../components/directory/Filters';
-import VolunteerCard from '../components/directory/VolunteerCard';
-import Button from '../components/ui/Button';
+import { useState } from "react";
+import Filters from "../components/directory/Filters";
+import VolunteerCard from "../components/directory/VolunteerCard";
+import Button from "../components/ui/Button";
 
 const DirectoryPage = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   return (
     <main data-testid="directory-page-container" className="flex min-h-screen">
-
       {/* Mobile filters panel */}
       {isFiltersOpen && (
         <>
@@ -44,7 +43,7 @@ const DirectoryPage = () => {
               onClick={() => setIsFiltersOpen((prev) => !prev)}
               className="px-4 py-2"
             >
-              {isFiltersOpen ? 'Hide Filters' : 'Show Filters'}
+              {isFiltersOpen ? "Hide Filters" : "Show Filters"}
             </Button>
           </div>
         </header>
