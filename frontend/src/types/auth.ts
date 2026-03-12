@@ -8,6 +8,7 @@ export type RegisterInput = {
 export type LoginInput = {
   email: string;
   password: string;
+  turnstileToken: string;
 };
 
 export type User = {
