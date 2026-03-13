@@ -1,11 +1,18 @@
 // Import Directory components and files here
-import { useState } from "react";
-import Filters from "../components/directory/Filters";
-import VolunteerCard from "../components/directory/VolunteerCard";
-import Button from "../components/ui/Button";
+import { useState, useEffect } from 'react';
+import { usePosts } from '../contexts/PostsContext';
+import Filters from '../components/directory/Filters';
+import VolunteerCard from '../components/directory/VolunteerCard';
+import Button from '../components/ui/Button';
 
 const DirectoryPage = () => {
+  const { posts, getPosts } = usePosts();
+
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   return (
     <main data-testid="directory-page-container" className="flex min-h-screen">
@@ -43,17 +50,27 @@ const DirectoryPage = () => {
               onClick={() => setIsFiltersOpen((prev) => !prev)}
               className="px-4 py-2"
             >
-              {isFiltersOpen ? "Hide Filters" : "Show Filters"}
+              {isFiltersOpen ? 'Hide Filters' : 'Show Filters'}
             </Button>
           </div>
         </header>
 
         {/* Add filter results summary here */}
 
-        <div className="flex flex-col gap-6">
+        {/* <div className="flex flex-col gap-6">
           {Array.from({ length: 10 }, (_, i) => (
             <VolunteerCard key={i} /> // For testing
           ))}
+        </div> */}
+
+        <div className="flex flex-col gap-6">
+          {posts.map((post) => (
+            <VolunteerCard key={post.id} post={post} />
+          ))}
+
+          {posts.length === 0 && (
+            <p className="text-text-muted">No volunteer opportunities found.</p>
+          )}
         </div>
       </section>
     </main>

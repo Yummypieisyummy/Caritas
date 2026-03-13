@@ -74,7 +74,7 @@ const Navbar = () => {
               <Button
                 as="link"
                 size="sm"
-                to={org?.verified ? `/organization/${org.id}` : '/'}
+                to={'/dashboard/overview'}
                 variant="textOnly"
               >
                 <User

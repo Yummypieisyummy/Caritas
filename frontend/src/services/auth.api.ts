@@ -6,49 +6,29 @@ import {
   LoginResponse,
 } from '../types/auth';
 
-export const registerRequest = async (
-  input: RegisterInput,
-): Promise<RegisterResponse> => {
-  try {
-    const res = await api.post<RegisterResponse>('/auth/register', input);
-    return res.data; // return only the data
-  } catch (err: any) {
-    throw err.response?.data || err;
-  }
+export const registerRequest = async (input: RegisterInput) => {
+  const res = await api.post<RegisterResponse>('/auth/register', input);
+  return res.data; // return only the data
 };
 
-export const loginRequest = async (
-  input: LoginInput,
-): Promise<LoginResponse> => {
+export const loginRequest = async (input: LoginInput) => {
   try {
     const res = await api.post<LoginResponse>('/auth/login', input);
     return res.data;
   } catch (err: any) {
-    throw err.response?.data || err;
+    throw new Error(err.response?.data?.message || 'Login failed');
   }
 };
 
 export const logoutRequest = async (): Promise<void> => {
-  try {
-    await api.post('/auth/logout');
-  } catch (err: any) {
-    throw err.response?.data || err;
-  }
+  await api.post('/auth/logout');
 };
 
-export const refreshRequest = async (): Promise<LoginResponse> => {
-  try {
-    const res = await api.post<LoginResponse>('/auth/refresh');
-    return res.data;
-  } catch (err: any) {
-    throw err.response?.data || err;
-  }
+export const refreshRequest = async () => {
+  const res = await api.post<LoginResponse>('/auth/refresh');
+  return res.data;
 };
 
 export const verifyEmailRequest = async (emailToken: string): Promise<void> => {
-  try {
-    await api.get('/auth/verify-email', { params: { emailToken } });
-  } catch (err: any) {
-    throw err.response?.data || err;
-  }
+  await api.get('/auth/verify-email', { params: { emailToken } });
 };

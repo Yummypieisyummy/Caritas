@@ -1,12 +1,15 @@
 import { createContext, use, ReactNode, useState, useEffect } from 'react';
 import * as authServices from '../services/auth.api';
 import { LoginInput, RegisterInput, User, Org } from '../types/auth';
+import { setAccessToken } from '../services/axios';
+
+type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
 
 type AuthContextValue = {
-  accessToken: string | null;
+  // accessToken: string | null;
   user: User | null;
   org: Org | null;
-  isLoading: boolean;
+  status: AuthStatus;
   register: (input: RegisterInput) => Promise<void>;
   login: (input: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
@@ -18,23 +21,26 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [org, setOrg] = useState<Org | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [status, setStatus] = useState<AuthStatus>('loading');
+  // const [accessToken, setAccessToken] = useState<string | null>(null);
 
   // Refresh / initial auth logic
   useEffect(() => {
     const initAuth = async () => {
       try {
         const data = await authServices.refreshRequest();
+
         setAccessToken(data.accessToken);
         setUser(data.user);
         setOrg(data.org);
+
+        setStatus('authenticated');
       } catch (err) {
         setUser(null);
         setOrg(null);
         setAccessToken(null);
-      } finally {
-        setIsLoading(false);
+
+        setStatus('unauthenticated');
       }
     };
 
@@ -42,21 +48,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const register = async (input: RegisterInput) => {
-    try {
-      const data = await authServices.registerRequest(input);
-    } catch (err) {
-      throw err; // Send error up the call stack
-    }
+    await authServices.registerRequest(input);
   };
 
   const login = async (input: LoginInput) => {
     try {
       const data = await authServices.loginRequest(input);
-      console.log('login data:', data);
+
       setUser(data.user);
       setOrg(data.org);
       setAccessToken(data.accessToken);
-      // Set org data from some sort of org context file
+
+      setStatus('authenticated');
     } catch (err) {
       throw err; // Send error up the call stack
     }
@@ -65,29 +68,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       await authServices.logoutRequest();
+    } finally {
       setUser(null);
       setOrg(null);
       setAccessToken(null);
-    } catch (err) {
-      throw err;
+
+      setStatus('unauthenticated');
     }
   };
 
   const verifyEmail = async (emailToken: string) => {
-    try {
-      await authServices.verifyEmailRequest(emailToken);
-    } catch (err) {
-      throw err;
-    }
+    await authServices.verifyEmailRequest(emailToken);
   };
 
   return (
     <AuthContext
       value={{
-        accessToken,
         user,
         org,
-        isLoading,
+        status,
         register,
         login,
         logout,

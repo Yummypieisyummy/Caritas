@@ -10,6 +10,11 @@ CREATE TYPE post_type AS ENUM (
     'item_offer'
 );
 
+CREATE TYPE event_type AS ENUM (
+    'one-time',
+    'recurring'
+)
+
 CREATE TYPE post_status AS ENUM (
     'active',
     'closed'
@@ -77,16 +82,36 @@ CREATE TABLE organization_verifications (
 
 -- POSTS
 
+-- CREATE TABLE posts (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+--     type post_type NOT NULL,
+--     title TEXT NOT NULL,
+--     short_description TEXT NOT NULL,
+--     long_description TEXT,
+--     location TEXT,
+--     date_start DATE,
+--     date_end DATE,
+--     status post_status NOT NULL DEFAULT 'active',
+--     interested INT DEFAULT 0,
+--     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
+--     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
+-- );
+
 CREATE TABLE posts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    type post_type NOT NULL,
+    post_type post_type NOT NULL,
+    event_type event_type NOT NULL,
     title TEXT NOT NULL,
-    short_description TEXT NOT NULL,
-    long_description TEXT,
-    location TEXT,
-    date_start DATE,
+    description TEXT NOT NULL,
+    additional_details TEXT,
+    location TEXT NOT NULL,
+    date_start DATE NOT NULL,
     date_end DATE,
+    days_of_week TEXT[],
+    contact_email TEXT NOT NULL,
+    contact_phone TEXT NOT NULL,
     status post_status NOT NULL DEFAULT 'active',
     interested INT DEFAULT 0,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
@@ -115,5 +140,5 @@ CREATE TABLE tag_map (
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_orgs_email ON organizations(email);
 CREATE INDEX idx_posts_org_id ON posts(org_id);
-CREATE INDEX idx_posts_type ON posts(type);
+CREATE INDEX idx_posts_type ON posts(post_type);
 CREATE INDEX idx_tag_map_tag_id ON tag_map(tag_id);

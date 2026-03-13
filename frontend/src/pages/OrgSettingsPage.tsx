@@ -83,7 +83,7 @@ const OrgSettingsPage = () => {
               Delete Organization Data
             </span>
             <Button size="sm" onClick={() => setIsDeleteDataOpen(true)}>
-              Delete Org Data
+              Delete Data
             </Button>
           </div>
         </section>

@@ -2,30 +2,17 @@ import Select from '../components/ui/Select';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import { Search, Ellipsis } from 'lucide-react';
+import { usePosts } from '../contexts/PostsContext';
+import { formatUIDate } from '../utils/formatDate';
+import { useEffect } from 'react';
 
 const ManagePostsPage = () => {
-  const posts = [
-    {
-      id: 1,
-      status: 'Active',
-      title: 'Stocking, organizing...',
-      volunteers: 5,
-      datePosted: 'Feb 12, 2026',
-    },
-    {
-      id: 2,
-      status: 'Draft',
-      title: 'Habitat Restore...',
-      datePosted: 'Feb 12, 2026',
-    },
-    {
-      id: 3,
-      status: 'Active',
-      title: 'Food Bank',
-      volunteers: 5,
-      datePosted: 'Feb 12, 2026',
-    },
-  ];
+  const { posts, getPosts } = usePosts();
+
+  // fetch posts on mount, will need revised later
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   return (
     <main className="min-h-screen w-full flex p-6 flex-col items-center justify-center">
@@ -75,7 +62,7 @@ const ManagePostsPage = () => {
                 <th className="text-left py-3 px-4 font-semibold">Title</th>
                 <th className="text-left py-3 px-4 font-semibold">Stats</th>
                 <th className="text-left py-3 px-4 font-semibold">
-                  Date Posted
+                  Start Date
                 </th>
                 <th className="text-left py-3 px-4 font-semibold">Actions</th>
               </tr>
@@ -90,7 +77,7 @@ const ManagePostsPage = () => {
                   <td className="p-4">
                     <span
                       className={`px-3 py-1 rounded-full text-white text-xs font-medium ${
-                        post.status === 'Active'
+                        post.status === 'active'
                           ? 'bg-accent-green'
                           : 'bg-gray-500'
                       }`}
@@ -100,11 +87,13 @@ const ManagePostsPage = () => {
                   </td>
                   <td className="p-4">{post.title}</td>
                   <td className="p-4">
-                    {post.volunteers !== undefined && post.volunteers >= 0 && (
-                      <span> {post.volunteers} interested volunteers</span>
+                    {post.interested !== undefined && post.interested >= 0 && (
+                      <span> {post.interested} interested volunteers</span>
                     )}
                   </td>
-                  <td className="p-4 text-text-muted">{post.datePosted}</td>
+                  <td className="p-4 text-text-muted">
+                    {formatUIDate(post.date_start)}
+                  </td>
                   <td className="p-4 text-center">
                     <Button size="sm" variant="icon">
                       <Ellipsis
