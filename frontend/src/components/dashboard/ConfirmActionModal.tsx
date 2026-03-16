@@ -1,13 +1,14 @@
 import Modal from '../ui/Modal';
-import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { ModalProps } from '../../types/modal';
+import { useState } from 'react';
 
 type ConfirmActionProps = ModalProps & {
-  onConfirm: () => void;
+  onConfirm: () => Promise<void> | void;
   title: string;
   description: string;
   confirmText?: string;
+  submittingText?: string;
 };
 
 const ConfirmActionModal = ({
@@ -16,8 +17,25 @@ const ConfirmActionModal = ({
   onConfirm,
   title,
   description,
-  confirmText,
+  confirmText = 'Confirm',
+  submittingText = 'Processing...',
 }: ConfirmActionProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleConfirm = async () => {
+    if (isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+      await onConfirm();
+      onClose();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col justify-center gap-6">
@@ -27,10 +45,18 @@ const ConfirmActionModal = ({
         </div>
 
         <div className="flex justify-end gap-4 mt-2">
-          <Button variant="secondary" type="submit" onClick={onClose}>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button onClick={onConfirm}>{confirmText}</Button>
+
+          <Button type="button" onClick={handleConfirm} disabled={isSubmitting}>
+            {isSubmitting ? submittingText : confirmText}
+          </Button>
         </div>
       </div>
     </Modal>

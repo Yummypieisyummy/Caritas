@@ -5,6 +5,7 @@ import usersRoutes from './src/routes/users.routes';
 import postsRoutes from './src/routes/posts.routes';
 import organizationsRoutes from './src/routes/org.routes';
 import authRoutes from './src/routes/auth.routes';
+import teamRoutes from './src/routes/team.routes';
 
 const app = express();
 
@@ -18,9 +19,6 @@ app.use(
   }),
 );
 
-
-
-
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
@@ -31,6 +29,7 @@ app.use('/api/users', usersRoutes);
 app.use('/api/posts', postsRoutes);
 app.use('/api/organizations', organizationsRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/team', teamRoutes);
 
 app.get('/api/sample', (req, res) => res.json({ message: 'Hello, World!' }));
 

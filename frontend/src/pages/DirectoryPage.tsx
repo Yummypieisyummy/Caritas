@@ -1,4 +1,3 @@
-// Import Directory components and files here
 import { useState, useEffect } from 'react';
 import { usePosts } from '../contexts/PostsContext';
 import Filters from '../components/directory/Filters';
@@ -6,12 +5,12 @@ import VolunteerCard from '../components/directory/VolunteerCard';
 import Button from '../components/ui/Button';
 
 const DirectoryPage = () => {
-  const { posts, getPosts } = usePosts();
+  const { publicPosts: posts, getPublicPosts } = usePosts();
 
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   useEffect(() => {
-    getPosts();
+    getPublicPosts();
   }, []);
 
   return (

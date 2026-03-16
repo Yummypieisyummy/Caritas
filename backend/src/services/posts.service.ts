@@ -141,7 +141,7 @@ export async function getPostById(id: string) {
 }
 
 // Add filters later and maybe pagination
-export async function listPosts(orgId: string) {
+export async function listOrgPosts(orgId: string) {
   const org = await query(`SELECT verified FROM organizations WHERE id = $1`, [
     orgId,
   ]);
@@ -160,4 +160,78 @@ export async function listPosts(orgId: string) {
   );
 
   return rows;
+}
+
+export async function listPublicPosts() {
+  // pass filters later
+
+  const { rows } = await query(
+    `SELECT * FROM posts WHERE status = 'active' ORDER BY date_start DESC`,
+  );
+
+  return rows;
+}
+
+export async function deletePostById(orgId: string, postId: string) {
+  if (!postId) {
+    throw new Error('PostID is required');
+  }
+
+  const org = await query(`SELECT verified FROM organizations WHERE id = $1`, [
+    orgId,
+  ]);
+
+  if (!org.rows.length) {
+    throw new Error('Organization not found');
+  }
+
+  if (!org.rows[0].verified) {
+    throw new Error('Organization not verified');
+  }
+
+  const { rows } = await query(
+    `DELETE FROM posts WHERE org_id = $1 AND id = $2 RETURNING *`,
+    [orgId, postId],
+  );
+
+  if (!rows.length) {
+    throw new Error(
+      'Post not found or you do not have permission to delete it',
+    );
+  }
+}
+
+export async function updatePostStatus(
+  orgId: string,
+  postId: string,
+  status: 'active' | 'closed',
+) {
+  if (!postId || !status) {
+    throw new Error('PostID and status are required');
+  }
+
+  const org = await query(`SELECT verified FROM organizations WHERE id = $1`, [
+    orgId,
+  ]);
+
+  if (!org.rows.length) {
+    throw new Error('Organization not found');
+  }
+
+  if (!org.rows[0].verified) {
+    throw new Error('Organization not verified');
+  }
+
+  const { rows } = await query(
+    `UPDATE posts SET status = $3 WHERE org_id = $1 AND id = $2 RETURNING *`,
+    [orgId, postId, status],
+  );
+
+  if (!rows.length) {
+    throw new Error(
+      'Post not found or you do not have permission to update it',
+    );
+  }
+
+  return rows[0];
 }

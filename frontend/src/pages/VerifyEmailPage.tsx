@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { useAuth } from '../contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
+import Spinner from '../components/ui/Spinner';
 
 const VerifyEmailPage = () => {
   // await verify endpoint call with attached email token, show spinner until complete
@@ -56,7 +56,8 @@ const VerifyEmailPage = () => {
         {/* Verifying */}
         {status === 'verifying' && (
           <div className="flex flex-col items-center gap-4">
-            <Loader2 size={54} className="animate-spin text-accent-green" />
+            {/* <Loader2 size={54} className="animate-spin text-accent-green" /> */}
+            <Spinner />
             <h1 className="font-semibold text-3xl">Verifying Email</h1>
             <p className="text-text-muted text-sm">
               Please wait until verification is complete.

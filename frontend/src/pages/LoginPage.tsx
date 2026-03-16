@@ -8,7 +8,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Turnstile from '../components/ui/Turnstile';
+// import Turnstile from '../components/ui/Turnstile';
 
 const loginSchema = z.object({
   email: z
@@ -17,12 +17,12 @@ const loginSchema = z.object({
     .toLowerCase()
     .pipe(z.email('Please enter a valid email')),
   password: z.string().min(1, 'Password is required'),
-  turnstileToken: z.string().min(1, 'Please complete the captcha'),
+  // turnstileToken: z.string().min(1, 'Please complete the captcha'),
 });
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState('');
+  // const [turnstileToken, setTurnstileToken] = useState('');
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -38,21 +38,23 @@ const LoginPage = () => {
   });
 
   const onLogin: SubmitHandler<LoginInput> = async (data) => {
-      if (!turnstileToken) {
-    setError('root', {
-      message: 'Please complete the captcha',
-    });
-    return;
-  }
-  
+    // if (!turnstileToken) {
+    //   setError('root', {
+    //     message: 'Please complete the captcha',
+    //   });
+    //   return;
+    // }
+
     try {
+      console.log('do we try?');
       await login({
         ...data,
-        turnstileToken,
-    });
-      navigate('/organization/setup'); // For first time login (verification form not submitted), navigate to setup page, else navigate to org dashboard
+        // turnstileToken,
+      });
+      navigate('/dashboard/overview'); // For first time login (verification form not submitted), navigate to setup page, else navigate to org dashboard
     } catch (err) {
       console.error(err); // add custom error message later, should show if account is unverified when trying to login, prompting to resend verification
+      console.log('is this failing');
       setError('root', {
         message: 'Invalid email or password or captcha verification failed',
       });
@@ -100,13 +102,13 @@ const LoginPage = () => {
               )}
             </Button>
           </div>
-          
-          <Turnstile
+
+          {/* <Turnstile
             sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
             onSuccess={(token) => setTurnstileToken(token)}
             onExpire={() => setTurnstileToken('')}
             onError={() => setTurnstileToken('')}
-          />
+          /> */}
 
           {errors.root && (
             <div className="text-red-500 text-sm text-center">

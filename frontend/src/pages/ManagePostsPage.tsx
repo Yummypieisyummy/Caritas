@@ -1,21 +1,50 @@
 import Select from '../components/ui/Select';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import { Search, Ellipsis } from 'lucide-react';
+import ConfirmActionModal from '../components/dashboard/ConfirmActionModal';
+import { Search, Ellipsis, Pencil, Trash2, PowerOff, Play } from 'lucide-react';
 import { usePosts } from '../contexts/PostsContext';
 import { formatUIDate } from '../utils/formatDate';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PostResponse } from '../types/posts';
 
 const ManagePostsPage = () => {
-  const { posts, getPosts } = usePosts();
+  const { orgPosts, getOrgPosts, updatePostStatus, deletePost } = usePosts();
+  const navigate = useNavigate();
 
-  // fetch posts on mount, will need revised later
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [postToDelete, setPostToDelete] = useState<PostResponse | null>(null);
+
   useEffect(() => {
-    getPosts();
+    getOrgPosts();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdownId(null);
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const handleStatusToggle = async (
+    id: string,
+    currentStatus: 'active' | 'closed',
+  ) => {
+    const newStatus = currentStatus === 'active' ? 'closed' : 'active';
+    await updatePostStatus(id, newStatus);
+    setOpenDropdownId(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!postToDelete) return;
+
+    await deletePost(postToDelete.id);
+
+    setPostToDelete(null);
+  };
+
   return (
-    <main className="min-h-screen w-full flex p-6 flex-col items-center justify-center">
+    <main className="min-h-screen w-full flex p-6 flex-col items-center justify-center relative">
       <div className="w-full max-w-4xl flex items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-semibold">Manage Posts</h1>
@@ -54,60 +83,136 @@ const ManagePostsPage = () => {
           </div>
         </div>
 
-        <div>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b border-filter-stroke">
-                <th className="text-left py-3 px-4 font-semibold">Status</th>
-                <th className="text-left py-3 px-4 font-semibold">Title</th>
-                <th className="text-left py-3 px-4 font-semibold">Stats</th>
-                <th className="text-left py-3 px-4 font-semibold">
-                  Start Date
-                </th>
-                <th className="text-left py-3 px-4 font-semibold">Actions</th>
-              </tr>
-            </thead>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-gray-50 border-b border-filter-stroke">
+              <th className="text-left py-3 px-4 font-semibold">Status</th>
+              <th className="text-left py-3 px-4 font-semibold">Title</th>
+              <th className="text-left py-3 px-4 font-semibold">Stats</th>
+              <th className="text-left py-3 px-4 font-semibold">Start Date</th>
+              <th className="text-left py-3 px-4 font-semibold">Actions</th>
+            </tr>
+          </thead>
 
-            <tbody>
-              {posts.map((post) => (
-                <tr
-                  key={post.id}
-                  className="border-b border-filter-stroke hover:bg-gray-50"
-                >
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-white text-xs font-medium ${
-                        post.status === 'active'
-                          ? 'bg-accent-green'
-                          : 'bg-gray-500'
-                      }`}
-                    >
-                      {post.status}
+          <tbody>
+            {orgPosts.length === 0 && (
+              <tr>
+                <td colSpan={5} className="text-center text-text-muted py-4">
+                  No organization posts.
+                </td>
+              </tr>
+            )}
+
+            {orgPosts.map((post) => (
+              <tr
+                key={post.id}
+                className="border-b border-filter-stroke hover:bg-gray-50"
+              >
+                <td className="p-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-white text-xs font-medium capitalize ${
+                      post.status === 'active'
+                        ? 'bg-accent-green'
+                        : 'bg-gray-500'
+                    }`}
+                  >
+                    {post.status}
+                  </span>
+                </td>
+
+                <td className="p-4 font-medium">{post.title}</td>
+
+                <td className="p-4">
+                  {post.interested !== undefined && post.interested >= 0 && (
+                    <span className="text-text-muted">
+                      {post.interested} interested volunteers
                     </span>
-                  </td>
-                  <td className="p-4">{post.title}</td>
-                  <td className="p-4">
-                    {post.interested !== undefined && post.interested >= 0 && (
-                      <span> {post.interested} interested volunteers</span>
-                    )}
-                  </td>
-                  <td className="p-4 text-text-muted">
-                    {formatUIDate(post.date_start)}
-                  </td>
-                  <td className="p-4 text-center">
-                    <Button size="sm" variant="icon">
-                      <Ellipsis
-                        strokeWidth={1.5}
-                        className="w-5 h-5 text-text-muted"
-                      />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  )}
+                </td>
+
+                <td className="p-4 text-text-muted">
+                  {formatUIDate(post.date_start)}
+                </td>
+
+                <td className="p-4 text-center relative">
+                  <Button
+                    size="sm"
+                    variant="icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenDropdownId(
+                        openDropdownId === post.id ? null : post.id,
+                      );
+                    }}
+                  >
+                    <Ellipsis
+                      strokeWidth={1.5}
+                      className="w-5 h-5 text-text-muted hover:text-text-base"
+                    />
+                  </Button>
+
+                  {openDropdownId === post.id && (
+                    <div className="absolute right-8 top-10 w-44 bg-white border border-filter-stroke rounded-xl shadow-lg z-10 py-2 flex flex-col">
+                      <Button
+                        variant="icon"
+                        onClick={() =>
+                          navigate(`/dashboard/posts/${post.id}/edit`)
+                        }
+                        className="w-full flex items-center justify-start gap-2"
+                      >
+                        <Pencil className="w-4 h-4" /> Edit
+                      </Button>
+
+                      <Button
+                        variant="icon"
+                        onClick={() => handleStatusToggle(post.id, post.status)}
+                        className="w-full flex items-center justify-start gap-2"
+                      >
+                        {post.status === 'active' ? (
+                          <>
+                            <PowerOff className="w-4 h-4 text-orange-500" />
+                            Close Post
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-4 h-4 text-accent-green" />
+                            Reactivate
+                          </>
+                        )}
+                      </Button>
+
+                      <Button
+                        variant="icon"
+                        onClick={() => {
+                          setPostToDelete(post);
+                          setOpenDropdownId(null);
+                        }}
+                        className="w-full flex items-center justify-start gap-2 text-red-600"
+                      >
+                        <Trash2 className="w-4 h-4" /> Delete
+                      </Button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
+
+      <ConfirmActionModal
+        isOpen={postToDelete !== null}
+        onClose={() => setPostToDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Post?"
+        description={
+          postToDelete
+            ? `Are you sure you want to permanently delete "${postToDelete.title}"? This action cannot be undone.`
+            : ''
+        }
+        confirmText="Yes, Delete"
+        submittingText="Deleting..."
+      />
     </main>
   );
 };

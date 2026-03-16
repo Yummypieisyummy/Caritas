@@ -8,10 +8,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 const inviteMemberSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Full name is required')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Please enter a valid name'),
+  // name: z
+  //   .string()
+  //   .min(2, 'Full name is required')
+  //   .regex(/^[a-zA-Z\s'-]+$/, 'Please enter a valid name'),
   email: z
     .string()
     .trim()
@@ -47,13 +47,13 @@ const InviteMemberModal = ({ isOpen, onClose }: ModalProps) => {
         </div>
 
         <form onSubmit={handleSubmit(onInvite)} className="flex flex-col gap-4">
-          <Input
+          {/* <Input
             {...register('name')}
             variant="secondary"
             label="Full Name"
             id="name"
             error={errors.name?.message}
-          ></Input>
+          ></Input> */}
 
           <Input
             {...register('email')}

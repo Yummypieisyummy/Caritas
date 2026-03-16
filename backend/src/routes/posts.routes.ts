@@ -5,6 +5,8 @@ import { verifyAccessToken } from '../middleware/auth.middleware';
 
 const router = Router();
 
+router.get('/public', asyncHandler(postsController.getPublicPosts));
+
 router.use(verifyAccessToken);
 
 // TODO: Add comments documenting how every route works
@@ -21,10 +23,17 @@ router.post('/', asyncHandler(postsController.createPost));
  */
 router.get('/:id', asyncHandler(postsController.getPostById));
 
+router.delete('/:id', asyncHandler(postsController.deletePostById));
+
+router.patch(
+  '/update/status/:id',
+  asyncHandler(postsController.updatePostStatus),
+);
+
 /**
  * GET /posts
  * List posts (optionally filtered)
  */
-router.get('/', asyncHandler(postsController.listPosts));
+router.get('/', asyncHandler(postsController.getOrgPosts));
 
 export default router;

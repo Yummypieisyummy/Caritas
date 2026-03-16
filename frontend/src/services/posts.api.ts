@@ -29,8 +29,26 @@ export const createPostRequest = async (data: PostRequest) => {
   return res.data;
 };
 
-export const getPostsRequest = async () => {
+export const getOrgPostsRequest = async () => {
   const res = await api.get<PostResponse[]>('/posts');
-  console.log(res);
   return res.data;
+};
+
+export const getPublicPostsRequest = async () => {
+  const res = await api.get<PostResponse[]>('/posts/public');
+  return res.data;
+};
+
+export const updatePostStatusRequest = async (
+  postId: string,
+  newStatus: 'active' | 'closed',
+) => {
+  const res = await api.patch<PostResponse>(`/posts/update/status/${postId}`, {
+    status: newStatus,
+  });
+  return res.data;
+};
+
+export const deletePostRequest = async (postId: string) => {
+  await api.delete(`/posts/${postId}`);
 };
