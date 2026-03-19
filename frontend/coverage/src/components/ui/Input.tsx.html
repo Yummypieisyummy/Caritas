@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>18/25</span>
+                <span class='fraction'>24/28</span>
             </div>
         
             
@@ -146,43 +146,43 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">46x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">34x</span>
-<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">34x</span>
-<span class="cline-any cline-yes">34x</span>
-<span class="cline-any cline-yes">34x</span>
-<span class="cline-any cline-yes">34x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">37x</span>
-<span class="cline-any cline-yes">37x</span>
-<span class="cline-any cline-yes">37x</span>
-<span class="cline-any cline-yes">37x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">37x</span>
-<span class="cline-any cline-yes">37x</span>
-<span class="cline-any cline-yes">37x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">41x</span>
-<span class="cline-any cline-yes">46x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,7 +209,7 @@ const Input = ({
   error,
   id,
 <span class="branch-0 cbranch-no" title="branch not covered" >  className = '',</span>
-<span class="branch-0 cbranch-no" title="branch not covered" >  size = 'md',</span>
+  size = 'md',
   variant = 'primary',
   ...rest
 }: InputProps<span class="branch-0 cbranch-no" title="branch not covered" >) =&gt; {</span>
@@ -233,14 +233,14 @@ const Input = ({
       {label &amp;&amp; (
         &lt;label
           htmlFor={id}
-          className={`font-medium ${size === <span class="branch-0 cbranch-no" title="branch not covered" >'sm' ? 'text-sm' : ''</span>}`}
+          className={`font-medium ${size === 'sm' ? 'text-sm' : ''}`}
         &gt;
           {label}
         &lt;/label&gt;
       )}
       &lt;input
         id={id}
-        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} ${size === <span class="branch-0 cbranch-no" title="branch not covered" >'sm' ? 'text-sm' : ''</span>}`<span class="branch-0 cbranch-no" title="branch not covered" >}</span>
+        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} ${size === 'sm' ? 'text-sm' : ''}`<span class="branch-0 cbranch-no" title="branch not covered" >}</span>
         {...rest}
       /&gt;
       {error &amp;&amp; &lt;span className="text-sm text-red-500 mt-1"&gt;{error}&lt;/span&gt;}
@@ -256,7 +256,7 @@ export default Input;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-08T02:30:21.481Z
+                at 2026-03-19T18:30:42.273Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

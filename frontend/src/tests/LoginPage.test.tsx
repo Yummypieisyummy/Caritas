@@ -111,7 +111,7 @@ test("submits successfully and navigates", async () => {
     });
   });
 
-  expect(mockNavigate).toHaveBeenCalledWith("/organization/setup");
+  expect(mockNavigate).toHaveBeenCalledWith("/dashboard/overview");
 });
 
 test("shows error message when login fails", async () => {
@@ -131,7 +131,11 @@ test("shows error message when login fails", async () => {
   fireEvent.click(screen.getByRole("button", { name: "Login" }));
 
   await waitFor(() => {
-    expect(screen.getByText("Invalid email or password")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Invalid email or password or captcha verification failed",
+      ),
+    ).toBeInTheDocument();
   });
 });
 

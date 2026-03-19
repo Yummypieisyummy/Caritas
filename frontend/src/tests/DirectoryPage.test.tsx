@@ -3,6 +3,18 @@ import { describe, test, expect, vi } from "vitest";
 import DirectoryPage from "../pages/DirectoryPage";
 import { MemoryRouter } from "react-router-dom";
 
+// Mock usePosts context
+const mockGetPublicPosts = vi.fn();
+
+vi.mock("../contexts/PostsContext", () => ({
+  usePosts: () => ({
+    publicPosts: Array.from({ length: 10 }, (_, i) => ({
+      id: i,
+    })),
+    getPublicPosts: mockGetPublicPosts,
+  }),
+}));
+
 // Mock Filters component
 vi.mock("../components/directory/Filters", () => ({
   default: ({ onClose }: { onClose?: () => void }) => (

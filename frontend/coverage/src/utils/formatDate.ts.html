@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/types/filters.ts</title>
+    <title>Code coverage report for src/utils/formatDate.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/types</a> filters.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/utils</a> formatDate.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
@@ -77,29 +77,13 @@
 <a name='L12'></a><a href='#L12'>12</a>
 <a name='L13'></a><a href='#L13'>13</a>
 <a name='L14'></a><a href='#L14'>14</a>
-<a name='L15'></a><a href='#L15'>15</a>
-<a name='L16'></a><a href='#L16'>16</a>
-<a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a>
-<a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a>
-<a name='L22'></a><a href='#L22'>22</a>
-<a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a>
-<a name='L25'></a><a href='#L25'>25</a>
-<a name='L26'></a><a href='#L26'>26</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L15'></a><a href='#L15'>15</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -107,36 +91,19 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export type FiltersType = {
-  category: string[];
-  daysNeeded: string[];
-  distance: string;
-  foodType: string[];
-  requirements: string[];
-  physicalRequirements: string[];
-  orgType: string;
-  timeOption: string;
-  specialOptions: string[];
-  urgency: string;
-};
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >export const formatUIDate = (isoString: string): string =&gt; {<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
+<span class="cstat-no" title="statement not covered" >  const date = new Date(isoString);</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >export const defaultFilters: FiltersType = {</span>
-<span class="cstat-no" title="statement not covered" >  category: [],</span>
-<span class="cstat-no" title="statement not covered" >  daysNeeded: [],</span>
-<span class="cstat-no" title="statement not covered" >  distance: '',</span>
-<span class="cstat-no" title="statement not covered" >  foodType: [],</span>
-<span class="cstat-no" title="statement not covered" >  requirements: [],</span>
-<span class="cstat-no" title="statement not covered" >  physicalRequirements: [],</span>
-<span class="cstat-no" title="statement not covered" >  orgType: '',</span>
-<span class="cstat-no" title="statement not covered" >  timeOption: '',</span>
-<span class="cstat-no" title="statement not covered" >  specialOptions: [],</span>
-<span class="cstat-no" title="statement not covered" >  urgency: '',</span>
+  // Fallback in case the API sends an invalid or empty string
+<span class="cstat-no" title="statement not covered" >  if (isNaN(date.getTime())) {</span>
+<span class="cstat-no" title="statement not covered" >    return 'Invalid Date';</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return date.toLocaleDateString('en-US', {</span>
+<span class="cstat-no" title="statement not covered" >    month: 'short',</span>
+<span class="cstat-no" title="statement not covered" >    day: 'numeric',</span>
+<span class="cstat-no" title="statement not covered" >    year: 'numeric',</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 &nbsp;</pre></td></tr></table></pre>
 

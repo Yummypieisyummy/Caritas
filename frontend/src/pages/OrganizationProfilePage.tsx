@@ -1,17 +1,15 @@
-import Filters from '../components/directory/Filters.tsx';
-import MiniVolunteerCard from '../components/organization profile/MiniVolunteerCard.tsx';
-import VolunteerCard from '../components/directory/VolunteerCard.tsx';
-import orgData from '../components/directory/VolunteerCard.tsx';
-import { useLocation, useParams } from 'react-router-dom';
-import { CircleArrowLeft } from 'lucide-react';
-import { useState } from 'react';
-import Button from '../components/ui/Button.tsx';
-import { Link } from 'react-router-dom';
-import { XIcon } from 'lucide-react';
+import Filters from "../components/directory/Filters.tsx";
+import MiniVolunteerCard from "../components/organization profile/MiniVolunteerCard.tsx";
+import VolunteerCard from "../components/directory/VolunteerCard.tsx";
+import { useLocation, useParams } from "react-router-dom";
+import { CircleArrowLeft } from "lucide-react";
+import { useState } from "react";
+import Button from "../components/ui/Button.tsx";
+import { XIcon } from "lucide-react";
 
 const OrganizationProfilePage = () => {
   // Modal state for post details
-  const [selectedPost, setSelectedPost] = useState<any>(null);
+  //const [selectedPost, setSelectedPost] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModalClick = () => {
@@ -21,12 +19,12 @@ const OrganizationProfilePage = () => {
   // Sample banner and profile image
 
   const Sample_Img = new URL(
-    '../assets/Roofing_Shingles_Asphalt.jpg',
+    "../assets/Roofing_Shingles_Asphalt.jpg",
     import.meta.url,
   ).href;
 
   // Connecting to directory for back button
-  const navLink = [{ id: 'Directory', to: '/directory' }];
+  const navLink = [{ id: "Directory", to: "/directory" }];
 
   // Organization profile data
   const { id } = useParams();
@@ -35,13 +33,13 @@ const OrganizationProfilePage = () => {
 
   const website = org?.contact?.website;
   const websiteHref = website
-    ? website.startsWith('http')
+    ? website.startsWith("http")
       ? website
       : `https://${website}`
     : null;
   const orgProfileData = {
     details:
-      'Habitat Restore accepts home goods, appliances, furniture, and building materials to support affordable housing projects in our community. Donations directly benefit local families in need of safe, decent housing.',
+      "Habitat Restore accepts home goods, appliances, furniture, and building materials to support affordable housing projects in our community. Donations directly benefit local families in need of safe, decent housing.",
   };
 
   return (
@@ -61,12 +59,12 @@ const OrganizationProfilePage = () => {
                 key={link.id}
                 to={link.to}
                 className={({ isActive }) =>
-                  isActive ? 'hover:bg-accent-green/10' : 'bg-tag-green'
+                  isActive ? "hover:bg-accent-green/10" : "bg-tag-green"
                 }
               >
                 <CircleArrowLeft size={24} color="#4c8256" />
                 <span className="text-accent-green text-xl whitespace-pre">
-                  {' Back to Directory'}
+                  {" Back to Directory"}
                 </span>
               </Button>
             ))}
@@ -93,7 +91,7 @@ const OrganizationProfilePage = () => {
               />
             </section>
             <span className="font-medium text-5xl ml-6">
-              {org?.name ?? id ?? 'Organization'}
+              {org?.name ?? id ?? "Organization"}
             </span>
           </section>
           <div className="flex flex-row">
@@ -103,17 +101,17 @@ const OrganizationProfilePage = () => {
                 <header className="mb-2 font-medium text-2xl">Details</header>
                 {/* Assuming organization information same as VolunteerCard site address */}
                 <article className="font-small text-m mb-2">
-                  📍 {org?.address ?? id ?? 'Address'}{' '}
+                  📍 {org?.address ?? id ?? "Address"}{" "}
                 </article>
                 <article className="font-small text-m mb-2">🕰️ Hours </article>
                 <article className="font-small text-m mb-2">
-                  📞 {org?.contact.phone ?? id ?? 'Phone Number'}{' '}
+                  📞 {org?.contact.phone ?? id ?? "Phone Number"}{" "}
                 </article>
                 <article className="font-small text-m mb-2">
-                  📧 {org?.contact.email ?? id ?? 'Email'}{' '}
+                  📧 {org?.contact.email ?? id ?? "Email"}{" "}
                 </article>
                 <article className="font-small text-m mb-2">
-                  🔗{' '}
+                  🔗{" "}
                   {websiteHref ? (
                     <a
                       href={websiteHref}
@@ -124,7 +122,7 @@ const OrganizationProfilePage = () => {
                       {org?.contact?.website}
                     </a>
                   ) : (
-                    (id ?? 'Website')
+                    (id ?? "Website")
                   )}
                 </article>
               </section>
@@ -132,8 +130,8 @@ const OrganizationProfilePage = () => {
                 {/* About blurb */}
                 <header className="mb-2 font-medium text-2xl">About</header>
                 <p className="font-small text-m mb-2">
-                  {' '}
-                  {orgProfileData.details}{' '}
+                  {" "}
+                  {orgProfileData.details}{" "}
                 </p>
               </section>
             </div>

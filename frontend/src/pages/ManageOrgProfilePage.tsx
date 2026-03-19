@@ -1,6 +1,6 @@
-import { Save, Camera, Upload } from 'lucide-react';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
+import { Save, Camera, Upload } from "lucide-react";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 
 const ManageOrgProfilePage = () => {
   return (
@@ -39,6 +39,7 @@ const ManageOrgProfilePage = () => {
             <label className="text-sm font-medium">Cover Image</label>
             <div className="relative w-full h-32 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 hover:border-accent-green transition-colors flex flex-col items-center justify-center cursor-pointer group">
               <Upload
+                data-testid="cover-upload"
                 className="text-text-muted/60 group-hover:text-accent-green mb-1"
                 size={20}
               />
@@ -62,6 +63,7 @@ const ManageOrgProfilePage = () => {
                   size={24}
                 />
                 <input
+                  data-testid="logo-upload"
                   type="file"
                   className="absolute inset-0 opacity-0 cursor-pointer"
                 />
