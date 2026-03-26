@@ -86,7 +86,9 @@ const ManagePostsPage = () => {
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-filter-stroke">
-              <th className="text-left py-3 px-4 font-semibold">Status</th>
+              <th className="text-left py-3 px-4 font-semibold min-w-25">
+                Status
+              </th>
               <th className="text-left py-3 px-4 font-semibold">Title</th>
               <th className="text-left py-3 px-4 font-semibold">Stats</th>
               <th className="text-left py-3 px-4 font-semibold">Start Date</th>

@@ -1,10 +1,14 @@
 import { query } from '../config/db';
 
 // Switched to return data or null here and let the service/auth decide how to handle null
-// Probably will need revised
 
-export async function createUser(data: any) {
-  const { email, password_hash, org_id } = data;
+type CreateUserInput = {
+  email: string;
+  password_hash: string;
+};
+
+export async function createUser(data: CreateUserInput) {
+  const { email, password_hash } = data;
 
   if (!email || !password_hash) {
     throw new Error('Email and password are required');
@@ -12,11 +16,11 @@ export async function createUser(data: any) {
 
   const { rows } = await query(
     `
-    INSERT INTO users (email, password_hash, org_id)
+    INSERT INTO users (email, password_hash)
     VALUES ($1, $2, $3)
     RETURNING *
     `,
-    [email, password_hash, org_id],
+    [email, password_hash],
   );
 
   return rows[0];
@@ -43,7 +47,8 @@ export async function getUserByEmail(email: string) {
   return rows[0] || null;
 }
 
-export async function getOrgUser(user_id: string) {
+// For users who belong to multiple orgs - retrieve all orgs a user belongs to
+export async function getUserOrgs(user_id: string) {
   if (!user_id) {
     throw new Error('User ID is required');
   }
@@ -51,11 +56,19 @@ export async function getOrgUser(user_id: string) {
   const { rows } = await query(`SELECT * FROM org_users WHERE user_id = $1`, [
     user_id,
   ]);
-  // if (!rows.length) throw new Error('Org user relationship not found');
+  return rows || null;
+}
+
+export async function getSpecificOrgUser(user_id: string, org_id: string) {
+  if (!user_id || !org_id) throw new Error('User ID and Org ID are required');
+
+  const { rows } = await query(
+    `SELECT * FROM org_users WHERE user_id = $1 AND org_id = $2`,
+    [user_id, org_id],
+  );
   return rows[0] || null;
 }
 
-// May want to make this dynamic later to handle different user updates
 export async function verifyUserEmail(user_id: string) {
   if (!user_id) {
     throw new Error('User ID is required');

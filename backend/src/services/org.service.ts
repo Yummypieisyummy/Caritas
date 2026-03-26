@@ -1,7 +1,6 @@
 import { query } from '../config/db';
 
 // Switched to return data or null here and let the service/auth decide how to handle null
-// Probably will need revised
 
 export async function createOrg(data: any) {
   const { name, email, about, contact_info, pfp_url, banner_url } = data;
@@ -54,4 +53,25 @@ export async function addOrgUser(data: any) {
   );
 
   return rows[0];
+}
+
+export async function assertOrgVerified(orgId: string) {
+  if (!orgId) {
+    throw new Error('OrgId is required');
+  }
+
+  const { rows } = await query(
+    `SELECT verified FROM organizations WHERE id = $1`,
+    [orgId],
+  );
+
+  if (!rows.length) {
+    throw new Error('Organization not found');
+  }
+
+  if (!rows[0].verified) {
+    throw new Error('Organization not verified');
+  }
+
+  return true;
 }

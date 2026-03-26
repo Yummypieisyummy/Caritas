@@ -63,6 +63,7 @@
 // }
 
 import { query } from '../config/db';
+import * as orgsServices from './org.service';
 
 type CreatePostInput = {
   org_id: string;
@@ -80,17 +81,11 @@ type CreatePostInput = {
 };
 
 export async function createPost(data: CreatePostInput) {
-  const org = await query(`SELECT verified FROM organizations WHERE id = $1`, [
-    data.org_id,
-  ]);
-
-  if (!org.rows.length) {
-    throw new Error('Organization not found');
+  if (!data) {
+    throw new Error('Post data is required');
   }
 
-  if (!org.rows[0].verified) {
-    throw new Error('Organization not verified');
-  }
+  await orgsServices.assertOrgVerified(data.org_id);
 
   const { rows } = await query(
     `
@@ -142,17 +137,7 @@ export async function getPostById(id: string) {
 
 // Add filters later and maybe pagination
 export async function listOrgPosts(orgId: string) {
-  const org = await query(`SELECT verified FROM organizations WHERE id = $1`, [
-    orgId,
-  ]);
-
-  if (!org.rows.length) {
-    throw new Error('Organization not found');
-  }
-
-  if (!org.rows[0].verified) {
-    throw new Error('Organization not verified');
-  }
+  await orgsServices.assertOrgVerified(orgId);
 
   const { rows } = await query(
     `SELECT * FROM posts WHERE org_id = $1 ORDER BY date_start DESC`,
@@ -174,20 +159,10 @@ export async function listPublicPosts() {
 
 export async function deletePostById(orgId: string, postId: string) {
   if (!postId) {
-    throw new Error('PostID is required');
+    throw new Error('PostId is required');
   }
 
-  const org = await query(`SELECT verified FROM organizations WHERE id = $1`, [
-    orgId,
-  ]);
-
-  if (!org.rows.length) {
-    throw new Error('Organization not found');
-  }
-
-  if (!org.rows[0].verified) {
-    throw new Error('Organization not verified');
-  }
+  await orgsServices.assertOrgVerified(orgId);
 
   const { rows } = await query(
     `DELETE FROM posts WHERE org_id = $1 AND id = $2 RETURNING *`,
@@ -210,17 +185,7 @@ export async function updatePostStatus(
     throw new Error('PostID and status are required');
   }
 
-  const org = await query(`SELECT verified FROM organizations WHERE id = $1`, [
-    orgId,
-  ]);
-
-  if (!org.rows.length) {
-    throw new Error('Organization not found');
-  }
-
-  if (!org.rows[0].verified) {
-    throw new Error('Organization not verified');
-  }
+  await orgsServices.assertOrgVerified(orgId);
 
   const { rows } = await query(
     `UPDATE posts SET status = $3 WHERE org_id = $1 AND id = $2 RETURNING *`,

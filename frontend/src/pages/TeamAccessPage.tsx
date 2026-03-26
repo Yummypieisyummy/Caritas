@@ -72,12 +72,12 @@ const TeamAccessPage = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-filter-stroke">
-                <th className="text-left py-3 px-4 font-semibold">Name</th>
+                {/* <th className="text-left py-3 px-4 font-semibold">Name</th> */}
                 <th className="text-left py-3 px-4 font-semibold">Email</th>
                 <th className="text-left py-3 px-4 font-semibold">Role</th>
                 <th className="text-left py-3 px-4 font-semibold">Status</th>
                 <th className="text-left py-3 px-4 font-semibold">
-                  Last Active
+                  Date Added
                 </th>
                 <th className="text-left py-3 px-4 font-semibold">Actions</th>
               </tr>
@@ -89,7 +89,7 @@ const TeamAccessPage = () => {
                   key={member.id}
                   className="border-b border-filter-stroke hover:bg-gray-50"
                 >
-                  <td className="p-4">{member.name}</td>
+                  {/* <td className="p-4">{member.name}</td> */}
                   <td className="p-4">{member.email}</td>
                   <td className="p-4">{member.role}</td>
                   <td className="p-4 text-text-muted">{member.status}</td>
