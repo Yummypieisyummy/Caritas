@@ -55,7 +55,7 @@ const VerifyEmailPage = () => {
       >
         {/* Verifying */}
         {status === 'verifying' && (
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center justify-center gap-4">
             {/* <Loader2 size={54} className="animate-spin text-accent-green" /> */}
             <Spinner />
             <h1 className="font-semibold text-3xl">Verifying Email</h1>

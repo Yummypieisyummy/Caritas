@@ -15,7 +15,6 @@ import CreatePostPage from './pages/CreatePostPage';
 import SignupSuccessPage from './pages/SignupSuccessPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import { AuthProvider } from './contexts/AuthContext';
-import { PostsProvider } from './contexts/PostsContext';
 import { FiltersProvider } from './contexts/FiltersContext';
 import TeamAccessPage from './pages/TeamAccessPage';
 import ManageOrgProfilePage from './pages/ManageOrgProfilePage';
@@ -24,61 +23,56 @@ import ProtectedRoutes from './components/layout/ProtectedRoutes';
 function App() {
   return (
     <AuthProvider>
-      <PostsProvider>
-        <FiltersProvider>
-          <Router>
-            <Routes>
-              {/* Pages with navbar + Public Routes */}
-              <Route element={<PublicLayout />}>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/directory" element={<DirectoryPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
+      <FiltersProvider>
+        <Router>
+          <Routes>
+            {/* Pages with navbar + Public Routes */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/directory" element={<DirectoryPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route
+                path="/organization/:id"
+                element={<OrganizationProfilePage />}
+              />
+            </Route>
+            {/* Pages without navbar */}
+            <Route
+              path="/dashboard/setup"
+              element={<SetupVerificationPage />}
+            />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/signup-success" element={<SignupSuccessPage />} />
+
+            {/* Organization dashboard pages + Private routes */}
+
+            <Route element={<ProtectedRoutes />}>
+              <Route element={<DashboardLayout />}>
                 <Route
-                  path="/organization/:id"
-                  element={<OrganizationProfilePage />}
+                  path="/dashboard/overview"
+                  element={<DashboardOverviewPage />}
+                />
+                <Route path="/dashboard/posts" element={<ManagePostsPage />} />
+                <Route
+                  path="/dashboard/profile"
+                  element={<ManageOrgProfilePage />}
+                />
+                <Route
+                  path="/dashboard/posts/create"
+                  element={<CreatePostPage />}
+                />
+                <Route path="/dashboard/team" element={<TeamAccessPage />} />
+                <Route
+                  path="/dashboard/settings"
+                  element={<OrgSettingsPage />}
                 />
               </Route>
-              {/* Pages without navbar */}
-              <Route
-                path="/dashboard/setup"
-                element={<SetupVerificationPage />}
-              />
-              <Route path="/verify-email" element={<VerifyEmailPage />} />
-              <Route path="/signup-success" element={<SignupSuccessPage />} />
-
-              {/* Organization dashboard pages + Private routes */}
-
-              <Route element={<ProtectedRoutes />}>
-                <Route element={<DashboardLayout />}>
-                  <Route
-                    path="/dashboard/overview"
-                    element={<DashboardOverviewPage />}
-                  />
-                  <Route
-                    path="/dashboard/posts"
-                    element={<ManagePostsPage />}
-                  />
-                  <Route
-                    path="/dashboard/profile"
-                    element={<ManageOrgProfilePage />}
-                  />
-                  <Route
-                    path="/dashboard/posts/create"
-                    element={<CreatePostPage />}
-                  />
-                  <Route path="/dashboard/team" element={<TeamAccessPage />} />
-                  <Route
-                    path="/dashboard/settings"
-                    element={<OrgSettingsPage />}
-                  />
-                </Route>
-              </Route>
-            </Routes>
-          </Router>
-        </FiltersProvider>
-      </PostsProvider>
+            </Route>
+          </Routes>
+        </Router>
+      </FiltersProvider>
     </AuthProvider>
   );
 }

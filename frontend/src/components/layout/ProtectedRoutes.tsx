@@ -7,7 +7,11 @@ const ProtectedRoutes = () => {
   const location = useLocation();
 
   if (status === 'loading') {
-    return <Spinner />;
+    return (
+      <div className="flex justify-center items-center flex-1 min-h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
   if (status === 'unauthenticated') {

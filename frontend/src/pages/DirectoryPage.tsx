@@ -1,17 +1,14 @@
-import { useState, useEffect } from 'react';
-import { usePosts } from '../contexts/PostsContext';
+import { useState } from 'react';
 import Filters from '../components/directory/Filters';
 import VolunteerCard from '../components/directory/VolunteerCard';
 import Button from '../components/ui/Button';
+import Spinner from '../components/ui/Spinner';
+import { usePublicPosts } from '../hooks/usePublicPosts';
 
 const DirectoryPage = () => {
-  const { publicPosts: posts, getPublicPosts } = usePosts();
-
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  useEffect(() => {
-    getPublicPosts();
-  }, []);
+  const { publicPosts: posts, isPending, isError } = usePublicPosts();
 
   return (
     <main data-testid="directory-page-container" className="flex min-h-screen">
@@ -30,48 +27,58 @@ const DirectoryPage = () => {
         </>
       )}
 
-      {/* Desktop sidebar filters */}
       <div className="hidden md:flex fixed top-20 left-0 w-80 bottom-0 bg-gray-100">
         <Filters />
       </div>
 
-      {/* Right content */}
-      <section className="md:ml-80 flex flex-col flex-1 p-6">
-        <header className="mb-6 flex items-center justify-between">
-          <h1 className="font-semibold text-3xl">Local Charity Posts</h1>
+      {isPending ? (
+        <div className="flex justify-center items-center flex-1 md:ml-80 min-h-screen">
+          <Spinner />
+        </div>
+      ) : isError ? (
+        <div className="text-red-500">
+          <p>Failed to load opportunities</p>
+        </div>
+      ) : (
+        <section className="md:ml-80 flex flex-col flex-1 p-6">
+          <header className="mb-6 flex items-center justify-between">
+            <h1 className="font-semibold text-3xl">Local Charity Posts</h1>
 
-          {/* Mobile filters button */}
-          <div className="md:hidden">
-            <Button
-              as="button"
-              variant="primary"
-              size="md"
-              onClick={() => setIsFiltersOpen((prev) => !prev)}
-              className="px-4 py-2"
-            >
-              {isFiltersOpen ? 'Hide Filters' : 'Show Filters'}
-            </Button>
-          </div>
-        </header>
+            {/* Mobile filters button */}
+            <div className="md:hidden">
+              <Button
+                as="button"
+                variant="primary"
+                size="md"
+                onClick={() => setIsFiltersOpen((prev) => !prev)}
+                className="px-4 py-2"
+              >
+                {isFiltersOpen ? 'Hide Filters' : 'Show Filters'}
+              </Button>
+            </div>
+          </header>
 
-        {/* Add filter results summary here */}
+          {/* Add filter results summary here */}
 
-        {/* <div className="flex flex-col gap-6">
+          {/* <div className="flex flex-col gap-6">
           {Array.from({ length: 10 }, (_, i) => (
             <VolunteerCard key={i} /> // For testing
           ))}
         </div> */}
 
-        <div className="flex flex-col gap-6">
-          {posts.map((post) => (
-            <VolunteerCard key={post.id} post={post} />
-          ))}
+          <div className="flex flex-col gap-6">
+            {posts.map((post) => (
+              <VolunteerCard key={post.id} post={post} />
+            ))}
 
-          {posts.length === 0 && (
-            <p className="text-text-muted">No volunteer opportunities found.</p>
-          )}
-        </div>
-      </section>
+            {posts.length === 0 && (
+              <p className="text-text-muted">
+                No volunteer opportunities found.
+              </p>
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 };
