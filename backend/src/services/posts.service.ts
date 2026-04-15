@@ -64,6 +64,7 @@
 
 import { query } from '../config/db';
 import * as orgsServices from './org.service';
+import { geocodeAddress } from './geocode.service';
 
 type CreatePostInput = {
   org_id: string;
@@ -79,6 +80,32 @@ type CreatePostInput = {
   contact_email: string;
   contact_phone: string;
 };
+
+type PostRow = {
+  location: string;
+  [key: string]: unknown;
+};
+
+type PostWithCoordinates = PostRow & {
+  latitude: number | null;
+  longitude: number | null;
+};
+
+async function withCoordinates(post: PostRow): Promise<PostWithCoordinates> {
+  const coordinates = await geocodeAddress(post.location);
+
+  return {
+    ...post,
+    latitude: coordinates?.latitude ?? null,
+    longitude: coordinates?.longitude ?? null,
+  };
+}
+
+async function withCoordinatesForMany(
+  posts: PostRow[],
+): Promise<PostWithCoordinates[]> {
+  return Promise.all(posts.map((post) => withCoordinates(post)));
+}
 
 export async function createPost(data: CreatePostInput) {
   if (!data) {
@@ -122,7 +149,7 @@ export async function createPost(data: CreatePostInput) {
     ],
   );
 
-  return rows[0];
+  return withCoordinates(rows[0]);
 }
 
 export async function getPostById(id: string) {
@@ -132,7 +159,7 @@ export async function getPostById(id: string) {
     throw new Error('Post not found');
   }
 
-  return rows[0];
+  return withCoordinates(rows[0]);
 }
 
 // Add filters later and maybe pagination
@@ -144,7 +171,7 @@ export async function listOrgPosts(orgId: string) {
     [orgId],
   );
 
-  return rows;
+  return withCoordinatesForMany(rows);
 }
 
 export async function listPublicPosts() {
@@ -154,7 +181,7 @@ export async function listPublicPosts() {
     `SELECT * FROM posts WHERE status = 'active' ORDER BY date_start DESC`,
   );
 
-  return rows;
+  return withCoordinatesForMany(rows);
 }
 
 export async function deletePostById(orgId: string, postId: string) {
@@ -198,5 +225,5 @@ export async function updatePostStatus(
     );
   }
 
-  return rows[0];
+  return withCoordinates(rows[0]);
 }

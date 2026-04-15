@@ -29,6 +29,8 @@ export interface PostResponse {
   description: string;
   additionalDetails: string;
   location: string;
+  latitude: number | null;
+  longitude: number | null;
   date_start: string;
   date_end: string | null;
   days_of_week: string[] | null;

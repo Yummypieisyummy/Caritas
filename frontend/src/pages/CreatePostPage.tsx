@@ -4,7 +4,7 @@ import Button from '../components/ui/Button';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { usePosts } from '../contexts/PostsContext';
+import { useOrgPosts } from '../hooks/useOrgPosts';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -58,7 +58,7 @@ const postSchema = z.object({
 type PostForm = z.infer<typeof postSchema>;
 
 const CreatePostPage = () => {
-  const { createPost } = usePosts();
+  const { createPost } = useOrgPosts();
   const navigate = useNavigate();
 
   const [eventType, setEventType] = useState<'one-time' | 'recurring'>(

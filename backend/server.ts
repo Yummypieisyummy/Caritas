@@ -2,7 +2,7 @@ import 'dotenv/config';
 import app from './app';
 import { connect, disconnect } from './src/config/db';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 (async () => {
   try {
