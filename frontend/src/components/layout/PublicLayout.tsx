@@ -5,7 +5,7 @@ const PublicLayout = () => {
   return (
     <>
       <Navbar />
-      <main className="pt-20">
+      <main className="fixed top-20 left-0 right-0 bottom-0 overflow-y-auto">
         <Outlet /> {/* Render children pages with nav*/}
       </main>
     </>

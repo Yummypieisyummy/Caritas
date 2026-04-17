@@ -2,6 +2,26 @@
 
 /* Global Tailwind Styles */
 
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  @apply bg-primary-bg text-text-base font-sans;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 50;
+}
+
 @theme {
   /* Colors */
   --color-primary-bg: #faf6ed;
@@ -31,8 +51,4 @@
     0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
   --shadow-card-hover:
     0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
-}
-
-body {
-  @apply bg-primary-bg text-text-base font-sans min-h-screen;
 }
