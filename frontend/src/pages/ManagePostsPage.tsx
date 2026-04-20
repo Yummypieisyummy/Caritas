@@ -1,7 +1,7 @@
 import Select from '../components/ui/Select';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import Spinner from '../components/ui/Spinner'; // Adjust path if needed
+import Spinner from '../components/ui/Spinner';
 import ConfirmActionModal from '../components/dashboard/ConfirmActionModal';
 import { Search, Ellipsis, Pencil, Trash2, PowerOff, Play } from 'lucide-react';
 import { useOrgPosts } from '../hooks/useOrgPosts';
@@ -11,8 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { PostResponse } from '../types/posts';
 
 const ManagePostsPage = () => {
-  const { orgPosts, isPending, isError, updatePostStatus, deletePost } =
-    useOrgPosts();
+  const { orgPosts, status, updatePostStatus, deletePost } = useOrgPosts();
   const navigate = useNavigate();
 
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
@@ -102,8 +101,7 @@ const ManagePostsPage = () => {
           </thead>
 
           <tbody>
-            {/* 1. LOADING STATE */}
-            {isPending && (
+            {status === 'pending' && (
               <tr>
                 <td colSpan={5} className="py-12">
                   <div className="flex flex-col items-center justify-center text-text-muted gap-3">
@@ -114,7 +112,7 @@ const ManagePostsPage = () => {
               </tr>
             )}
 
-            {isError && !isPending && (
+            {status === 'error' && (
               <tr>
                 <td colSpan={5} className="text-center py-12">
                   <div className="flex flex-col items-center text-red-500">
@@ -127,7 +125,7 @@ const ManagePostsPage = () => {
               </tr>
             )}
 
-            {!isPending && !isError && orgPosts.length === 0 && (
+            {status === 'success' && orgPosts.length === 0 && (
               <tr>
                 <td colSpan={5} className="text-center text-text-muted py-12">
                   No organization posts found.
@@ -135,8 +133,7 @@ const ManagePostsPage = () => {
               </tr>
             )}
 
-            {!isPending &&
-              !isError &&
+            {status === 'success' &&
               orgPosts.map((post) => (
                 <tr
                   key={post.id}

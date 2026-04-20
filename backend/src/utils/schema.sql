@@ -214,6 +214,20 @@ CREATE TABLE org_users (
     role org_user_role NOT NULL,
     UNIQUE (org_id, user_id)
 );
+
+-- ORGANIZATION INVITES
+
+CREATE TABLE organization_invites (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    email TEXT NOT NULL,
+    role org_user_role NOT NULL,
+    token TEXT UNIQUE NOT NULL,
+    invited_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
+    UNIQUE (org_id, email)
+);
  
 -- ORGANIZATION VERIFICATIONS
  

@@ -3,22 +3,14 @@ import * as postsServices from '../services/posts.api';
 import { useQuery } from '@tanstack/react-query';
 
 export const usePublicPosts = () => {
-  const {
-    data: publicPosts = [],
-    isPending,
-    isError,
-  } = useQuery<PostResponse[]>({
+  const { data: publicPosts = [], status } = useQuery<PostResponse[]>({
     queryKey: ['publicPosts'],
-    queryFn: async () => {
-      //  Wait for 2 seconds (2000ms)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      return postsServices.getPublicPostsRequest();
-    },
+    queryFn: postsServices.getPublicPostsRequest,
+    staleTime: 30 * 60 * 1000, // 30 minutes for public posts to keep directory feeling fast
   });
 
   return {
     publicPosts,
-    isPending,
-    isError,
+    status,
   };
 };

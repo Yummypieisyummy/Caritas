@@ -7,8 +7,7 @@ import { usePublicPosts } from '../hooks/usePublicPosts';
 
 const DirectoryPage = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-
-  const { publicPosts: posts, isPending, isError } = usePublicPosts();
+  const { publicPosts: posts, status } = usePublicPosts();
 
   return (
     <main data-testid="directory-page-container" className="flex min-h-screen">
@@ -31,12 +30,12 @@ const DirectoryPage = () => {
         <Filters />
       </div>
 
-      {isPending ? (
+      {status === 'pending' ? (
         <div className="flex justify-center items-center flex-1 md:ml-80 min-h-screen">
           <Spinner />
         </div>
-      ) : isError ? (
-        <div className="text-red-500">
+      ) : status === 'error' ? (
+        <div className="flex justify-center items-center flex-1 md:ml-80 min-h-screen text-red-500">
           <p>Failed to load opportunities</p>
         </div>
       ) : (
@@ -57,14 +56,6 @@ const DirectoryPage = () => {
               </Button>
             </div>
           </header>
-
-          {/* Add filter results summary here */}
-
-          {/* <div className="flex flex-col gap-6">
-          {Array.from({ length: 10 }, (_, i) => (
-            <VolunteerCard key={i} /> // For testing
-          ))}
-        </div> */}
 
           <div className="flex flex-col gap-6">
             {posts.map((post) => (

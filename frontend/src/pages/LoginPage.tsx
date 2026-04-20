@@ -46,7 +46,6 @@ const LoginPage = () => {
     // }
 
     try {
-      console.log('do we try?');
       await login({
         ...data,
         // turnstileToken,
@@ -54,7 +53,6 @@ const LoginPage = () => {
       navigate('/dashboard/overview'); // For first time login (verification form not submitted), navigate to setup page, else navigate to org dashboard
     } catch (err) {
       console.error(err); // add custom error message later, should show if account is unverified when trying to login, prompting to resend verification
-      console.log('is this failing');
       setError('root', {
         message: 'Invalid email or password or captcha verification failed',
       });

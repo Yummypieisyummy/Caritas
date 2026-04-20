@@ -1,12 +1,13 @@
-import { createContext, use, ReactNode, useState, useEffect } from 'react';
+import { createContext, use, ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import * as authServices from '../services/auth.api';
 import { LoginInput, RegisterInput, User, Org } from '../types/auth';
 import { setAccessToken } from '../services/axios';
+import { useUserQuery } from '../hooks/useUserQuery';
 
 type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
 
 type AuthContextValue = {
-  // accessToken: string | null;
   user: User | null;
   org: Org | null;
   status: AuthStatus;
@@ -19,61 +20,30 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [org, setOrg] = useState<Org | null>(null);
-  const [status, setStatus] = useState<AuthStatus>('loading');
-  // const [accessToken, setAccessToken] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  // Refresh / initial auth logic
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const data = await authServices.refreshRequest();
-
-        setAccessToken(data.accessToken);
-        setUser(data.user);
-        setOrg(data.org);
-
-        setStatus('authenticated');
-      } catch (err) {
-        setUser(null);
-        setOrg(null);
-        setAccessToken(null);
-
-        setStatus('unauthenticated');
-      }
-    };
-
-    initAuth();
-  }, []);
+  // React Query fetches the session automatically
+  const { data, status: queryStatus } = useUserQuery();
 
   const register = async (input: RegisterInput) => {
     await authServices.registerRequest(input);
   };
 
+  // Login updates the DB, Axios, and the React Query Cache
   const login = async (input: LoginInput) => {
-    try {
-      const data = await authServices.loginRequest(input);
-
-      setUser(data.user);
-      setOrg(data.org);
-      setAccessToken(data.accessToken);
-
-      setStatus('authenticated');
-    } catch (err) {
-      throw err; // Send error up the call stack
-    }
+    const res = await authServices.loginRequest(input);
+    setAccessToken(res.accessToken);
+    queryClient.setQueryData(['authUser'], res);
   };
 
+  // Logout clears the DB, Axios, and the React Query Cache
   const logout = async () => {
     try {
       await authServices.logoutRequest();
     } finally {
-      setUser(null);
-      setOrg(null);
       setAccessToken(null);
-
-      setStatus('unauthenticated');
+      queryClient.setQueryData(['authUser'], null);
+      queryClient.removeQueries({ queryKey: ['authUser'] });
     }
   };
 
@@ -81,12 +51,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await authServices.verifyEmailRequest(emailToken);
   };
 
+  // Map the React Query status to your App's AuthStatus
+  let appStatus: AuthStatus = 'loading';
+
+  if (queryStatus === 'pending') {
+    appStatus = 'loading';
+  } else if (queryStatus === 'success' && data) {
+    appStatus = 'authenticated';
+  } else {
+    appStatus = 'unauthenticated';
+  }
+
   return (
     <AuthContext
       value={{
-        user,
-        org,
-        status,
+        user: data?.user ?? null,
+        org: data?.org ?? null,
+        status: appStatus,
         register,
         login,
         logout,
