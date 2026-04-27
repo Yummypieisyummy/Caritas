@@ -1,5 +1,10 @@
 import api from './axios';
-import { PostRequest, PostResponse } from '../types/posts';
+import {
+  PostFilters,
+  PostRequest,
+  PostResponse,
+  TagResponse,
+} from '../types/posts';
 
 // map frontend labels to DB enums
 const POST_TYPE_MAP = {
@@ -23,19 +28,43 @@ export const createPostRequest = async (data: PostRequest) => {
       data.eventType === 'recurring' ? (data.recurringDays ?? []) : null,
     contact_email: data.email,
     contact_phone: data.phoneNumber,
+    tag_ids: data.tagIds ?? [],
   };
 
   const res = await api.post<PostResponse>('/posts', payload);
   return res.data;
 };
 
-export const getOrgPostsRequest = async () => {
-  const res = await api.get<PostResponse[]>('/posts');
+const buildPostParams = (filters?: PostFilters) => ({
+  post_type: filters?.post_type,
+  event_type: filters?.event_type,
+  daysNeeded: filters?.daysNeeded?.length
+    ? filters.daysNeeded.join(',')
+    : undefined,
+  requirements: filters?.requirements?.length
+    ? filters.requirements.join(',')
+    : undefined,
+  userLat: filters?.userLat,
+  userLng: filters?.userLng,
+  maxDistanceMiles: filters?.maxDistanceMiles,
+});
+
+export const getOrgPostsRequest = async (filters?: PostFilters) => {
+  const res = await api.get<PostResponse[]>('/posts', {
+    params: buildPostParams(filters),
+  });
   return res.data;
 };
 
-export const getPublicPostsRequest = async () => {
-  const res = await api.get<PostResponse[]>('/posts/public');
+export const getPublicPostsRequest = async (filters?: PostFilters) => {
+  const res = await api.get<PostResponse[]>('/posts/public', {
+    params: buildPostParams(filters),
+  });
+  return res.data;
+};
+
+export const getAvailableTagsRequest = async () => {
+  const res = await api.get<TagResponse[]>('/posts/tags');
   return res.data;
 };
 

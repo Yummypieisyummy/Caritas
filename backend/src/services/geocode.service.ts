@@ -15,37 +15,51 @@ async function geocodeQuery(query: string): Promise<Coordinates | null> {
     q: query,
   });
 
-  const response = await fetch(
-    `https://nominatim.openstreetmap.org/search?${params.toString()}`,
-    {
-      headers: {
-        Accept: 'application/json',
-        'User-Agent': GEOCODER_USER_AGENT,
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?${params.toString()}`,
+      {
+        headers: {
+          Accept: 'application/json',
+          'User-Agent': GEOCODER_USER_AGENT,
+        },
       },
-    },
-  );
+    );
 
-  if (!response.ok) {
+    if (!response.ok) {
+      console.error('Geocoding request failed', {
+        status: response.status,
+        statusText: response.statusText,
+        query,
+      });
+      return null;
+    }
+
+    const data = (await response.json()) as Array<{
+      lat: string;
+      lon: string;
+    }>;
+
+    if (!data.length) {
+      return null;
+    }
+
+    const latitude = Number(data[0].lat);
+    const longitude = Number(data[0].lon);
+
+    if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+      console.error('Geocoding returned invalid coordinates', {
+        query,
+        result: data[0],
+      });
+      return null;
+    }
+
+    return { latitude, longitude };
+  } catch (error) {
+    console.error('Geocoding request errored', { query, error });
     return null;
   }
-
-  const data = (await response.json()) as Array<{
-    lat: string;
-    lon: string;
-  }>;
-
-  if (!data.length) {
-    return null;
-  }
-
-  const latitude = Number(data[0].lat);
-  const longitude = Number(data[0].lon);
-
-  if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
-    return null;
-  }
-
-  return { latitude, longitude };
 }
 
 function buildFallbackQueries(location: string): string[] {

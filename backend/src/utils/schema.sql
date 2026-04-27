@@ -113,6 +113,8 @@
 --     days_of_week TEXT[],
 --     contact_email TEXT NOT NULL,
 --     contact_phone TEXT NOT NULL,
+--     latitude NUMERIC(10, 7),
+--     longitude NUMERIC(10, 7),
 --     status post_status NOT NULL DEFAULT 'active',
 --     interested INT DEFAULT 0,
 --     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
@@ -255,11 +257,17 @@ CREATE TABLE posts (
     days_of_week TEXT[],
     contact_email TEXT NOT NULL,
     contact_phone TEXT NOT NULL,
+    latitude NUMERIC(10, 7),
+    longitude NUMERIC(10, 7),
     status post_status NOT NULL DEFAULT 'active',
     interested INT DEFAULT 0,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
 );
+
+-- For existing databases, run:
+-- ALTER TABLE posts ADD COLUMN latitude NUMERIC(10, 7);
+-- ALTER TABLE posts ADD COLUMN longitude NUMERIC(10, 7);
 
 -- TAGS
  
@@ -269,6 +277,23 @@ CREATE TABLE tags (
     color TEXT,
     display BOOLEAN DEFAULT false
 );
+
+INSERT INTO tags (name, color, display)
+VALUES
+    ('Requires Credentials', 'purple', true),
+    ('Orientation Needed', 'blue', true),
+    ('Requires Driver''s License', 'orange', true),
+    ('Food Handling Certification', 'green', true),
+    ('Heavy Lifting', 'orange', true),
+    ('Outdoor Work', 'green', true),
+    ('Standing for Long Periods', 'blue', true),
+    ('Food Pantry', 'green', true),
+    ('Tutoring / Mentoring', 'purple', true),
+    ('Elder Care', 'blue', true),
+    ('Donations', 'orange', true)
+ON CONFLICT (name) DO UPDATE
+SET color = EXCLUDED.color,
+    display = EXCLUDED.display;
  
 -- TAG_MAP (Post ↔ Tags)
  

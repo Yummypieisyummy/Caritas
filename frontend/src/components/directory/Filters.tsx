@@ -1,20 +1,72 @@
+import { MapPin, XIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useFilters } from '../../contexts/FiltersContext';
+import { useUserLocation } from '../../hooks/useUserLocation';
 import Button from '../ui/Button';
 import Checkbox from '../ui/Checkbox';
-import Select from '../ui/Select';
-import { useFilters } from '../../contexts/FiltersContext';
-import * as filterOptions from '../../config/filterOptions';
-import { XIcon } from 'lucide-react';
 
 interface FiltersProps {
-  onClose?: () => void; // Optional prop for mobile close button
+  onClose?: () => void;
 }
 
+const POST_TYPE_OPTIONS = [
+  { label: 'Volunteer Request', value: 'volunteer_request' },
+  { label: 'Volunteer Offer', value: 'volunteer_offer' },
+  { label: 'Item Request', value: 'item_request' },
+  { label: 'Item Offer', value: 'item_offer' },
+];
+
+const EVENT_TYPE_OPTIONS = [
+  { label: 'One-time', value: 'one-time' },
+  { label: 'Recurring', value: 'recurring' },
+];
+
+const DAYS_NEEDED_OPTIONS = ['Weekdays', 'Weekends'];
+
+const REQUIREMENTS_OPTIONS = [
+  'Requires Credentials',
+  'Orientation Needed',
+  "Requires Driver's License",
+  'Food Handling Certification',
+];
+
+const DISTANCE_OPTIONS = [
+  { label: 'Any Distance', value: '' },
+  { label: '5 miles', value: '5' },
+  { label: '10 miles', value: '10' },
+  { label: '25 miles', value: '25' },
+  { label: '50 miles', value: '50' },
+];
+
 const Filters = ({ onClose }: FiltersProps) => {
-  const { filters, toggleOption, setSelect, clearFilters } = useFilters();
+  const {
+    filters,
+    setSelect,
+    toggleOption,
+    setLocation,
+    clearFilters,
+  } = useFilters();
+  const { latitude, longitude, error, isLoading, requestLocation } =
+    useUserLocation();
+  const [locationMessage, setLocationMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (latitude == null || longitude == null) {
+      return;
+    }
+
+    setLocation(latitude, longitude);
+    setLocationMessage('Location enabled for distance filtering.');
+  }, [latitude, longitude, setLocation]);
+
+  useEffect(() => {
+    if (error) {
+      setLocationMessage('Location access needed for distance filtering.');
+    }
+  }, [error]);
 
   return (
     <aside className="w-full h-full flex flex-col bg-filter-bg border-r border-filter-stroke">
-      {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-filter-stroke/50">
         <h1 className="font-semibold text-2xl">Filters</h1>
         {onClose && (
@@ -24,120 +76,103 @@ const Filters = ({ onClose }: FiltersProps) => {
         )}
       </header>
 
-      {/* Scrollable Filter Options */}
       <section className="flex-1 overflow-y-auto p-6">
-        <div className="flex flex-col gap-5">
-          {/* Category */}
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <span className="font-semibold">Category</span>
-            {filterOptions.CATEGORY_OPTIONS.map((cat) => (
+            <span className="font-semibold">Post Type</span>
+            {POST_TYPE_OPTIONS.map((option) => (
               <Checkbox
-                key={cat}
-                option={cat}
-                checked={filters.category.includes(cat)}
-                onChange={() => toggleOption('category', cat)}
+                key={option.value}
+                option={option.label}
+                checked={filters.post_type === option.value}
+                onChange={() =>
+                  setSelect(
+                    'post_type',
+                    filters.post_type === option.value ? '' : option.value,
+                  )
+                }
               />
             ))}
           </div>
 
-          {/* Distance */}
-          <Select
-            label="Distance"
-            options={filterOptions.DISTANCE_OPTIONS}
-            value={filters.distance}
-            onChange={(e) => setSelect('distance', e.target.value)}
-          />
+          <div className="flex flex-col gap-2">
+            <span className="font-semibold">Event Type</span>
+            {EVENT_TYPE_OPTIONS.map((option) => (
+              <Checkbox
+                key={option.value}
+                option={option.label}
+                checked={filters.event_type === option.value}
+                onChange={() =>
+                  setSelect(
+                    'event_type',
+                    filters.event_type === option.value ? '' : option.value,
+                  )
+                }
+              />
+            ))}
+          </div>
 
-          {/* Days Needed */}
           <div className="flex flex-col gap-2">
             <span className="font-semibold">Days Needed</span>
-            {filterOptions.DAYS_NEEDED_OPTIONS.map((days) => (
+            {DAYS_NEEDED_OPTIONS.map((option) => (
               <Checkbox
-                key={days}
-                option={days}
-                checked={filters.daysNeeded.includes(days)}
-                onChange={() => toggleOption('daysNeeded', days)}
+                key={option}
+                option={option}
+                checked={filters.daysNeeded.includes(option)}
+                onChange={() => toggleOption('daysNeeded', option)}
               />
             ))}
           </div>
 
-          {/* Food Type */}
           <div className="flex flex-col gap-2">
-            <span className="font-semibold">Food Type</span>
-            {filterOptions.FOOD_TYPE_OPTIONS.map((food) => (
+            <span className="font-semibold">Requirements</span>
+            {REQUIREMENTS_OPTIONS.map((option) => (
               <Checkbox
-                key={food}
-                option={food}
-                checked={filters.foodType.includes(food)}
-                onChange={() => toggleOption('foodType', food)}
+                key={option}
+                option={option}
+                checked={filters.requirements.includes(option)}
+                onChange={() => toggleOption('requirements', option)}
               />
             ))}
           </div>
 
-          {/* Skills / Cert Requirements */}
-          <div className="flex flex-col gap-2">
-            <span className="font-semibold">Skills / Cert Requirements</span>
-            {filterOptions.REQUIREMENTS_OPTIONS.map((req) => (
-              <Checkbox
-                key={req}
-                option={req}
-                checked={filters.requirements.includes(req)}
-                onChange={() => toggleOption('requirements', req)}
-              />
-            ))}
+          <div className="flex flex-col gap-3">
+            <label className="w-full flex flex-col gap-2">
+              <span className="font-semibold">Distance</span>
+              <select
+                value={filters.maxDistanceMiles}
+                onChange={(e) =>
+                  setSelect('maxDistanceMiles', e.target.value)
+                }
+                className="w-full bg-white border border-filter-stroke px-3 py-2 rounded-xl focus:outline-none hover:border-accent-green/50 focus:border-accent-green focus:ring-2 focus:ring-accent-green/10 h-10 transition-all duration-200 text-text-muted"
+              >
+                {DISTANCE_OPTIONS.map((option) => (
+                  <option key={option.label} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <Button
+              as="button"
+              variant="primary"
+              size="sm"
+              onClick={requestLocation}
+              disabled={isLoading}
+              className="w-full gap-2"
+            >
+              <MapPin size={18} />
+              {isLoading ? 'Finding Location...' : 'Use My Location'}
+            </Button>
+
+            {locationMessage && (
+              <p className="text-sm text-text-muted">{locationMessage}</p>
+            )}
           </div>
-
-          {/* Physical Requirements */}
-          <div className="flex flex-col gap-2">
-            <span className="font-semibold">Physical Requirements</span>
-            {filterOptions.PHYSICAL_REQUIREMENTS_OPTIONS.map((req) => (
-              <Checkbox
-                key={req}
-                option={req}
-                checked={filters.physicalRequirements.includes(req)}
-                onChange={() => toggleOption('physicalRequirements', req)}
-              />
-            ))}
-          </div>
-
-          {/* Organization Type */}
-          <Select
-            label="Organization Type"
-            options={filterOptions.ORGANIZATION_TYPE_OPTIONS}
-            value={filters.orgType}
-            onChange={(e) => setSelect('orgType', e.target.value)}
-          />
-
-          {/* Time Commitment */}
-          <Select
-            label="Time Commitment"
-            options={filterOptions.TIME_COMMITMENT_OPTIONS}
-            value={filters.timeOption}
-            onChange={(e) => setSelect('timeOption', e.target.value)}
-          />
-
-          {/* Special Needs / Restrictions */}
-          <div className="flex flex-col gap-2">
-            <span className="font-semibold">Special Needs / Restrictions</span>
-            {filterOptions.SPECIAL_NEEDS_OPTIONS.map((opt) => (
-              <Checkbox
-                key={opt}
-                option={opt}
-                checked={filters.specialOptions.includes(opt)}
-                onChange={() => toggleOption('specialOptions', opt)}
-              />
-            ))}
-          </div>
-
-          {/* Urgency / Priority */}
-          <Select
-            label="Urgency / Priority"
-            options={filterOptions.URGENCY_OPTIONS}
-            value={filters.urgency}
-            onChange={(e) => setSelect('urgency', e.target.value)}
-          />
         </div>
       </section>
+
       <footer className="flex items-center justify-center h-20 border-t border-filter-stroke/50 p-6">
         <Button
           as="button"
@@ -147,7 +182,7 @@ const Filters = ({ onClose }: FiltersProps) => {
           className="w-full flex gap-1 items-center"
         >
           <XIcon size={18} strokeWidth={3} />
-          <p className="text-lg font font-semibold">Clear All</p>
+          <p className="text-lg font-semibold">Clear All</p>
         </Button>
       </footer>
     </aside>

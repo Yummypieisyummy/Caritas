@@ -26,7 +26,14 @@ const DashboradSidebar = () => {
 
   return (
     <aside className="fixed h-screen w-80 flex flex-col bg-text-logo p-6 justify-between">
-      <h2 className="text-4xl font-semibold text-white">Caritas</h2>
+      <Button
+        as="link"
+        to="/"
+        variant="textOnly"
+        className="text-4xl font-semibold text-white justify-start"
+      >
+        Caritas
+      </Button>
 
       <section className="flex flex-col gap-6">
         {sidebarLinks.map((link) => {
@@ -43,7 +50,7 @@ const DashboradSidebar = () => {
               }}
               className={({ isActive }) =>
                 [
-                  'rounded-xl inline-flex items-center justify-between px-2 py-4 text-lg font-medium transition-opacity duration-200',
+                  'rounded-xl inline-flex items-center justify-between p-4 text-lg font-medium transition-opacity duration-200',
                   isLocked
                     ? 'cursor-not-allowed text-white/35 hover:opacity-100'
                     : 'cursor-pointer text-white hover:opacity-100 hover:bg-white/10',

@@ -10,6 +10,7 @@ import markerIconPng from 'leaflet/dist/images/marker-icon.png';
 import markerShadowPng from 'leaflet/dist/images/marker-shadow.png';
 import Button from '../ui/Button';
 import Tag, { TagColor } from '../ui/Tag';
+import { useFilters } from '../../contexts/FiltersContext';
 
 type Props = { post: PostResponse };
 
@@ -32,7 +33,34 @@ const mapPinIcon = new Icon({
   shadowSize: [41, 41],
 });
 
+function calculateDistanceMiles(from: Coordinates, to: Coordinates) {
+  const earthRadiusMiles = 3958.8;
+  const toRadians = (degrees: number) => degrees * (Math.PI / 180);
+  const latDistance = toRadians(to.lat - from.lat);
+  const lonDistance = toRadians(to.lon - from.lon);
+  const startLat = toRadians(from.lat);
+  const endLat = toRadians(to.lat);
+
+  const a =
+    Math.sin(latDistance / 2) ** 2 +
+    Math.cos(startLat) *
+      Math.cos(endLat) *
+      Math.sin(lonDistance / 2) ** 2;
+
+  return earthRadiusMiles * 2 * Math.asin(Math.sqrt(a));
+}
+
+function toFiniteNumber(value: unknown) {
+  if (value == null) {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 const VolunteerCard = ({ post }: Props) => {
+  const { filters } = useFilters();
   const [expanded, setExpanded] = useState(false);
   const [tagsExpanded, setTagsExpanded] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
@@ -45,26 +73,46 @@ const VolunteerCard = ({ post }: Props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Generate dynamic tags based on actual post data
-  const dynamicTags = [
-    post.post_type.replace('_', ' ').toUpperCase(),
-    post.event_type.toUpperCase(),
-  ];
+  const postTags = post.tags?.filter((tag) => tag.display) ?? [];
+  const dynamicTags = postTags.length
+    ? postTags.map((tag) => tag.name)
+    : [
+        post.post_type.replace('_', ' ').toUpperCase(),
+        post.event_type.toUpperCase(),
+      ];
 
   const maxVisibleTags = isSmallScreen && !tagsExpanded ? 1 : dynamicTags.length;
   const visibleTags = dynamicTags.slice(0, maxVisibleTags);
   const hiddenTagCount = Math.max(0, dynamicTags.length - maxVisibleTags);
 
+  const postLatitude = toFiniteNumber(post.latitude);
+  const postLongitude = toFiniteNumber(post.longitude);
+  const userLatitude = toFiniteNumber(filters.userLat);
+  const userLongitude = toFiniteNumber(filters.userLng);
+  const hasUserLocation = userLatitude != null && userLongitude != null;
   const coordinates: Coordinates | null =
-    post.latitude != null && post.longitude != null
-      ? { lat: post.latitude, lon: post.longitude }
+    postLatitude != null && postLongitude != null
+      ? { lat: postLatitude, lon: postLongitude }
       : null;
+  const backendDistanceMiles = toFiniteNumber(post.distance_miles);
+  const fallbackDistanceMiles =
+    backendDistanceMiles == null &&
+    coordinates &&
+    hasUserLocation
+      ? calculateDistanceMiles(
+          { lat: userLatitude, lon: userLongitude },
+          coordinates,
+        )
+      : null;
+  const distanceMiles = hasUserLocation
+    ? backendDistanceMiles ?? fallbackDistanceMiles
+    : null;
 
   const mapsUrl = useMemo(
     () =>
       coordinates
-        ? `https://maps.google.com/?q=$${coordinates.lat},${coordinates.lon}`
-        : `https://maps.google.com/?q=$${encodeURIComponent(post.location)}`,
+        ? `https://maps.google.com/?q=${coordinates.lat},${coordinates.lon}`
+        : `https://maps.google.com/?q=${encodeURIComponent(post.location)}`,
     [coordinates, post.location],
   );
 
@@ -116,6 +164,9 @@ const VolunteerCard = ({ post }: Props) => {
         <div className="mt-1 flex flex-col text-text-muted">
           <p>💒 {post.org_name}</p>
           <p>🕒 {scheduleDisplay}</p>
+          {distanceMiles != null && Number.isFinite(distanceMiles) && (
+            <p>📍 {distanceMiles.toFixed(1)} miles away</p>
+          )}
         </div>
       </header>
 

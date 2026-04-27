@@ -7,7 +7,7 @@ export const useOrgPosts = () => {
 
   const { data: orgPosts = [], status } = useQuery<PostResponse[]>({
     queryKey: ['orgPosts'],
-    queryFn: postsServices.getOrgPostsRequest,
+    queryFn: () => postsServices.getOrgPostsRequest(),
   });
 
   const createMutation = useMutation({

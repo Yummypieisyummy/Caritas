@@ -62,7 +62,7 @@
 //   return NaN;
 // }
 
-import { query } from '../config/db';
+import { pool, query } from '../config/db';
 import * as orgsServices from './org.service';
 import { geocodeAddress } from './geocode.service';
 
@@ -79,10 +79,24 @@ type CreatePostInput = {
   days_of_week?: string[];
   contact_email: string;
   contact_phone: string;
+  tag_ids?: number[];
+};
+
+type PostFilters = {
+  post_type?: string;
+  event_type?: string;
+  tag_ids?: unknown;
+  daysNeeded?: unknown;
+  requirements?: unknown;
+  userLat?: string | number;
+  userLng?: string | number;
+  maxDistanceMiles?: string | number;
 };
 
 type PostRow = {
   location: string;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
   [key: string]: unknown;
 };
 
@@ -91,20 +105,16 @@ type PostWithCoordinates = PostRow & {
   longitude: number | null;
 };
 
-async function withCoordinates(post: PostRow): Promise<PostWithCoordinates> {
-  const coordinates = await geocodeAddress(post.location);
-
+function withCoordinates(post: PostRow): PostWithCoordinates {
   return {
     ...post,
-    latitude: coordinates?.latitude ?? null,
-    longitude: coordinates?.longitude ?? null,
+    latitude: post.latitude == null ? null : Number(post.latitude),
+    longitude: post.longitude == null ? null : Number(post.longitude),
   };
 }
 
-async function withCoordinatesForMany(
-  posts: PostRow[],
-): Promise<PostWithCoordinates[]> {
-  return Promise.all(posts.map((post) => withCoordinates(post)));
+function withCoordinatesForMany(posts: PostRow[]): PostWithCoordinates[] {
+  return posts.map((post) => withCoordinates(post));
 }
 
 export async function createPost(data: CreatePostInput) {
@@ -114,46 +124,102 @@ export async function createPost(data: CreatePostInput) {
 
   await orgsServices.assertOrgVerified(data.org_id);
 
-  const { rows } = await query(
-    `
-    INSERT INTO posts (
-      org_id,
-      post_type,
-      event_type,
-      title,
-      description,
-      additional_details,
-      location,
-      date_start,
-      date_end,
-      days_of_week,
-      contact_email,
-      contact_phone
-    )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-    RETURNING *
-    `,
-    [
-      data.org_id,
-      data.post_type,
-      data.event_type,
-      data.title,
-      data.description,
-      data.additional_details ?? null,
-      data.location,
-      data.date_start,
-      data.date_end ?? null,
-      data.days_of_week ?? null,
-      data.contact_email,
-      data.contact_phone,
-    ],
-  );
+  const tagIds = normalizeTagIds(data.tag_ids);
+  const coordinates = await geocodeAddress(data.location);
+  const client = await pool.connect();
 
-  return withCoordinates(rows[0]);
+  try {
+    await client.query('BEGIN');
+
+    const { rows } = await client.query(
+      `
+      INSERT INTO posts (
+        org_id,
+        post_type,
+        event_type,
+        title,
+        description,
+        additional_details,
+        location,
+        date_start,
+        date_end,
+        days_of_week,
+        contact_email,
+        contact_phone,
+        latitude,
+        longitude
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+      RETURNING *
+      `,
+      [
+        data.org_id,
+        data.post_type,
+        data.event_type,
+        data.title,
+        data.description,
+        data.additional_details ?? null,
+        data.location,
+        data.date_start,
+        data.date_end ?? null,
+        data.days_of_week ?? null,
+        data.contact_email,
+        data.contact_phone,
+        coordinates?.latitude ?? null,
+        coordinates?.longitude ?? null,
+      ],
+    );
+
+    const post = rows[0];
+
+    if (tagIds.length) {
+      await client.query(
+        `
+        INSERT INTO tag_map (post_id, tag_id)
+        SELECT $1, unnest($2::int[])
+        ON CONFLICT DO NOTHING
+        `,
+        [post.id, tagIds],
+      );
+    }
+
+    await client.query('COMMIT');
+    return withCoordinates(post);
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function getPostById(id: string) {
-  const { rows } = await query(`SELECT * FROM posts WHERE id = $1`, [id]);
+  const { rows } = await query(
+    `
+    SELECT
+      posts.*,
+      COALESCE(
+        (
+          SELECT json_agg(
+            json_build_object(
+              'id', tags.id,
+              'name', tags.name,
+              'color', tags.color,
+              'display', tags.display
+            )
+            ORDER BY tags.name
+          )
+          FROM tag_map
+          JOIN tags ON tags.id = tag_map.tag_id
+          WHERE tag_map.post_id = posts.id
+        ),
+        '[]'::json
+      ) AS tags
+    FROM posts
+    WHERE posts.id = $1
+    `,
+    [id],
+  );
 
   if (!rows.length) {
     throw new Error('Post not found');
@@ -162,33 +228,249 @@ export async function getPostById(id: string) {
   return withCoordinates(rows[0]);
 }
 
-// Add filters later and maybe pagination
-export async function listPublicPosts() {
-  const { rows } = await query(
-    `SELECT posts.*, organizations.name AS org_name 
-     FROM posts 
-     JOIN organizations ON posts.org_id = organizations.id 
-     WHERE posts.status = 'active' 
-     ORDER BY posts.date_start DESC`
-  );
+function normalizeTagIds(tagIds?: unknown): number[] {
+  if (!Array.isArray(tagIds)) {
+    return [];
+  }
+
+  return tagIds
+    .map((tagId) => Number(tagId))
+    .filter((tagId) => Number.isInteger(tagId) && tagId > 0)
+    .filter((tagId, index, tagIds) => tagIds.indexOf(tagId) === index);
+}
+
+function normalizeStringArray(value?: unknown): string[] {
+  if (!value) {
+    return [];
+  }
+
+  const values = Array.isArray(value) ? value : [value];
+
+  return values
+    .flatMap((item) => String(item).split(','))
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .filter((item, index, items) => items.indexOf(item) === index);
+}
+
+function toFiniteNumber(value: unknown): number | null {
+  if (value === undefined || value === null || value === '') {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function buildDistanceExpression(latParam: number, lngParam: number) {
+  return `
+    3958.8 * 2 * ASIN(
+      SQRT(
+        POWER(
+          SIN(RADIANS((posts.latitude::double precision - $${latParam}) / 2)),
+          2
+        )
+        + COS(RADIANS($${latParam}))
+        * COS(RADIANS(posts.latitude::double precision))
+        * POWER(
+          SIN(RADIANS((posts.longitude::double precision - $${lngParam}) / 2)),
+          2
+        )
+      )
+    )
+  `;
+}
+
+function buildListPostsQuery(filters: PostFilters = {}, orgId?: string) {
+  const whereClauses: string[] = [];
+  const values: unknown[] = [];
+  const userLat = toFiniteNumber(filters.userLat);
+  const userLng = toFiniteNumber(filters.userLng);
+  const maxDistanceMiles = toFiniteNumber(filters.maxDistanceMiles);
+  const shouldCalculateDistance = userLat !== null && userLng !== null;
+
+  let distanceSelect = 'NULL::double precision AS distance_miles';
+  let orderBy = 'created_at DESC';
+
+  if (filters.post_type) {
+    values.push(filters.post_type);
+    whereClauses.push(`posts.post_type = $${values.length}`);
+  }
+
+  if (filters.event_type) {
+    values.push(filters.event_type);
+    whereClauses.push(`posts.event_type = $${values.length}`);
+  }
+
+  const tagIds = normalizeTagIds(filters.tag_ids);
+  const daysNeeded = normalizeStringArray(filters.daysNeeded);
+  const requirements = normalizeStringArray(filters.requirements);
+
+  if (tagIds.length) {
+    values.push(tagIds);
+    whereClauses.push(`
+      EXISTS (
+        SELECT 1
+        FROM tag_map
+        WHERE tag_map.post_id = posts.id
+          AND tag_map.tag_id = ANY($${values.length}::int[])
+      )
+    `);
+  }
+
+  if (daysNeeded.length) {
+    const dayClauses: string[] = [];
+
+    if (daysNeeded.includes('Weekdays')) {
+      dayClauses.push(`
+        (
+          posts.days_of_week && ARRAY['Monday','Tuesday','Wednesday','Thursday','Friday']::text[]
+          OR (
+            posts.event_type = 'one-time'
+            AND EXTRACT(DOW FROM posts.date_start) BETWEEN 1 AND 5
+          )
+        )
+      `);
+    }
+
+    if (daysNeeded.includes('Weekends')) {
+      dayClauses.push(`
+        (
+          posts.days_of_week && ARRAY['Saturday','Sunday']::text[]
+          OR (
+            posts.event_type = 'one-time'
+            AND EXTRACT(DOW FROM posts.date_start) IN (0, 6)
+          )
+        )
+      `);
+    }
+
+    if (dayClauses.length) {
+      whereClauses.push(`(${dayClauses.join(' OR ')})`);
+    }
+  }
+
+  if (requirements.length) {
+    values.push(requirements.map((requirement) => `%${requirement}%`));
+    const requirementPatternsParam = values.length;
+    values.push(requirements);
+    const requirementsParam = values.length;
+    whereClauses.push(`
+      (
+        CONCAT_WS(
+          ' ',
+          posts.title,
+          posts.description,
+          posts.additional_details
+        ) ILIKE ANY($${requirementPatternsParam}::text[])
+        OR EXISTS (
+          SELECT 1
+          FROM tag_map
+          JOIN tags ON tags.id = tag_map.tag_id
+          WHERE tag_map.post_id = posts.id
+            AND tags.name = ANY($${requirementsParam}::text[])
+        )
+      )
+    `);
+  }
+
+  if (orgId) {
+    values.push(orgId);
+    whereClauses.push(`posts.org_id = $${values.length}`);
+  }
+
+  if (shouldCalculateDistance) {
+    values.push(userLat);
+    const latParam = values.length;
+    values.push(userLng);
+    const lngParam = values.length;
+    distanceSelect = `
+      CASE
+        WHEN posts.latitude IS NOT NULL AND posts.longitude IS NOT NULL
+        THEN ${buildDistanceExpression(latParam, lngParam)}
+        ELSE NULL::double precision
+      END AS distance_miles
+    `;
+    orderBy = 'distance_miles ASC NULLS LAST, created_at DESC';
+  }
+
+  const whereClause = whereClauses.length
+    ? `WHERE ${whereClauses.join(' AND ')}`
+    : '';
+  let maxDistanceClause = '';
+
+  if (shouldCalculateDistance && maxDistanceMiles !== null) {
+    values.push(maxDistanceMiles);
+    maxDistanceClause = `WHERE distance_miles <= $${values.length}`;
+  }
+
+  return {
+    text: `
+      SELECT *
+      FROM (
+        SELECT
+          posts.*,
+          organizations.name AS org_name,
+          COALESCE(
+            (
+              SELECT json_agg(
+                json_build_object(
+                  'id', tags.id,
+                  'name', tags.name,
+                  'color', tags.color,
+                  'display', tags.display
+                )
+                ORDER BY tags.name
+              )
+              FROM tag_map
+              JOIN tags ON tags.id = tag_map.tag_id
+              WHERE tag_map.post_id = posts.id
+            ),
+            '[]'::json
+          ) AS tags,
+          ${distanceSelect}
+        FROM posts
+        JOIN organizations ON posts.org_id = organizations.id
+        ${whereClause}
+      ) filtered_posts
+      ${maxDistanceClause}
+      ORDER BY ${orderBy}
+    `,
+    values,
+  };
+}
+
+export async function listPosts(filters: PostFilters = {}) {
+  const { text, values } = buildListPostsQuery(filters);
+  const { rows } = await query(text, values);
+
+  return withCoordinatesForMany(rows);
+}
+
+// Add pagination later
+export async function listPublicPosts(filters: PostFilters = {}) {
+  const { text, values } = buildListPostsQuery(filters);
+  const { rows } = await query(text, values);
 
   return withCoordinatesForMany(rows);
 }
 
 // Note: You should also update listOrgPosts in this same file to use the same JOIN logic!
-export async function listOrgPosts(orgId: string) {
+export async function listOrgPosts(orgId: string, filters: PostFilters = {}) {
   await orgsServices.assertOrgVerified(orgId);
 
-  const { rows } = await query(
-    `SELECT posts.*, organizations.name AS org_name 
-     FROM posts 
-     JOIN organizations ON posts.org_id = organizations.id 
-     WHERE org_id = $1 
-     ORDER BY date_start DESC`,
-    [orgId],
-  );
+  const { text, values } = buildListPostsQuery(filters, orgId);
+  const { rows } = await query(text, values);
 
   return withCoordinatesForMany(rows);
+}
+
+export async function listTags() {
+  const { rows } = await query(
+    `SELECT * FROM tags WHERE display = true ORDER BY name ASC`,
+  );
+
+  return rows;
 }
 
 export async function deletePostById(orgId: string, postId: string) {

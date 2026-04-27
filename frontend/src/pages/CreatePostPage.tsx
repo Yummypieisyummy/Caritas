@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useOrgPosts } from '../hooks/useOrgPosts';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAvailableTags } from '../hooks/useAvailableTags';
 
 const DAYS_OF_WEEK = [
   'Monday',
@@ -23,6 +24,20 @@ const POST_TYPES = [
   'Volunteer Offer',
   'Item Request',
   'Item Offer',
+];
+
+const REQUIREMENT_TAGS = [
+  'Requires Credentials',
+  'Orientation Needed',
+  "Requires Driver's License",
+  'Food Handling Certification',
+];
+
+const FOCUS_TAGS = [
+  'Food Pantry',
+  'Tutoring / Mentoring',
+  'Elder Care',
+  'Donations',
 ];
 
 const postSchema = z.object({
@@ -59,12 +74,18 @@ type PostForm = z.infer<typeof postSchema>;
 
 const CreatePostPage = () => {
   const { createPost } = useOrgPosts();
+  const { tags, status: tagsStatus } = useAvailableTags();
   const navigate = useNavigate();
 
   const [eventType, setEventType] = useState<'one-time' | 'recurring'>(
     'one-time',
   );
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const requirementTags = tags.filter((tag) =>
+    REQUIREMENT_TAGS.includes(tag.name),
+  );
+  const focusTags = tags.filter((tag) => FOCUS_TAGS.includes(tag.name));
 
   const {
     register,
@@ -98,9 +119,20 @@ const CreatePostPage = () => {
     setValue('recurringDays', updatedDays);
   };
 
+  const handleTagToggle = (tagId: number) => {
+    setSelectedTagIds((currentTagIds) =>
+      currentTagIds.includes(tagId)
+        ? currentTagIds.filter((currentTagId) => currentTagId !== tagId)
+        : [...currentTagIds, tagId],
+    );
+  };
+
   const onSubmit: SubmitHandler<PostForm> = async (data) => {
     try {
-      await createPost(data);
+      await createPost({
+        ...data,
+        tagIds: selectedTagIds,
+      });
       navigate('/dashboard/posts');
     } catch (err) {
       console.error(err);
@@ -253,6 +285,72 @@ const CreatePostPage = () => {
             placeholder="Enter address"
             error={errors.address?.message}
           />
+
+          {(tagsStatus === 'pending' || tags.length > 0) && (
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="font-medium">
+                  Optional Tags
+                </label>
+                <p className="text-sm text-text-muted">
+                  Add requirements or focus areas so people can find this post.
+                </p>
+              </div>
+              {tagsStatus === 'pending' ? (
+                <p className="text-sm text-text-muted">Loading tags...</p>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {requirementTags.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <span className="text-sm font-semibold">
+                        Requirements
+                      </span>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {requirementTags.map((tag) => (
+                          <label
+                            key={tag.id}
+                            className="flex items-center gap-2 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedTagIds.includes(tag.id)}
+                              onChange={() => handleTagToggle(tag.id)}
+                              className="w-4 h-4 accent-accent-green cursor-pointer"
+                            />
+                            <span className="text-sm">{tag.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {focusTags.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <span className="text-sm font-semibold">
+                        Focus Area
+                      </span>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {focusTags.map((tag) => (
+                          <label
+                            key={tag.id}
+                            className="flex items-center gap-2 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedTagIds.includes(tag.id)}
+                              onChange={() => handleTagToggle(tag.id)}
+                              className="w-4 h-4 accent-accent-green cursor-pointer"
+                            />
+                            <span className="text-sm">{tag.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <Input
             {...register('email')}

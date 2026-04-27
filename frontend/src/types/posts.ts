@@ -57,7 +57,27 @@ export type PostRequest = {
   endDate?: string;
   recurringDays?: string[];
   additionalDetails?: string;
+  tagIds?: number[];
 };
+
+export type PostFilters = {
+  post_type?: PostResponse['post_type'];
+  event_type?: PostResponse['event_type'];
+  daysNeeded?: string[];
+  requirements?: string[];
+  userLat?: number;
+  userLng?: number;
+  maxDistanceMiles?: number;
+};
+
+export type TagResponse = {
+  id: number;
+  name: string;
+  color: string | null;
+  display: boolean;
+};
+
+export type PostTag = TagResponse;
 
 export interface PostResponse {
   id: string;
@@ -75,6 +95,8 @@ export interface PostResponse {
   location: string;
   latitude: number | null;
   longitude: number | null;
+  distance_miles?: number | string | null;
+  tags?: PostTag[];
   date_start: string;
   date_end: string | null;
   days_of_week: string[] | null;

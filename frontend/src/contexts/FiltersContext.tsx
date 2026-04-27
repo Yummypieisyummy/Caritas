@@ -1,16 +1,21 @@
-import { createContext, use, ReactNode, useReducer } from 'react';
+import { createContext, use, ReactNode, useCallback, useReducer } from 'react';
 import { FiltersType, defaultFilters } from '../types/filters';
 
 type FiltersAction =
   | {
-      type: 'TOGGLE_OPTION'; // Checkboxes
-      key: keyof FiltersType;
+      type: 'SET_SELECT'; // Drop-down selections
+      key: 'post_type' | 'event_type' | 'maxDistanceMiles';
+      value: string | null;
+    }
+  | {
+      type: 'TOGGLE_OPTION';
+      key: 'daysNeeded' | 'requirements';
       value: string;
     }
   | {
-      type: 'SET_SELECT'; // Drop-down selections
-      key: keyof FiltersType;
-      value: string | null;
+      type: 'SET_LOCATION';
+      latitude: number;
+      longitude: number;
     }
   | {
       type: 'CLEAR_FILTERS';
@@ -24,21 +29,29 @@ const filtersReducer = (
   // Function must always return a value exactly like FiltersType
 
   switch (action.type) {
-    case 'TOGGLE_OPTION': {
-      const current = state[action.key] as string[]; // Current state before change
-
-      return {
-        ...state, // Create new copy of prev state
-        [action.key]: current.includes(action.value) // Update the correct property
-          ? current.filter((v) => v !== action.value) // Remove value if already in current state
-          : [...current, action.value],
-      };
-    }
-
     case 'SET_SELECT': {
       return {
         ...state,
-        [action.key]: action.value,
+        [action.key]: action.value ?? '',
+      };
+    }
+
+    case 'TOGGLE_OPTION': {
+      const currentValues = state[action.key];
+
+      return {
+        ...state,
+        [action.key]: currentValues.includes(action.value)
+          ? currentValues.filter((value) => value !== action.value)
+          : [...currentValues, action.value],
+      };
+    }
+
+    case 'SET_LOCATION': {
+      return {
+        ...state,
+        userLat: action.latitude,
+        userLng: action.longitude,
       };
     }
 
@@ -50,8 +63,12 @@ const filtersReducer = (
 
 type FiltersContextValue = {
   filters: FiltersType;
-  toggleOption: (key: keyof FiltersType, value: string) => void;
-  setSelect: (key: keyof FiltersType, value: string) => void;
+  setSelect: (
+    key: 'post_type' | 'event_type' | 'maxDistanceMiles',
+    value: string | null,
+  ) => void;
+  toggleOption: (key: 'daysNeeded' | 'requirements', value: string) => void;
+  setLocation: (latitude: number, longitude: number) => void;
   clearFilters: () => void;
 };
 
@@ -62,20 +79,38 @@ const FiltersContext = createContext<FiltersContextValue | undefined>(
 export const FiltersProvider = ({ children }: { children: ReactNode }) => {
   const [filters, dispatch] = useReducer(filtersReducer, defaultFilters);
 
-  const toggleOption = (key: keyof FiltersType, value: string) => {
-    dispatch({ type: 'TOGGLE_OPTION', key, value });
-  };
-
-  const setSelect = (key: keyof FiltersType, value: string) => {
+  const setSelect = useCallback((
+    key: 'post_type' | 'event_type' | 'maxDistanceMiles',
+    value: string | null,
+  ) => {
     dispatch({ type: 'SET_SELECT', key, value });
-  };
+  }, []);
 
-  const clearFilters = () => {
+  const toggleOption = useCallback(
+    (key: 'daysNeeded' | 'requirements', value: string) => {
+      dispatch({ type: 'TOGGLE_OPTION', key, value });
+    },
+    [],
+  );
+
+  const setLocation = useCallback((latitude: number, longitude: number) => {
+    dispatch({ type: 'SET_LOCATION', latitude, longitude });
+  }, []);
+
+  const clearFilters = useCallback(() => {
     dispatch({ type: 'CLEAR_FILTERS' });
-  };
+  }, []);
 
   return (
-    <FiltersContext value={{ filters, toggleOption, setSelect, clearFilters }}>
+    <FiltersContext
+      value={{
+        filters,
+        setSelect,
+        toggleOption,
+        setLocation,
+        clearFilters,
+      }}
+    >
       {children}
     </FiltersContext>
   );

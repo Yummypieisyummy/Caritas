@@ -1,25 +1,19 @@
 export type FiltersType = {
-  category: string[];
+  post_type: string;
+  event_type: string;
   daysNeeded: string[];
-  distance: string;
-  foodType: string[];
   requirements: string[];
-  physicalRequirements: string[];
-  orgType: string;
-  timeOption: string;
-  specialOptions: string[];
-  urgency: string;
+  maxDistanceMiles: string;
+  userLat: number | null;
+  userLng: number | null;
 };
 
 export const defaultFilters: FiltersType = {
-  category: [],
+  post_type: '',
+  event_type: '',
   daysNeeded: [],
-  distance: '',
-  foodType: [],
   requirements: [],
-  physicalRequirements: [],
-  orgType: '',
-  timeOption: '',
-  specialOptions: [],
-  urgency: '',
+  maxDistanceMiles: '',
+  userLat: null,
+  userLng: null,
 };

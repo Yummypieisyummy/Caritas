@@ -52,6 +52,38 @@ vi.mock("../hooks/useOrgPosts", () => ({
   }),
 }));
 
+vi.mock("../hooks/useAvailableTags", () => ({
+  useAvailableTags: () => ({
+    tags: [
+      {
+        id: 1,
+        name: "Requires Credentials",
+        color: "purple",
+        display: true,
+      },
+      {
+        id: 2,
+        name: "Orientation Needed",
+        color: "blue",
+        display: true,
+      },
+      {
+        id: 3,
+        name: "Requires Driver's License",
+        color: "orange",
+        display: true,
+      },
+      {
+        id: 4,
+        name: "Food Handling Certification",
+        color: "green",
+        display: true,
+      },
+    ],
+    status: "success",
+  }),
+}));
+
 vi.mock("react-router-dom", () => ({
   useNavigate: () => mocks.navigate,
 }));
@@ -166,6 +198,25 @@ describe("CreatePostPage", () => {
     await waitFor(() => {
       expect(mocks.createPost).toHaveBeenCalled();
       expect(mocks.navigate).toHaveBeenCalledWith("/dashboard/posts");
+    });
+  });
+
+  it("submits selected requirement tags", async () => {
+    mocks.createPost.mockResolvedValueOnce({});
+
+    render(<CreatePostPage />);
+
+    fillValidForm();
+    fireEvent.click(screen.getByLabelText(/requires credentials/i));
+    fireEvent.click(screen.getByLabelText(/food handling certification/i));
+    fireEvent.click(screen.getByText(/create post/i));
+
+    await waitFor(() => {
+      expect(mocks.createPost).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tagIds: [1, 4],
+        }),
+      );
     });
   });
 
