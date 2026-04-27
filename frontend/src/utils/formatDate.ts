@@ -1,7 +1,9 @@
-export const formatUIDate = (isoString: string): string => {
-  const date = new Date(isoString);
+export const formatUIDate = (dateInput: string | Date | undefined): string => {
+  if (!dateInput) return '—'; // Handle empty values gracefully
 
-  // Fallback in case the API sends an invalid or empty string
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+
+  // Your fallback for invalid dates
   if (isNaN(date.getTime())) {
     return 'Invalid Date';
   }

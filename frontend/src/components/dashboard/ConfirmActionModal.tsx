@@ -21,16 +21,19 @@ const ConfirmActionModal = ({
   submittingText = 'Processing...',
 }: ConfirmActionProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleConfirm = async () => {
     if (isSubmitting) return;
 
     try {
       setIsSubmitting(true);
+      setError(null);
       await onConfirm();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError(err.message || 'An error occurred');
     } finally {
       setIsSubmitting(false);
     }
@@ -42,13 +45,17 @@ const ConfirmActionModal = ({
         <div className="mb-2">
           <h2 className="font-semibold text-xl mb-2">{title}</h2>
           <p className="text-sm text-text-muted">{description}</p>
+          {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
         </div>
 
         <div className="flex justify-end gap-4 mt-2">
           <Button
             variant="secondary"
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              setError(null);
+              onClose();
+            }}
             disabled={isSubmitting}
           >
             Cancel

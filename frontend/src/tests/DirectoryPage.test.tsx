@@ -3,15 +3,35 @@ import { describe, test, expect, vi } from "vitest";
 import DirectoryPage from "../pages/DirectoryPage";
 import { MemoryRouter } from "react-router-dom";
 
-// Mock usePosts context
-const mockGetPublicPosts = vi.fn();
-
-vi.mock("../contexts/PostsContext", () => ({
-  usePosts: () => ({
+// Mock data hooks
+vi.mock("../hooks/usePublicPosts", () => ({
+  usePublicPosts: () => ({
     publicPosts: Array.from({ length: 10 }, (_, i) => ({
-      id: i,
+      id: String(i),
+      title: `Post ${i}`,
+      description: "A useful volunteer opportunity",
+      additional_details: "",
+      days_of_week: [],
+      event_type: "one-time",
+      date_start: "2026-01-01",
     })),
-    getPublicPosts: mockGetPublicPosts,
+    status: "success",
+  }),
+}));
+
+vi.mock("../contexts/FiltersContext", () => ({
+  useFilters: () => ({
+    filters: {
+      category: [],
+      daysNeeded: [],
+      foodType: [],
+      requirements: [],
+      physicalRequirements: [],
+      orgType: "",
+      timeOption: "",
+      specialOptions: [],
+      urgency: "",
+    },
   }),
 }));
 

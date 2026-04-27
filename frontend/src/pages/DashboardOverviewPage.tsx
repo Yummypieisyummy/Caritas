@@ -1,6 +1,10 @@
 import Button from '../components/ui/Button';
+import { useAuth } from '../contexts/AuthContext';
 
 const DashboardOverviewPage = () => {
+  const { org } = useAuth();
+  const isOrgVerified = org?.verified === true;
+
   const stats = {
     totalPosts: 24,
     pendingPosts: 3,
@@ -9,8 +13,36 @@ const DashboardOverviewPage = () => {
 
   return (
     <main className="min-h-screen w-full flex p-6 flex-col items-center justify-center">
+      {!isOrgVerified && (
+        <section className="w-full max-w-4xl mb-8 rounded-2xl border-2 border-amber-400 bg-amber-50 p-6 shadow-card-shadow">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-amber-950">
+                Action Required
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-amber-900">
+                Your organization is currently in limited access mode. Please
+                complete your organization profile and submit your verification
+                documents to unlock full features.
+              </p>
+            </div>
+            <Button
+              as="link"
+              to="/dashboard/profile"
+              variant="primary"
+              size="md"
+              className="shrink-0"
+            >
+              Manage Org Profile
+            </Button>
+          </div>
+        </section>
+      )}
+
       <div className="w-full max-w-3xl flex flex-col mb-6 text-center">
-        <h1 className="text-3xl font-semibold">Welcome, Habitat Restore</h1>
+        <h1 className="text-3xl font-semibold">
+          Welcome, {org?.name ?? 'Organization'}
+        </h1>
         <p className="mt-1 text-sm text-text-muted">
           Here's a quick overview of your organization
         </p>

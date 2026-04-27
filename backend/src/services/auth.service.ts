@@ -81,15 +81,28 @@ export async function register({ email, password, orgName }: RegisterInput) {
   const verifyURL = `${FRONTEND}/verify-email?token=${emailToken}`;
 
   const subject = 'Caritas Account Verification';
-  const message = `Hi ${orgName},
-Thank you for creating an account with Caritas!
-To complete your registration, please verify your email by clicking the link below:
-${verifyURL}
+  const message = `
+  <p>Hi ${orgName},</p>
 
-Once verified, our admins will review your organization's documentation before granting full access.
+  <p>Thank you for creating an account with Caritas!</p>
 
-Best regards,
-The Caritas Team`;
+  <p>
+    To complete your registration, please verify your email by clicking the link below:
+  </p>
+
+  <p>
+    <a href="${verifyURL}">Verify your email</a>
+  </p>
+
+  <p>
+    Once verified, our admins will review your organization's documentation before granting full access.
+  </p>
+
+  <p>
+    Best regards,<br/>
+    The Caritas Team
+  </p>
+`;
   await sendEmail(email, subject, message);
 
   return {

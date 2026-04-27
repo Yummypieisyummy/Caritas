@@ -8,7 +8,6 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import OrganizationProfilePage from './pages/OrganizationProfilePage';
 import DashboardOverviewPage from './pages/DashboardOverviewPage';
-import SetupVerificationPage from './pages/SetupVerificationPage';
 import OrgSettingsPage from './pages/OrgSettingsPage';
 import ManagePostsPage from './pages/ManagePostsPage';
 import CreatePostPage from './pages/CreatePostPage';
@@ -39,10 +38,6 @@ function App() {
               />
             </Route>
             {/* Pages without navbar */}
-            <Route
-              path="/dashboard/setup"
-              element={<SetupVerificationPage />}
-            />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/signup-success" element={<SignupSuccessPage />} />
 

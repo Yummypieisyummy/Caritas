@@ -20,6 +20,9 @@ export type Org = {
   id: string;
   name: string;
   verified: boolean;
+  pfp_url?: string | null;
+  banner_url?: string | null;
+  about?: string | null;
 };
 
 export type RegisterResponse = {

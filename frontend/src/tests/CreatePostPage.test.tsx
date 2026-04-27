@@ -41,17 +41,19 @@ vi.mock("../components/ui/Button", () => ({
 }));
 
 // ---- Mock hooks ----
-const mockCreatePost = vi.fn();
-const mockNavigate = vi.fn();
+const mocks = vi.hoisted(() => ({
+  createPost: vi.fn(),
+  navigate: vi.fn(),
+}));
 
-vi.mock("../contexts/PostsContext", () => ({
-  usePosts: () => ({
-    createPost: mockCreatePost,
+vi.mock("../hooks/useOrgPosts", () => ({
+  useOrgPosts: () => ({
+    createPost: mocks.createPost,
   }),
 }));
 
 vi.mock("react-router-dom", () => ({
-  useNavigate: () => mockNavigate,
+  useNavigate: () => mocks.navigate,
 }));
 
 // ---- Helper ----
@@ -153,7 +155,7 @@ describe("CreatePostPage", () => {
   });
 
   it("submits form successfully", async () => {
-    mockCreatePost.mockResolvedValueOnce({});
+    mocks.createPost.mockResolvedValueOnce({});
 
     render(<CreatePostPage />);
 
@@ -162,13 +164,13 @@ describe("CreatePostPage", () => {
     fireEvent.click(screen.getByText(/create post/i));
 
     await waitFor(() => {
-      expect(mockCreatePost).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith("/dashboard/posts");
+      expect(mocks.createPost).toHaveBeenCalled();
+      expect(mocks.navigate).toHaveBeenCalledWith("/dashboard/posts");
     });
   });
 
   it("handles submission error", async () => {
-    mockCreatePost.mockRejectedValueOnce(new Error("fail"));
+    mocks.createPost.mockRejectedValueOnce(new Error("fail"));
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -186,7 +188,7 @@ describe("CreatePostPage", () => {
   });
 
   it("disables button while submitting", async () => {
-    mockCreatePost.mockImplementation(
+    mocks.createPost.mockImplementation(
       () => new Promise((resolve) => setTimeout(resolve, 100)),
     );
 

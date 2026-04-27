@@ -160,7 +160,7 @@ CREATE TYPE post_type AS ENUM (
 CREATE TYPE event_type AS ENUM (
     'one-time',
     'recurring'
-)
+);
 
 CREATE TYPE post_status AS ENUM (
     'active',
@@ -174,8 +174,8 @@ CREATE TYPE verification_status AS ENUM (
 );
 
 CREATE TYPE org_user_role AS ENUM (
-    'admin'
-    'member'
+    'admin',
+    'member' 
 );
  
 -- ORGANIZATIONS

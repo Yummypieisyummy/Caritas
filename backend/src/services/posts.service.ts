@@ -163,22 +163,29 @@ export async function getPostById(id: string) {
 }
 
 // Add filters later and maybe pagination
-export async function listOrgPosts(orgId: string) {
-  await orgsServices.assertOrgVerified(orgId);
-
+export async function listPublicPosts() {
   const { rows } = await query(
-    `SELECT * FROM posts WHERE org_id = $1 ORDER BY date_start DESC`,
-    [orgId],
+    `SELECT posts.*, organizations.name AS org_name 
+     FROM posts 
+     JOIN organizations ON posts.org_id = organizations.id 
+     WHERE posts.status = 'active' 
+     ORDER BY posts.date_start DESC`
   );
 
   return withCoordinatesForMany(rows);
 }
 
-export async function listPublicPosts() {
-  // pass filters later
+// Note: You should also update listOrgPosts in this same file to use the same JOIN logic!
+export async function listOrgPosts(orgId: string) {
+  await orgsServices.assertOrgVerified(orgId);
 
   const { rows } = await query(
-    `SELECT * FROM posts WHERE status = 'active' ORDER BY date_start DESC`,
+    `SELECT posts.*, organizations.name AS org_name 
+     FROM posts 
+     JOIN organizations ON posts.org_id = organizations.id 
+     WHERE org_id = $1 
+     ORDER BY date_start DESC`,
+    [orgId],
   );
 
   return withCoordinatesForMany(rows);

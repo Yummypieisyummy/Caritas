@@ -1,19 +1,48 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, test, expect, vi } from "vitest";
-import OrgSettingsPage from "../pages/OrgSettingsPage";
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
+import OrgSettingsPage from '../pages/OrgSettingsPage';
 
-// Mocking child components
-vi.mock("../components/ui/Button", () => ({
-  default: ({ children, onClick }: any) => (
-    <button onClick={onClick}>{children}</button>
+const mocks = vi.hoisted(() => ({
+  logout: vi.fn(),
+  navigate: vi.fn(),
+  exportOrganizationData: vi.fn(),
+  deleteOrganization: vi.fn(),
+}));
+
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => mocks.navigate,
+}));
+
+vi.mock('../contexts/AuthContext', () => ({
+  useAuth: () => ({
+    org: { id: 'org-123', name: 'Habitat Restore', verified: true },
+    logout: mocks.logout,
+  }),
+}));
+
+vi.mock('../hooks/useOrgSettings', () => ({
+  useOrgSettings: () => ({
+    exportOrganizationData: mocks.exportOrganizationData,
+    isExporting: false,
+    exportError: null,
+    deleteOrganization: mocks.deleteOrganization,
+    isDeleting: false,
+  }),
+}));
+
+vi.mock('../components/ui/Button', () => ({
+  default: ({ children, onClick, disabled }: any) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
-vi.mock("../components/ui/Toggle", () => ({
+vi.mock('../components/ui/Toggle', () => ({
   default: () => <div data-testid="toggle" />,
 }));
 
-vi.mock("../components/ui/Select", () => ({
+vi.mock('../components/ui/Select', () => ({
   default: ({ defaultValue }: any) => (
     <select data-testid="select" defaultValue={defaultValue}>
       <option>1 month</option>
@@ -24,7 +53,7 @@ vi.mock("../components/ui/Select", () => ({
   ),
 }));
 
-vi.mock("../components/dashboard/ConfirmActionModal", () => ({
+vi.mock('../components/dashboard/ConfirmActionModal', () => ({
   default: ({ isOpen, onClose, onConfirm, title, confirmText }: any) =>
     isOpen ? (
       <div role="dialog">
@@ -35,115 +64,68 @@ vi.mock("../components/dashboard/ConfirmActionModal", () => ({
     ) : null,
 }));
 
-describe("OrgSettingsPage", () => {
-  test("renders page headings", () => {
+describe('OrgSettingsPage', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('renders page headings', () => {
     render(<OrgSettingsPage />);
 
-    expect(screen.getByText("Manage Settings")).toBeInTheDocument();
+    expect(screen.getByText('Manage Settings')).toBeInTheDocument();
     expect(
-      screen.getByText("Handle Organization Settings and Preferences"),
+      screen.getByText('Handle organization settings and preferences.'),
     ).toBeInTheDocument();
   });
 
-  test("renders account information", () => {
+  test('renders account information from auth context', () => {
     render(<OrgSettingsPage />);
 
-    expect(screen.getByText("Organization Name")).toBeInTheDocument();
-    expect(screen.getByText("Habitat Restore")).toBeInTheDocument();
-    expect(screen.getByText("Email")).toBeInTheDocument();
-    expect(screen.getByText("habitatrestore@gmal.com")).toBeInTheDocument();
-    expect(screen.getByText("Member Since")).toBeInTheDocument();
-    expect(screen.getByText("Feb 29, 2026")).toBeInTheDocument();
+    expect(screen.getByText('Organization Name')).toBeInTheDocument();
+    expect(screen.getByText('Habitat Restore')).toBeInTheDocument();
+    expect(screen.getByText('Verification Status')).toBeInTheDocument();
+    expect(screen.getByText('Verified')).toBeInTheDocument();
   });
 
-  test("renders toggle components", () => {
+  test('renders toggle components', () => {
     render(<OrgSettingsPage />);
 
-    const toggles = screen.getAllByTestId("toggle");
-    expect(toggles.length).toBe(2);
+    expect(screen.getAllByTestId('toggle')).toHaveLength(2);
   });
 
-  test("renders select component with default value", () => {
+  test('renders select component with default value', () => {
     render(<OrgSettingsPage />);
 
-    const select = screen.getByTestId("select");
-    expect(select).toBeInTheDocument();
+    expect(screen.getByTestId('select')).toBeInTheDocument();
   });
 
-  test("opens delete org data modal", () => {
+  test('downloads organization data', () => {
     render(<OrgSettingsPage />);
 
-    fireEvent.click(screen.getByText("Delete Organization Data"));
+    fireEvent.click(screen.getByText('Download Data'));
 
-    expect(screen.getByText("Delete Data")).toBeInTheDocument();
+    expect(mocks.exportOrganizationData).toHaveBeenCalledTimes(1);
   });
 
-  test("confirm delete org data action", async () => {
-    const consoleSpy = vi.spyOn(console, "log");
-
-    render(<OrgSettingsPage />);
-    fireEvent.click(screen.getByText("Delete Data"));
-
-    await waitFor(() => {
-      expect(screen.getByRole("dialog")).toBeInTheDocument();
-    });
-
-    const buttons = screen.getAllByText("Delete Data");
-
-    fireEvent.click(buttons[1]);
-
-    expect(consoleSpy).toHaveBeenCalledWith("delete data test");
-  });
-
-  test("opens reset password modal", () => {
+  test('opens delete account modal and confirms deletion', () => {
     render(<OrgSettingsPage />);
 
-    fireEvent.click(screen.getByText("Reset Password"));
-
+    fireEvent.click(screen.getByText('Delete Account'));
     expect(
-      screen.getByText("Reset Organization Password?"),
+      screen.getByText('Delete Organization Account?'),
     ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Delete Organization'));
+
+    expect(mocks.deleteOrganization).toHaveBeenCalledTimes(1);
   });
 
-  test("confirm reset password action", () => {
-    const consoleSpy = vi.spyOn(console, "log");
-
+  test('closes modal when close clicked', () => {
     render(<OrgSettingsPage />);
 
-    fireEvent.click(screen.getByText("Reset Password"));
-    fireEvent.click(screen.getByText("Send Reset Link"));
+    fireEvent.click(screen.getByText('Delete Account'));
+    fireEvent.click(screen.getByText('Close'));
 
-    expect(consoleSpy).toHaveBeenCalledWith("reset password test");
-  });
-
-  test("opens delete account modal", () => {
-    render(<OrgSettingsPage />);
-
-    fireEvent.click(screen.getByText("Delete Account"));
-
-    expect(
-      screen.getByText("Delete Organization Account?"),
-    ).toBeInTheDocument();
-  });
-
-  test("confirm delete account action", () => {
-    const consoleSpy = vi.spyOn(console, "log");
-
-    render(<OrgSettingsPage />);
-
-    fireEvent.click(screen.getByText("Delete Account"));
-    fireEvent.click(screen.getByText("Delete Organization"));
-
-    expect(consoleSpy).toHaveBeenCalledWith("delete org account test");
-  });
-
-  test("closes modal when close clicked", () => {
-    render(<OrgSettingsPage />);
-
-    fireEvent.click(screen.getByText("Delete Data"));
-
-    fireEvent.click(screen.getByText("Close"));
-
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });

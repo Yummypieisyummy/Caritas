@@ -1,62 +1,60 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import Button from '../components/ui/Button';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
+import Button from '../components/ui/Button';
 import Spinner from '../components/ui/Spinner';
 
 const VerifyEmailPage = () => {
-  // await verify endpoint call with attached email token, show spinner until complete
-  // Success, failure views
-  const [errorMessage, setErrorMessage] = useState('');
-  const [status, setStatus] = useState('verifying');
   const { verifyEmail } = useAuth();
-
   const navigate = useNavigate();
-
   const [searchParams] = useSearchParams();
   const emailToken = searchParams.get('token');
 
+  const { isLoading, isSuccess, isError, error } = useQuery({
+    queryKey: ['verifyEmail', emailToken],
+    queryFn: async () => {
+      if (!emailToken) throw new Error('No verification token found');
+
+      const minDelay = new Promise((resolve) => setTimeout(resolve, 1000));
+      await Promise.all([verifyEmail(emailToken), minDelay]);
+
+      return true;
+    },
+    enabled: !!emailToken,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  // Navigate side-effect on success
   useEffect(() => {
-    const verify = async () => {
-      if (!emailToken) {
-        setStatus('error');
-        setErrorMessage('No verification token found');
-        return;
-      }
-
-      try {
-        setStatus('verifying');
-
-        // The code pauses here until both the api call and 1 second delay are finished
-        const minDelay = new Promise((resolve) => setTimeout(resolve, 1000));
-        await Promise.all([verifyEmail(emailToken), minDelay]);
-        setStatus('success');
-
-        // redirect to login after 2 seconds
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      } catch (err: any) {
-        setStatus('error');
-        setErrorMessage(
-          err.response?.data?.error ||
-            'Verification failed. The link may be expired or invalid',
-        );
-      }
-    };
-
-    verify();
-  }, [emailToken, verifyEmail]);
+    if (isSuccess) {
+      const timer = setTimeout(() => {
+        navigate('/login', {
+          state: { message: 'Email verified! You can now log in.' },
+        });
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSuccess, navigate]);
 
   return (
-    <main className="flex min-h-screen w-full items-center justify-center">
+    <main className="flex min-h-screen w-full items-center justify-center p-6">
       <section
-        className={`bg-white w-full max-w-md shadow-card-shadow rounded-2xl flex flex-col items-center text-center p-8 ${status === 'error' && 'border-2 border-red-600'} ${status === 'success' && 'border-2 border-accent-green'}`}
+        className={`bg-white w-full max-w-md shadow-card-shadow rounded-2xl flex flex-col items-center text-center p-8 transition-colors duration-300
+          ${isError ? 'border-2 border-red-600' : ''} 
+          ${isSuccess ? 'border-2 border-accent-green' : 'border border-transparent'}`}
       >
-        {/* Verifying */}
-        {status === 'verifying' && (
+        {!emailToken && (
+          <div className="flex flex-col items-center gap-4">
+            <h1 className="font-semibold text-3xl">Invalid Link</h1>
+            <p className="text-text-muted text-sm">No token found.</p>
+            <Button onClick={() => navigate('/login')}>Go to Login</Button>
+          </div>
+        )}
+
+        {isLoading && (
           <div className="flex flex-col items-center justify-center gap-4">
-            {/* <Loader2 size={54} className="animate-spin text-accent-green" /> */}
             <Spinner />
             <h1 className="font-semibold text-3xl">Verifying Email</h1>
             <p className="text-text-muted text-sm">
@@ -64,22 +62,28 @@ const VerifyEmailPage = () => {
             </p>
           </div>
         )}
-        {/* Success */}
-        {status === 'success' && (
+
+        {isSuccess && (
           <div className="flex flex-col items-center gap-4">
-            <h1 className="font-semibold text-3xl">Email Verified!</h1>
+            <h1 className="font-semibold text-3xl text-accent-green">
+              Email Verified!
+            </h1>
             <p className="text-text-muted text-sm">Redirecting to Login...</p>
           </div>
         )}
-        {/* Error */}
-        {status === 'error' && (
+
+        {isError && (
           <div className="flex flex-col items-center gap-4">
             <h1 className="font-semibold text-3xl">Verification Failed</h1>
-            <p className="text-text-muted text-sm">{errorMessage}</p>
+            <p className="text-text-muted text-sm">
+              {(error as any)?.response?.data?.error ||
+                error?.message ||
+                'The link may be expired or invalid.'}
+            </p>
             <Button
               variant="textOnly"
               size="sm"
-              className="text-red-600 hover:underline"
+              className="text-red-600 hover:underline mt-2"
             >
               Click to resend
             </Button>

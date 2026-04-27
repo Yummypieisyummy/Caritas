@@ -1,13 +1,27 @@
 import { render, screen } from "@testing-library/react";
-import { describe, test, expect } from "vitest";
+import { beforeEach, describe, test, expect, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import DashboardOverviewPage from "../pages/DashboardOverviewPage";
+
+const mocks = vi.hoisted(() => ({
+  org: { id: "org-123", name: "Habitat Restore", verified: true },
+}));
+
+vi.mock("../contexts/AuthContext", () => ({
+  useAuth: () => ({
+    org: mocks.org,
+  }),
+}));
 
 const renderWithRouter = (component: React.ReactElement) => {
   return render(<MemoryRouter>{component}</MemoryRouter>);
 };
 
 describe("DashboardOverviewPage", () => {
+  beforeEach(() => {
+    mocks.org = { id: "org-123", name: "Habitat Restore", verified: true };
+  });
+
   test("renders welcome header and description", () => {
     renderWithRouter(<DashboardOverviewPage />);
 
@@ -60,5 +74,20 @@ describe("DashboardOverviewPage", () => {
     expect(screen.getByText("View All Posts")).toBeInTheDocument();
     expect(screen.getByText("Manage Team")).toBeInTheDocument();
     expect(screen.getByText("Organization Settings")).toBeInTheDocument();
+  });
+
+  test("renders limited access banner for unverified organizations", () => {
+    mocks.org = { id: "org-123", name: "Habitat Restore", verified: false };
+
+    renderWithRouter(<DashboardOverviewPage />);
+
+    expect(screen.getByText("Action Required")).toBeInTheDocument();
+    expect(
+      screen.getByText(/limited access mode/i),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("link", { name: "Manage Org Profile" }),
+    ).toHaveAttribute("href", "/dashboard/profile");
   });
 });
