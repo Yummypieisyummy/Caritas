@@ -72,6 +72,7 @@ const Select = ({
   className = '',
   ...rest
 }: SelectProps) => {
+  const { value, defaultValue, ...selectProps } = rest;
   const baseStyles =
     'w-full transition-all duration-200 placeholder:text-text-muted text-text-muted';
 
@@ -87,8 +88,13 @@ const Select = ({
       {label && <span className="font-semibold">{label}</span>}
       <select
         className={`${baseStyles} ${variants[variant]} ${className}`}
-        defaultValue={placeholder ? '' : options[0]}
-        {...rest}
+        value={value}
+        defaultValue={
+          value === undefined
+            ? defaultValue ?? (placeholder ? '' : options[0])
+            : undefined
+        }
+        {...selectProps}
       >
         {placeholder && (
           <option value="" disabled>

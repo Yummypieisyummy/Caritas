@@ -1,170 +1,150 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
-import OrganizationProfilePage from "../pages/OrganizationProfilePage";
-import { describe, test, expect, vi } from "vitest";
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
+import OrganizationProfilePage from '../pages/OrganizationProfilePage';
+import { PostResponse } from '../types/posts';
 
-// Mocking child components
-vi.mock("../components/directory/Filters.tsx", () => ({
-  default: () => <div data-testid="filters" />,
+const mockUseOrgProfile = vi.hoisted(() => vi.fn());
+
+vi.mock('../hooks/useOrgProfile', async () => {
+  const actual = await vi.importActual('../hooks/useOrgProfile');
+  return {
+    ...actual,
+    useOrgProfile: mockUseOrgProfile,
+  };
+});
+
+vi.mock('../components/ui/Spinner', () => ({
+  default: () => <div data-testid="spinner" />,
 }));
 
-vi.mock("../components/organization profile/MiniVolunteerCard.tsx", () => ({
-  default: ({ onOpen }: any) => (
-    <button data-testid="mini-card" onClick={onOpen}>
-      Open Post
-    </button>
-  ),
-}));
+const samplePost: PostResponse = {
+  id: 'post-1',
+  org_id: 'org-123',
+  org_name: 'Habitat Restore',
+  post_type: 'volunteer_request',
+  event_type: 'one-time',
+  title: 'Stock and sort donations',
+  description: 'Help keep the donation center organized.',
+  additional_details: 'Wear comfortable shoes.',
+  location: '123 Main St',
+  latitude: null,
+  longitude: null,
+  requirements: ['Orientation Needed'],
+  date_start: '2026-05-10',
+  date_end: null,
+  days_of_week: null,
+  contact_email: 'volunteer@habitat.org',
+  interested: 4,
+  status: 'active',
+  contact_phone: '555-555-5555',
+  created_at: '2026-04-01T00:00:00.000Z',
+};
 
-vi.mock("../components/directory/VolunteerCard.tsx", () => ({
-  default: () => <div data-testid="volunteer-card">VolunteerCard</div>,
-}));
+const orgProfileData = {
+  organization: {
+    id: 'org-123',
+    name: 'Habitat Restore',
+    verified: true,
+    pfp_url: null,
+    banner_url: null,
+    email: 'info@habitat.org',
+    about: 'Habitat Restore supports affordable housing projects.',
+    contact_info: {
+      address: '123 Main St',
+      phone: '555-555-5555',
+      email: 'contact@habitat.org',
+      website: 'habitat.org',
+      hours: 'Saturdays, 10AM-2PM',
+    },
+  },
+  activePosts: [samplePost],
+};
 
-vi.mock("../components/ui/Button.tsx", () => ({
-  default: ({ children, ...props }: any) => (
-    <button {...props}>{children}</button>
-  ),
-}));
-
-const renderPage = (state?: any, paramId = "123") => {
-  return render(
-    <MemoryRouter
-      initialEntries={[
-        {
-          pathname: `/organization/${paramId}`,
-          state,
-        },
-      ]}
-    >
+const renderPage = (paramId = 'org-123') =>
+  render(
+    <MemoryRouter initialEntries={[`/organization/${paramId}`]}>
       <Routes>
         <Route path="/organization/:id" element={<OrganizationProfilePage />} />
       </Routes>
     </MemoryRouter>,
   );
-};
 
-describe("OrganizationProfilePage", () => {
-  test("renders filters sidebar", () => {
-    renderPage();
-    expect(screen.getByTestId("filters")).toBeInTheDocument();
+describe('OrganizationProfilePage', () => {
+  beforeEach(() => {
+    mockUseOrgProfile.mockReturnValue({
+      data: orgProfileData,
+      isLoading: false,
+      isError: false,
+    });
   });
 
-  test("renders fallback organization name from param id", () => {
-    renderPage();
-    expect(screen.getByText("123")).toBeInTheDocument();
+  test('fetches profile data with the organization id from the route', () => {
+    renderPage('org-123');
+
+    expect(mockUseOrgProfile).toHaveBeenCalledWith('org-123');
   });
 
-  test("renders organization data from router state", () => {
-    const org = {
-      name: "Habitat Restore",
-      address: "123 Main St",
-      contact: {
-        phone: "555-555-5555",
-        email: "test@test.com",
-        website: "habitat.org",
-      },
-    };
+  test('shows a spinner while loading', () => {
+    mockUseOrgProfile.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+    });
 
-    renderPage({ org });
-
-    expect(screen.getByText("Habitat Restore")).toBeInTheDocument();
-    expect(screen.getByText(/123 Main St/)).toBeInTheDocument();
-    expect(screen.getByText(/555-555-5555/)).toBeInTheDocument();
-    expect(screen.getByText(/test@test.com/)).toBeInTheDocument();
-  });
-
-  test("formats website without http", () => {
-    const org = {
-      name: "Habitat Restore",
-      address: "123 Main St",
-      contact: {
-        phone: "555-555-5555",
-        email: "test@test.com",
-        website: "habitat.org",
-      },
-    };
-
-    renderPage({ org });
-
-    const link = screen.getByRole("link", { name: "habitat.org" });
-    expect(link).toHaveAttribute("href", "https://habitat.org");
-  });
-
-  test("keeps website if already has http", () => {
-    const org = {
-      name: "Habitat Restore",
-      address: "123 Main St",
-      contact: {
-        phone: "555-555-5555",
-        email: "test@test.com",
-        website: "http://habitat.org",
-      },
-    };
-
-    renderPage({ org });
-
-    const link = screen.getByRole("link", { name: "http://habitat.org" });
-    expect(link).toHaveAttribute("href", "http://habitat.org");
-  });
-
-  test("renders two MiniVolunteerCards", () => {
-    renderPage();
-    const cards = screen.getAllByTestId("mini-card");
-    expect(cards).toHaveLength(2);
-  });
-
-  test("opens modal when MiniVolunteerCard clicked", () => {
     renderPage();
 
-    fireEvent.click(screen.getAllByTestId("mini-card")[0]);
-
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByTestId("volunteer-card")).toBeInTheDocument();
+    expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
-  test("closes modal when close button clicked", () => {
+  test('renders organization profile details', () => {
     renderPage();
 
-    fireEvent.click(screen.getAllByTestId("mini-card")[0]);
-
-    fireEvent.click(screen.getByLabelText("Close"));
-
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByText('Habitat Restore')).toBeInTheDocument();
+    expect(screen.getByText(/supports affordable housing/)).toBeInTheDocument();
+    expect(screen.getAllByText('123 Main St').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('555-555-5555').length).toBeGreaterThan(0);
+    expect(screen.getByText('contact@habitat.org')).toBeInTheDocument();
   });
 
-  test("closes modal when clicking backdrop", () => {
+  test('formats website links without a protocol', () => {
     renderPage();
 
-    fireEvent.click(screen.getAllByTestId("mini-card")[0]);
-
-    const backdrop = screen.getByRole("dialog");
-    fireEvent.click(backdrop);
-
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /habitat.org/ })).toHaveAttribute(
+      'href',
+      'https://habitat.org',
+    );
   });
 
-  test("modal stays open when clicking inside modal content", () => {
+  test('renders active posts with compact filters', () => {
     renderPage();
 
-    fireEvent.click(screen.getAllByTestId("mini-card")[0]);
-
-    fireEvent.click(screen.getByTestId("volunteer-card"));
-
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-  });
-
-  test("renders about section", () => {
-    renderPage();
-
-    expect(screen.getByText("About")).toBeInTheDocument();
+    expect(screen.getByText('Active Posts')).toBeInTheDocument();
+    expect(screen.getByText('Stock and sort donations')).toBeInTheDocument();
     expect(
-      screen.getByText(/Habitat Restore accepts home goods/),
+      screen.getByRole('combobox', { name: 'Filter by post type' }),
     ).toBeInTheDocument();
   });
 
-  test("renders back to directory button", () => {
+  test('expands post details', () => {
     renderPage();
 
-    expect(screen.getByText(/Back to Directory/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /show more/i }));
+
+    expect(screen.getByText('Wear comfortable shoes.')).toBeInTheDocument();
+    expect(screen.getByText(/volunteer@habitat.org/)).toBeInTheDocument();
+  });
+
+  test('handles failed profile loading gracefully', () => {
+    mockUseOrgProfile.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    });
+
+    renderPage();
+
+    expect(screen.getByText('Organization unavailable')).toBeInTheDocument();
+    expect(screen.getByText('Back to Directory')).toBeInTheDocument();
   });
 });

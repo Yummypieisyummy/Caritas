@@ -8,6 +8,12 @@ const serviceError = (message: string, status: number) => {
   return error;
 };
 
+type OrgProfilePostRow = {
+  latitude?: string | number | null;
+  longitude?: string | number | null;
+  [key: string]: unknown;
+};
+
 export async function createOrg(data: any) {
   const { name, email, about, contact_info, pfp_url, banner_url } = data;
 
@@ -33,6 +39,42 @@ export async function getOrgById(id: string) {
   ]);
   // if (!rows.length) throw new Error('Organization not found');
   return rows[0] || null;
+}
+
+function withPostCoordinates(post: OrgProfilePostRow) {
+  return {
+    ...post,
+    latitude: post.latitude == null ? null : Number(post.latitude),
+    longitude: post.longitude == null ? null : Number(post.longitude),
+  };
+}
+
+export async function getOrgProfileById(id: string) {
+  const organization = await getOrgById(id);
+
+  if (!organization) {
+    throw serviceError('Organization not found', 404);
+  }
+
+  const { rows: activePosts } = await query(
+    `
+    SELECT
+      posts.*,
+      organizations.name AS org_name,
+      NULL::double precision AS distance_miles
+    FROM posts
+    JOIN organizations ON posts.org_id = organizations.id
+    WHERE posts.org_id = $1
+      AND posts.status = 'active'
+    ORDER BY posts.created_at DESC
+    `,
+    [id],
+  );
+
+  return {
+    organization,
+    activePosts: activePosts.map(withPostCoordinates),
+  };
 }
 
 export async function listOrgs() {

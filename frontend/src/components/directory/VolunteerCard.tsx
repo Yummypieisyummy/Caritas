@@ -1,4 +1,14 @@
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import {
+  Building2,
+  CalendarClock,
+  ChevronDown,
+  ChevronUp,
+  HandHeart,
+  Mail,
+  Map,
+  MapPin,
+  Phone,
+} from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from 'leaflet';
@@ -142,30 +152,45 @@ const VolunteerCard = ({ post }: Props) => {
             ))}
 
             {hiddenTagCount > 0 && !tagsExpanded && (
-              <button
+              <Button
+                as="button"
+                variant="textOnly"
+                size="sm"
                 onClick={() => setTagsExpanded(true)}
-                className="text-sm font-medium text-accent-green hover:text-accent-green-dark transition-colors px-2 py-1 whitespace-nowrap"
+                className="whitespace-nowrap text-accent-green"
               >
                 +{hiddenTagCount} more
-              </button>
+              </Button>
             )}
 
             {tagsExpanded && hiddenTagCount > 0 && (
-              <button
+              <Button
+                as="button"
+                variant="textOnly"
+                size="sm"
                 onClick={() => setTagsExpanded(false)}
-                className="text-sm font-medium text-accent-green hover:text-accent-green-dark transition-colors px-2 py-1 whitespace-nowrap"
+                className="whitespace-nowrap text-accent-green"
               >
                 Show less
-              </button>
+              </Button>
             )}
           </div>
         </div>
 
-        <div className="mt-1 flex flex-col text-text-muted">
-          <p>💒 {post.org_name}</p>
-          <p>🕒 {scheduleDisplay}</p>
+        <div className="mt-2 flex flex-col gap-1 text-text-muted">
+          <p className="flex items-center gap-2">
+            <Building2 className="h-4 w-4 shrink-0 text-accent-green" />
+            <span>{post.org_name}</span>
+          </p>
+          <p className="flex items-center gap-2">
+            <CalendarClock className="h-4 w-4 shrink-0 text-accent-green" />
+            <span>{scheduleDisplay}</span>
+          </p>
           {distanceMiles != null && Number.isFinite(distanceMiles) && (
-            <p>📍 {distanceMiles.toFixed(1)} miles away</p>
+            <p className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 shrink-0 text-accent-green" />
+              <span>{distanceMiles.toFixed(1)} miles away</span>
+            </p>
           )}
         </div>
       </header>
@@ -176,15 +201,30 @@ const VolunteerCard = ({ post }: Props) => {
         {expanded && (
           <div className="flex flex-col md:flex-row gap-6 mt-4">
             <div className="flex-1 flex flex-col gap-2">
-              <p>
-                <span className="font-medium">📍 Address: </span>
-                {post.location}
+              <p className="flex items-start gap-2">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent-green" />
+                <span>
+                  <span className="font-medium">Address: </span>
+                  {post.location}
+                </span>
               </p>
 
-              <p className="mb-4">
-                <span className="font-medium">✉️ Contact: </span>
-                {post.contact_email} | {post.contact_phone}
-              </p>
+              <div className="mb-4 flex flex-col gap-1">
+                <p className="flex items-start gap-2">
+                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-accent-green" />
+                  <span>
+                    <span className="font-medium">Email: </span>
+                    {post.contact_email}
+                  </span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-accent-green" />
+                  <span>
+                    <span className="font-medium">Phone: </span>
+                    {post.contact_phone}
+                  </span>
+                </p>
+              </div>
               
               {/* Conditionally render additional details */}
               {post.additional_details && post.additional_details.trim() !== '' && (
@@ -232,9 +272,10 @@ const VolunteerCard = ({ post }: Props) => {
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="self-start text-text-muted text-sm hover:underline hover:text-text-green font-medium px-2 py-1"
+                className="inline-flex items-center gap-2 self-start text-text-muted text-sm hover:underline hover:text-text-green font-medium px-2 py-1"
               >
-                🗺️ View full map
+                <Map className="h-4 w-4" />
+                View full map
               </a>
             </div>
           </div>
@@ -257,9 +298,9 @@ const VolunteerCard = ({ post }: Props) => {
             variant="icon"
             size="sm"
             aria-label="Volunteer Hand Raise"
-            className="bg-sky-500"
+            className="bg-sky-500 text-white"
           >
-            🤚
+            <HandHeart className="h-5 w-5" />
           </Button>
 
           <span className="text-text-muted">

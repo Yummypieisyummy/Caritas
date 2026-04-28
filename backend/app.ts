@@ -4,6 +4,7 @@ import cors from 'cors';
 import usersRoutes from './src/routes/users.routes';
 import postsRoutes from './src/routes/posts.routes';
 import organizationsRoutes from './src/routes/org.routes';
+import orgProfileRoutes from './src/routes/orgProfile.routes';
 import authRoutes from './src/routes/auth.routes';
 import teamRoutes from './src/routes/team.routes';
 
@@ -30,6 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/users', usersRoutes);
 app.use('/api/posts', postsRoutes);
+app.use('/api/orgs', orgProfileRoutes);
 app.use('/api/organizations', organizationsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/team', teamRoutes);

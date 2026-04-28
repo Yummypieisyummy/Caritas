@@ -13,6 +13,12 @@ export const getOrgById = async (req: Request, res: Response) => {
   res.json(org);
 };
 
+export const getOrgProfileById = async (req: Request, res: Response) => {
+  const { id } = req.params as { id: string };
+  const profile = await orgsService.getOrgProfileById(id);
+  res.json(profile);
+};
+
 export const listOrgs = async (_req: Request, res: Response) => {
   const orgs = await orgsService.listOrgs();
   res.json(orgs);
