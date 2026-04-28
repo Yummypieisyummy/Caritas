@@ -100,6 +100,13 @@ type PostFilters = {
   maxDistanceMiles?: string | number;
 };
 
+type PostStatus = 'active' | 'closed';
+
+type ListPostsQueryOptions = {
+  orgId?: string;
+  status?: PostStatus;
+};
+
 type PostRow = {
   location: string;
   latitude?: string | number | null;
@@ -255,7 +262,10 @@ function buildDistanceExpression(latParam: number, lngParam: number) {
   `;
 }
 
-function buildListPostsQuery(filters: PostFilters = {}, orgId?: string) {
+function buildListPostsQuery(
+  filters: PostFilters = {},
+  options: ListPostsQueryOptions = {},
+) {
   const whereClauses: string[] = [];
   const values: unknown[] = [];
   const userLat = toFiniteNumber(filters.userLat);
@@ -323,9 +333,14 @@ function buildListPostsQuery(filters: PostFilters = {}, orgId?: string) {
     `);
   }
 
-  if (orgId) {
-    values.push(orgId);
+  if (options.orgId) {
+    values.push(options.orgId);
     whereClauses.push(`posts.org_id = $${values.length}`);
+  }
+
+  if (options.status) {
+    values.push(options.status);
+    whereClauses.push(`posts.status = $${values.length}`);
   }
 
   if (shouldCalculateDistance) {
@@ -384,7 +399,7 @@ export async function listPublicPosts(filters: PostFilters = {}) {
   let postIds = filters.postIds;
 
   if (filters.searchQuery) {
-    postIds = await searchPostIds(filters.searchQuery);
+    postIds = await searchPostIds(filters.searchQuery, { status: 'active' });
 
     if (!postIds.length) {
       return [];
@@ -394,10 +409,15 @@ export async function listPublicPosts(filters: PostFilters = {}) {
   const { searchQuery, ...sqlFilters } = filters;
   void searchQuery;
 
-  const { text, values } = buildListPostsQuery({
-    ...sqlFilters,
-    postIds,
-  });
+  const { text, values } = buildListPostsQuery(
+    {
+      ...sqlFilters,
+      postIds,
+    },
+    {
+      status: 'active',
+    },
+  );
   const { rows } = await query(text, values);
 
   return withCoordinatesForMany(rows);
@@ -407,7 +427,7 @@ export async function listPublicPosts(filters: PostFilters = {}) {
 export async function listOrgPosts(orgId: string, filters: PostFilters = {}) {
   await orgsServices.assertOrgVerified(orgId);
 
-  const { text, values } = buildListPostsQuery(filters, orgId);
+  const { text, values } = buildListPostsQuery(filters, { orgId });
   const { rows } = await query(text, values);
 
   return withCoordinatesForMany(rows);

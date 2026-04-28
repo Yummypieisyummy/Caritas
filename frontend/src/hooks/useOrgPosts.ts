@@ -5,6 +5,12 @@ import { PostResponse, PostRequest } from '../types/posts';
 export const useOrgPosts = () => {
   const queryClient = useQueryClient();
 
+  const refreshPostCaches = () => {
+    queryClient.invalidateQueries({ queryKey: ['orgPosts'] });
+    queryClient.invalidateQueries({ queryKey: ['publicPosts'] });
+    queryClient.invalidateQueries({ queryKey: ['orgProfile'] });
+  };
+
   const { data: orgPosts = [], status } = useQuery<PostResponse[]>({
     queryKey: ['orgPosts'],
     queryFn: () => postsServices.getOrgPostsRequest(),
@@ -13,7 +19,7 @@ export const useOrgPosts = () => {
   const createMutation = useMutation({
     mutationFn: (data: PostRequest) => postsServices.createPostRequest(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orgPosts'] });
+      refreshPostCaches();
     },
   });
 
@@ -26,14 +32,14 @@ export const useOrgPosts = () => {
       newStatus: 'active' | 'closed';
     }) => postsServices.updatePostStatusRequest(postId, newStatus),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orgPosts'] });
+      refreshPostCaches();
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: postsServices.deletePostRequest,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orgPosts'] });
+      refreshPostCaches();
     },
   });
 

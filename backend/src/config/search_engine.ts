@@ -20,6 +20,10 @@ type PostDocument = {
   status?: string;
 };
 
+type SearchPostOptions = {
+  status?: string;
+};
+
 const client = new Meilisearch({
   host: process.env.MEILISEARCH_URL ?? 'http://127.0.0.1:7700',
   apiKey: process.env.MEILISEARCH_AUTH,
@@ -140,12 +144,16 @@ export async function deletePostDocument(id: string) {
   await client.tasks.waitForTask(task.taskUid);
 }
 
-export async function searchPostIds(searchQuery: string): Promise<string[]> {
+export async function searchPostIds(
+  searchQuery: string,
+  options: SearchPostOptions = {},
+): Promise<string[]> {
   await initializeSearchIndex();
 
   const results = await postsIndex.search(searchQuery, {
     attributesToRetrieve: ['id'],
+    filter: options.status ? `status = "${options.status}"` : undefined,
   });
 
-  return results.hits.map((hit) => hit.id);
+  return results.hits.map((hit: Pick<PostDocument, 'id'>) => hit.id);
 }

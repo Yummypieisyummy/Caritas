@@ -253,5 +253,6 @@ CREATE TABLE posts (
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_orgs_email ON organizations(email);
 CREATE INDEX idx_posts_org_id ON posts(org_id);
+CREATE INDEX idx_posts_status_created_at ON posts(status, created_at DESC);
 CREATE INDEX idx_posts_type ON posts(post_type);
 CREATE INDEX idx_posts_requirements ON posts USING GIN(requirements);
