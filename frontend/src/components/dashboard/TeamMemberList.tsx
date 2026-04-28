@@ -37,7 +37,7 @@ const TeamMemberList = ({
   const currentUserIsAdmin = currentUserRole === 'admin';
 
   return (
-    <div className="overflow-x-auto">
+    <div className="app-scrollbar overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="bg-gray-50 border-b border-filter-stroke">

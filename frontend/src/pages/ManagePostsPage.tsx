@@ -134,7 +134,7 @@ const ManagePostsPage = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="app-scrollbar overflow-x-auto">
           <table className="w-full min-w-[42rem] text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-filter-stroke">

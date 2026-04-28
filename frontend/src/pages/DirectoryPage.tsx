@@ -95,7 +95,7 @@ const DirectoryPage = () => {
             className="md:hidden fixed inset-0 bg-black/50 z-40"
             onClick={() => setIsFiltersOpen(false)}
           />
-          <div className="md:hidden fixed top-20 right-0 bottom-0 w-80 max-w-full bg-white shadow-lg z-50 overflow-y-auto">
+          <div className="app-scrollbar md:hidden fixed top-20 right-0 bottom-0 w-80 max-w-full bg-white shadow-lg z-50 overflow-y-auto">
             <Filters onClose={() => setIsFiltersOpen(false)} />
           </div>
         </>

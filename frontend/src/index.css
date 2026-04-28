@@ -2,6 +2,40 @@
 
 /* Global Tailwind Styles */
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(76, 130, 86, 0.55) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  min-height: 2.5rem;
+  border: 0.1875rem solid transparent;
+  border-radius: 999px;
+  background-color: rgba(76, 130, 86, 0.48);
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(59, 110, 71, 0.72);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.app-scrollbar {
+  scrollbar-gutter: stable;
+}
+
 html,
 body,
 #root {

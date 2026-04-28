@@ -58,7 +58,7 @@ const DashboradSidebar = () => {
         </footer>
       </div>
 
-      <section className="flex gap-2 overflow-x-auto pb-1 md:flex-col md:gap-6 md:overflow-visible md:pb-0">
+      <section className="app-scrollbar flex gap-2 overflow-x-auto pb-1 md:flex-col md:gap-6 md:overflow-visible md:pb-0">
         {sidebarLinks.map((link) => {
           const isLocked = link.requiresVerifiedOrg && !isOrgVerified;
 

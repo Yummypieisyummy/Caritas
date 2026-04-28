@@ -69,7 +69,7 @@ const Filters = ({ onClose }: FiltersProps) => {
         )}
       </header>
 
-      <section className="flex-1 overflow-y-auto p-6">
+      <section className="app-scrollbar flex-1 overflow-y-auto p-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <span className="font-semibold">Post Type</span>
