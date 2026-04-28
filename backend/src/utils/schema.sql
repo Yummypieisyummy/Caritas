@@ -121,30 +121,12 @@
 --     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
 -- );
 
--- -- TAGS
- 
--- CREATE TABLE tags (
---     id SERIAL PRIMARY KEY,
---     name TEXT UNIQUE NOT NULL,
---     color TEXT,
---     display BOOLEAN DEFAULT false
--- );
- 
--- -- TAG_MAP (Post ↔ Tags)
- 
--- CREATE TABLE tag_map (
---     post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
---     tag_id INT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
---     PRIMARY KEY (post_id, tag_id)
--- );
-
 -- -- INDEXES
 
 -- CREATE INDEX idx_users_email ON users(email);
 -- CREATE INDEX idx_orgs_email ON organizations(email);
 -- CREATE INDEX idx_posts_org_id ON posts(org_id);
 -- CREATE INDEX idx_posts_type ON posts(post_type);
--- CREATE INDEX idx_tag_map_tag_id ON tag_map(tag_id);
 
 
 -- Needed for UUID generation
@@ -199,7 +181,6 @@ CREATE TABLE organizations (
 
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- org_id UUID REFERENCES organizations(id) ON DELETE SET NULL,
     email TEXT UNIQUE NOT NULL,
     email_verified_at TIMESTAMP WITHOUT TIME ZONE,
     password_hash TEXT NOT NULL,
@@ -255,6 +236,7 @@ CREATE TABLE posts (
     date_start DATE NOT NULL,
     date_end DATE,
     days_of_week TEXT[],
+    requirements TEXT[],
     contact_email TEXT NOT NULL,
     contact_phone TEXT NOT NULL,
     latitude NUMERIC(10, 7),
@@ -265,43 +247,6 @@ CREATE TABLE posts (
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
 );
 
--- For existing databases, run:
--- ALTER TABLE posts ADD COLUMN latitude NUMERIC(10, 7);
--- ALTER TABLE posts ADD COLUMN longitude NUMERIC(10, 7);
-
--- TAGS
- 
-CREATE TABLE tags (
-    id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL,
-    color TEXT,
-    display BOOLEAN DEFAULT false
-);
-
-INSERT INTO tags (name, color, display)
-VALUES
-    ('Requires Credentials', 'purple', true),
-    ('Orientation Needed', 'blue', true),
-    ('Requires Driver''s License', 'orange', true),
-    ('Food Handling Certification', 'green', true),
-    ('Heavy Lifting', 'orange', true),
-    ('Outdoor Work', 'green', true),
-    ('Standing for Long Periods', 'blue', true),
-    ('Food Pantry', 'green', true),
-    ('Tutoring / Mentoring', 'purple', true),
-    ('Elder Care', 'blue', true),
-    ('Donations', 'orange', true)
-ON CONFLICT (name) DO UPDATE
-SET color = EXCLUDED.color,
-    display = EXCLUDED.display;
- 
--- TAG_MAP (Post ↔ Tags)
- 
-CREATE TABLE tag_map (
-    post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-    tag_id INT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
-    PRIMARY KEY (post_id, tag_id)
-);
 
 -- INDEXES
 
@@ -309,4 +254,4 @@ CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_orgs_email ON organizations(email);
 CREATE INDEX idx_posts_org_id ON posts(org_id);
 CREATE INDEX idx_posts_type ON posts(post_type);
-CREATE INDEX idx_tag_map_tag_id ON tag_map(tag_id);
+CREATE INDEX idx_posts_requirements ON posts USING GIN(requirements);

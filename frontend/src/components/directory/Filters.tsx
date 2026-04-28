@@ -1,7 +1,8 @@
-import { MapPin, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useFilters } from '../../contexts/FiltersContext';
 import { useUserLocation } from '../../hooks/useUserLocation';
+import { REQUIREMENT_OPTIONS } from '../../config/filterOptions';
 import Button from '../ui/Button';
 import Checkbox from '../ui/Checkbox';
 
@@ -23,13 +24,6 @@ const EVENT_TYPE_OPTIONS = [
 
 const DAYS_NEEDED_OPTIONS = ['Weekdays', 'Weekends'];
 
-const REQUIREMENTS_OPTIONS = [
-  'Requires Credentials',
-  'Orientation Needed',
-  "Requires Driver's License",
-  'Food Handling Certification',
-];
-
 const DISTANCE_OPTIONS = [
   { label: 'Any Distance', value: '' },
   { label: '5 miles', value: '5' },
@@ -46,8 +40,7 @@ const Filters = ({ onClose }: FiltersProps) => {
     setLocation,
     clearFilters,
   } = useFilters();
-  const { latitude, longitude, error, isLoading, requestLocation } =
-    useUserLocation();
+  const { latitude, longitude, error, isLoading } = useUserLocation();
   const [locationMessage, setLocationMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -126,7 +119,7 @@ const Filters = ({ onClose }: FiltersProps) => {
 
           <div className="flex flex-col gap-2">
             <span className="font-semibold">Requirements</span>
-            {REQUIREMENTS_OPTIONS.map((option) => (
+            {REQUIREMENT_OPTIONS.map((option) => (
               <Checkbox
                 key={option}
                 option={option}
@@ -154,19 +147,11 @@ const Filters = ({ onClose }: FiltersProps) => {
               </select>
             </label>
 
-            <Button
-              as="button"
-              variant="primary"
-              size="sm"
-              onClick={requestLocation}
-              disabled={isLoading}
-              className="w-full gap-2"
-            >
-              <MapPin size={18} />
-              {isLoading ? 'Finding Location...' : 'Use My Location'}
-            </Button>
+            {isLoading && (
+              <p className="text-sm text-text-muted">Finding Location...</p>
+            )}
 
-            {locationMessage && (
+            {locationMessage && !isLoading && (
               <p className="text-sm text-text-muted">{locationMessage}</p>
             )}
           </div>

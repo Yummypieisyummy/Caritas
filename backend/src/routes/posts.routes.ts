@@ -9,7 +9,6 @@ import {
 const router = Router();
 
 router.get('/public', asyncHandler(postsController.getPublicPosts));
-router.get('/tags', asyncHandler(postsController.getAvailableTags));
 
 router.use(verifyAccessToken);
 

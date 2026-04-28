@@ -4,7 +4,7 @@ import Button from '../ui/Button';
 import { useAuth } from '../../contexts/AuthContext';
 
 const DashboradSidebar = () => {
-  const { org } = useAuth();
+  const { org, logout } = useAuth();
   const isOrgVerified = org?.verified === true;
 
   const sidebarLinks = [
@@ -76,11 +76,10 @@ const DashboradSidebar = () => {
           View Public page
         </Button>
         <Button
-          as="link"
-          to="/organization/:id"
           variant="textOnly"
           size="md"
           className="text-white"
+          onClick={logout}
         >
           Logout
         </Button>

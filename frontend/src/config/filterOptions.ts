@@ -7,11 +7,24 @@ export const CATEGORY_OPTIONS = [
   'Donations',
 ];
 
-export const DAYS_NEEDED_OPTIONS = [
-  'Weekdays',
-  'Weekends',
-  'Custom Date Range',
+export const POST_TYPES = [
+  'Volunteer Request',
+  'Volunteer Offer',
+  'Item Request',
+  'Item Offer',
 ];
+
+export const DAYS_OF_WEEK = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
+
+export const DAYS_NEEDED_OPTIONS = ['Weekdays', 'Weekends'];
 
 export const DISTANCE_OPTIONS = [
   '5 miles',
@@ -28,7 +41,7 @@ export const FOOD_TYPE_OPTIONS = [
   'Baked Goods',
 ];
 
-export const REQUIREMENTS_OPTIONS = [
+export const REQUIREMENT_OPTIONS = [
   'Requires Credentials',
   'Orientation Needed',
   "Requires Driver's License",

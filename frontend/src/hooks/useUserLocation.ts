@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type UserLocationState = {
   latitude: number | null;
@@ -8,7 +8,9 @@ type UserLocationState = {
   requestLocation: () => void;
 };
 
-export const useUserLocation = () => {
+let hasRequestedInitialLocation = false;
+
+export const useUserLocation = (autoRequest = true) => {
   const [location, setLocation] = useState<UserLocationState>({
     latitude: null,
     longitude: null,
@@ -59,6 +61,15 @@ export const useUserLocation = () => {
       },
     );
   }, []);
+
+  useEffect(() => {
+    if (!autoRequest || hasRequestedInitialLocation) {
+      return;
+    }
+
+    hasRequestedInitialLocation = true;
+    requestLocation();
+  }, [autoRequest, requestLocation]);
 
   return {
     ...location,

@@ -52,38 +52,6 @@ vi.mock("../hooks/useOrgPosts", () => ({
   }),
 }));
 
-vi.mock("../hooks/useAvailableTags", () => ({
-  useAvailableTags: () => ({
-    tags: [
-      {
-        id: 1,
-        name: "Requires Credentials",
-        color: "purple",
-        display: true,
-      },
-      {
-        id: 2,
-        name: "Orientation Needed",
-        color: "blue",
-        display: true,
-      },
-      {
-        id: 3,
-        name: "Requires Driver's License",
-        color: "orange",
-        display: true,
-      },
-      {
-        id: 4,
-        name: "Food Handling Certification",
-        color: "green",
-        display: true,
-      },
-    ],
-    status: "success",
-  }),
-}));
-
 vi.mock("react-router-dom", () => ({
   useNavigate: () => mocks.navigate,
 }));
@@ -107,7 +75,7 @@ const fillValidForm = () => {
   });
 
   fireEvent.change(screen.getByLabelText(/address/i), {
-    target: { value: "123 Main St" },
+    target: { value: "123 Main St, Latrobe, PA 15650" },
   });
 
   fireEvent.change(screen.getByLabelText(/contact email/i), {
@@ -133,6 +101,10 @@ describe("CreatePostPage", () => {
     expect(screen.getByLabelText(/post type/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/event date/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/address/i)).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("123 Main St, Latrobe, PA 15650"),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/requirements \(optional\)/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/contact email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/phone number/i)).toBeInTheDocument();
   });
@@ -196,12 +168,16 @@ describe("CreatePostPage", () => {
     fireEvent.click(screen.getByText(/create post/i));
 
     await waitFor(() => {
-      expect(mocks.createPost).toHaveBeenCalled();
+      expect(mocks.createPost).toHaveBeenCalledWith(
+        expect.objectContaining({
+          requirements: [],
+        }),
+      );
       expect(mocks.navigate).toHaveBeenCalledWith("/dashboard/posts");
     });
   });
 
-  it("submits selected requirement tags", async () => {
+  it("submits selected requirements", async () => {
     mocks.createPost.mockResolvedValueOnce({});
 
     render(<CreatePostPage />);
@@ -214,7 +190,10 @@ describe("CreatePostPage", () => {
     await waitFor(() => {
       expect(mocks.createPost).toHaveBeenCalledWith(
         expect.objectContaining({
-          tagIds: [1, 4],
+          requirements: [
+            "Requires Credentials",
+            "Food Handling Certification",
+          ],
         }),
       );
     });

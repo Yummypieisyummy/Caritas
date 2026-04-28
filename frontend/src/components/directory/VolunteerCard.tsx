@@ -73,9 +73,9 @@ const VolunteerCard = ({ post }: Props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const postTags = post.tags?.filter((tag) => tag.display) ?? [];
-  const dynamicTags = postTags.length
-    ? postTags.map((tag) => tag.name)
+  const postRequirements = post.requirements ?? [];
+  const dynamicTags = postRequirements.length
+    ? postRequirements
     : [
         post.post_type.replace('_', ' ').toUpperCase(),
         post.event_type.toUpperCase(),
@@ -195,8 +195,8 @@ const VolunteerCard = ({ post }: Props) => {
               )}
             </div>
 
-            <div className="w-full md:w-96 flex flex-col gap-2">
-              <div className="w-full h-56 rounded-lg overflow-hidden border border-nav-stroke bg-gray-100 flex items-center justify-center">
+            <div className="w-full lg:w-[34rem] xl:w-[42rem] flex flex-col gap-2">
+              <div className="w-full h-72 md:h-80 rounded-xl overflow-hidden border border-nav-stroke bg-gray-100 flex items-center justify-center">
                 <MapContainer
                   center={
                     coordinates

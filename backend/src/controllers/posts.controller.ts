@@ -9,7 +9,6 @@ type RequestWithUser = Request & {
 type PostQueryFilters = {
   post_type?: string;
   event_type?: string;
-  tag_ids?: number[];
   daysNeeded?: string[];
   requirements?: string[];
   userLat?: number;
@@ -32,22 +31,6 @@ function singleQueryValue(value: unknown): string | undefined {
   }
 
   return value ? String(value) : undefined;
-}
-
-function parseTagIds(tagIds: unknown): number[] | undefined {
-  if (!tagIds) {
-    return undefined;
-  }
-
-  const rawTagIds = Array.isArray(tagIds) ? tagIds : [tagIds];
-
-  const parsedTagIds = rawTagIds
-    .flatMap((tagId) => String(tagId).split(','))
-    .map((tagId) => Number(tagId))
-    .filter((tagId) => Number.isInteger(tagId) && tagId > 0)
-    .filter((tagId, index, tagIds) => tagIds.indexOf(tagId) === index);
-
-  return parsedTagIds.length ? parsedTagIds : undefined;
 }
 
 function parseStringList(value: unknown): string[] | undefined {
@@ -106,7 +89,6 @@ function getPostFilters(query: Request['query']): PostQueryFilters {
   return {
     post_type: parseEnumValue(query.post_type, POST_TYPES),
     event_type: parseEnumValue(query.event_type, EVENT_TYPES),
-    tag_ids: parseTagIds(query.tag_ids),
     daysNeeded: parseStringList(query.daysNeeded),
     requirements: parseStringList(query.requirements),
     userLat: parseNumber(query.userLat, { min: -90, max: 90 }),
@@ -144,11 +126,6 @@ export const getOrgPosts = async (req: RequestWithUser, res: Response) => {
 export const getPublicPosts = async (req: Request, res: Response) => {
   const posts = await postsService.listPosts(getPostFilters(req.query));
   res.status(200).json(posts);
-};
-
-export const getAvailableTags = async (_req: Request, res: Response) => {
-  const tags = await postsService.listTags();
-  res.status(200).json(tags);
 };
 
 export const deletePostById = async (req: RequestWithUser, res: Response) => {

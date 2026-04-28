@@ -77,15 +77,14 @@ type CreatePostInput = {
   date_start: string;
   date_end?: string;
   days_of_week?: string[];
+  requirements?: unknown;
   contact_email: string;
   contact_phone: string;
-  tag_ids?: number[];
 };
 
 type PostFilters = {
   post_type?: string;
   event_type?: string;
-  tag_ids?: unknown;
   daysNeeded?: unknown;
   requirements?: unknown;
   userLat?: string | number;
@@ -124,7 +123,7 @@ export async function createPost(data: CreatePostInput) {
 
   await orgsServices.assertOrgVerified(data.org_id);
 
-  const tagIds = normalizeTagIds(data.tag_ids);
+  const requirements = normalizeStringArray(data.requirements);
   const coordinates = await geocodeAddress(data.location);
   const client = await pool.connect();
 
@@ -144,12 +143,13 @@ export async function createPost(data: CreatePostInput) {
         date_start,
         date_end,
         days_of_week,
+        requirements,
         contact_email,
         contact_phone,
         latitude,
         longitude
       )
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
       RETURNING *
       `,
       [
@@ -163,6 +163,7 @@ export async function createPost(data: CreatePostInput) {
         data.date_start,
         data.date_end ?? null,
         data.days_of_week ?? null,
+        requirements,
         data.contact_email,
         data.contact_phone,
         coordinates?.latitude ?? null,
@@ -171,17 +172,6 @@ export async function createPost(data: CreatePostInput) {
     );
 
     const post = rows[0];
-
-    if (tagIds.length) {
-      await client.query(
-        `
-        INSERT INTO tag_map (post_id, tag_id)
-        SELECT $1, unnest($2::int[])
-        ON CONFLICT DO NOTHING
-        `,
-        [post.id, tagIds],
-      );
-    }
 
     await client.query('COMMIT');
     return withCoordinates(post);
@@ -196,25 +186,7 @@ export async function createPost(data: CreatePostInput) {
 export async function getPostById(id: string) {
   const { rows } = await query(
     `
-    SELECT
-      posts.*,
-      COALESCE(
-        (
-          SELECT json_agg(
-            json_build_object(
-              'id', tags.id,
-              'name', tags.name,
-              'color', tags.color,
-              'display', tags.display
-            )
-            ORDER BY tags.name
-          )
-          FROM tag_map
-          JOIN tags ON tags.id = tag_map.tag_id
-          WHERE tag_map.post_id = posts.id
-        ),
-        '[]'::json
-      ) AS tags
+    SELECT posts.*
     FROM posts
     WHERE posts.id = $1
     `,
@@ -226,17 +198,6 @@ export async function getPostById(id: string) {
   }
 
   return withCoordinates(rows[0]);
-}
-
-function normalizeTagIds(tagIds?: unknown): number[] {
-  if (!Array.isArray(tagIds)) {
-    return [];
-  }
-
-  return tagIds
-    .map((tagId) => Number(tagId))
-    .filter((tagId) => Number.isInteger(tagId) && tagId > 0)
-    .filter((tagId, index, tagIds) => tagIds.indexOf(tagId) === index);
 }
 
 function normalizeStringArray(value?: unknown): string[] {
@@ -302,21 +263,8 @@ function buildListPostsQuery(filters: PostFilters = {}, orgId?: string) {
     whereClauses.push(`posts.event_type = $${values.length}`);
   }
 
-  const tagIds = normalizeTagIds(filters.tag_ids);
   const daysNeeded = normalizeStringArray(filters.daysNeeded);
   const requirements = normalizeStringArray(filters.requirements);
-
-  if (tagIds.length) {
-    values.push(tagIds);
-    whereClauses.push(`
-      EXISTS (
-        SELECT 1
-        FROM tag_map
-        WHERE tag_map.post_id = posts.id
-          AND tag_map.tag_id = ANY($${values.length}::int[])
-      )
-    `);
-  }
 
   if (daysNeeded.length) {
     const dayClauses: string[] = [];
@@ -351,26 +299,9 @@ function buildListPostsQuery(filters: PostFilters = {}, orgId?: string) {
   }
 
   if (requirements.length) {
-    values.push(requirements.map((requirement) => `%${requirement}%`));
-    const requirementPatternsParam = values.length;
     values.push(requirements);
-    const requirementsParam = values.length;
     whereClauses.push(`
-      (
-        CONCAT_WS(
-          ' ',
-          posts.title,
-          posts.description,
-          posts.additional_details
-        ) ILIKE ANY($${requirementPatternsParam}::text[])
-        OR EXISTS (
-          SELECT 1
-          FROM tag_map
-          JOIN tags ON tags.id = tag_map.tag_id
-          WHERE tag_map.post_id = posts.id
-            AND tags.name = ANY($${requirementsParam}::text[])
-        )
-      )
+      posts.requirements && $${values.length}::text[]
     `);
   }
 
@@ -411,23 +342,6 @@ function buildListPostsQuery(filters: PostFilters = {}, orgId?: string) {
         SELECT
           posts.*,
           organizations.name AS org_name,
-          COALESCE(
-            (
-              SELECT json_agg(
-                json_build_object(
-                  'id', tags.id,
-                  'name', tags.name,
-                  'color', tags.color,
-                  'display', tags.display
-                )
-                ORDER BY tags.name
-              )
-              FROM tag_map
-              JOIN tags ON tags.id = tag_map.tag_id
-              WHERE tag_map.post_id = posts.id
-            ),
-            '[]'::json
-          ) AS tags,
           ${distanceSelect}
         FROM posts
         JOIN organizations ON posts.org_id = organizations.id
@@ -463,14 +377,6 @@ export async function listOrgPosts(orgId: string, filters: PostFilters = {}) {
   const { rows } = await query(text, values);
 
   return withCoordinatesForMany(rows);
-}
-
-export async function listTags() {
-  const { rows } = await query(
-    `SELECT * FROM tags WHERE display = true ORDER BY name ASC`,
-  );
-
-  return rows;
 }
 
 export async function deletePostById(orgId: string, postId: string) {

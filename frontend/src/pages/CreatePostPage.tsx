@@ -7,38 +7,12 @@ import { z } from 'zod';
 import { useOrgPosts } from '../hooks/useOrgPosts';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAvailableTags } from '../hooks/useAvailableTags';
 
-const DAYS_OF_WEEK = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
-
-const POST_TYPES = [
-  'Volunteer Request',
-  'Volunteer Offer',
-  'Item Request',
-  'Item Offer',
-];
-
-const REQUIREMENT_TAGS = [
-  'Requires Credentials',
-  'Orientation Needed',
-  "Requires Driver's License",
-  'Food Handling Certification',
-];
-
-const FOCUS_TAGS = [
-  'Food Pantry',
-  'Tutoring / Mentoring',
-  'Elder Care',
-  'Donations',
-];
+import {
+  DAYS_OF_WEEK,
+  REQUIREMENT_OPTIONS,
+  POST_TYPES,
+} from '../config/filterOptions';
 
 const postSchema = z.object({
   title: z
@@ -51,7 +25,6 @@ const postSchema = z.object({
     .max(1000, 'Description must be less than 1000 characters'),
   postType: z.enum(
     ['Volunteer Request', 'Volunteer Offer', 'Item Request', 'Item Offer'],
-
     { message: 'Please select a post type' },
   ),
   eventType: z.enum(['one-time', 'recurring']),
@@ -74,23 +47,20 @@ type PostForm = z.infer<typeof postSchema>;
 
 const CreatePostPage = () => {
   const { createPost } = useOrgPosts();
-  const { tags, status: tagsStatus } = useAvailableTags();
   const navigate = useNavigate();
 
   const [eventType, setEventType] = useState<'one-time' | 'recurring'>(
     'one-time',
   );
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
-  const requirementTags = tags.filter((tag) =>
-    REQUIREMENT_TAGS.includes(tag.name),
+
+  const [selectedRequirements, setSelectedRequirements] = useState<string[]>(
+    [],
   );
-  const focusTags = tags.filter((tag) => FOCUS_TAGS.includes(tag.name));
 
   const {
     register,
     handleSubmit,
-    // setError,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<PostForm>({
@@ -119,11 +89,9 @@ const CreatePostPage = () => {
     setValue('recurringDays', updatedDays);
   };
 
-  const handleTagToggle = (tagId: number) => {
-    setSelectedTagIds((currentTagIds) =>
-      currentTagIds.includes(tagId)
-        ? currentTagIds.filter((currentTagId) => currentTagId !== tagId)
-        : [...currentTagIds, tagId],
+  const handleRequirementToggle = (req: string) => {
+    setSelectedRequirements((prev) =>
+      prev.includes(req) ? prev.filter((r) => r !== req) : [...prev, req],
     );
   };
 
@@ -131,12 +99,11 @@ const CreatePostPage = () => {
     try {
       await createPost({
         ...data,
-        tagIds: selectedTagIds,
+        requirements: selectedRequirements,
       });
       navigate('/dashboard/posts');
     } catch (err) {
       console.error(err);
-      // add error message somewhere if submission fails
     }
   };
 
@@ -188,39 +155,30 @@ const CreatePostPage = () => {
           <div className="flex flex-col gap-3">
             <label className="font-medium">Event Schedule</label>
             <div className="bg-text-muted/15 p-1 rounded-xl flex w-fit gap-1">
-              {/* One-time Button */}
               <button
                 type="button"
                 onClick={() => handleEventTypeChange('one-time')}
-                className={`
-                  px-6 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200
-                  ${
-                    eventType === 'one-time'
-                      ? 'bg-accent-green text-white'
-                      : 'text-text-muted hover:text-text-base'
-                  }
-                `}
+                className={`px-6 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 ${
+                  eventType === 'one-time'
+                    ? 'bg-accent-green text-white'
+                    : 'text-text-muted hover:text-text-base'
+                }`}
               >
                 One-time event
               </button>
 
-              {/* Recurring Button */}
               <button
                 type="button"
                 onClick={() => handleEventTypeChange('recurring')}
-                className={`
-                  px-6 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200
-                  ${
-                    eventType === 'recurring'
-                      ? 'bg-accent-green text-white'
-                      : 'text-text-muted hover:text-text-base'
-                  }
-                `}
+                className={`px-6 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 ${
+                  eventType === 'recurring'
+                    ? 'bg-accent-green text-white'
+                    : 'text-text-muted hover:text-text-base'
+                }`}
               >
                 Recurring event
               </button>
             </div>
-            {/* Hidden to validate react form */}
             <input type="hidden" {...register('eventType')} value={eventType} />
           </div>
 
@@ -282,75 +240,29 @@ const CreatePostPage = () => {
             name="address"
             label="Address"
             variant="primary"
-            placeholder="Enter address"
+            placeholder="Street address, City, State"
             error={errors.address?.message}
           />
 
-          {(tagsStatus === 'pending' || tags.length > 0) && (
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="font-medium">
-                  Optional Tags
+          <div className="flex flex-col gap-3">
+            <label className="font-medium">Requirements (Optional)</label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {REQUIREMENT_OPTIONS.map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedRequirements.includes(option)}
+                    onChange={() => handleRequirementToggle(option)}
+                    className="w-4 h-4 accent-accent-green cursor-pointer"
+                  />
+                  <span className="text-sm">{option}</span>
                 </label>
-                <p className="text-sm text-text-muted">
-                  Add requirements or focus areas so people can find this post.
-                </p>
-              </div>
-              {tagsStatus === 'pending' ? (
-                <p className="text-sm text-text-muted">Loading tags...</p>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  {requirementTags.length > 0 && (
-                    <div className="flex flex-col gap-2">
-                      <span className="text-sm font-semibold">
-                        Requirements
-                      </span>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {requirementTags.map((tag) => (
-                          <label
-                            key={tag.id}
-                            className="flex items-center gap-2 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedTagIds.includes(tag.id)}
-                              onChange={() => handleTagToggle(tag.id)}
-                              className="w-4 h-4 accent-accent-green cursor-pointer"
-                            />
-                            <span className="text-sm">{tag.name}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {focusTags.length > 0 && (
-                    <div className="flex flex-col gap-2">
-                      <span className="text-sm font-semibold">
-                        Focus Area
-                      </span>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {focusTags.map((tag) => (
-                          <label
-                            key={tag.id}
-                            className="flex items-center gap-2 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedTagIds.includes(tag.id)}
-                              onChange={() => handleTagToggle(tag.id)}
-                              className="w-4 h-4 accent-accent-green cursor-pointer"
-                            />
-                            <span className="text-sm">{tag.name}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+              ))}
             </div>
-          )}
+          </div>
 
           <Input
             {...register('email')}

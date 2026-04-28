@@ -1,10 +1,5 @@
 import api from './axios';
-import {
-  PostFilters,
-  PostRequest,
-  PostResponse,
-  TagResponse,
-} from '../types/posts';
+import { PostFilters, PostRequest, PostResponse } from '../types/posts';
 
 // map frontend labels to DB enums
 const POST_TYPE_MAP = {
@@ -26,9 +21,9 @@ export const createPostRequest = async (data: PostRequest) => {
     date_end: data.endDate ?? null,
     days_of_week:
       data.eventType === 'recurring' ? (data.recurringDays ?? []) : null,
+    requirements: data.requirements ?? [],
     contact_email: data.email,
     contact_phone: data.phoneNumber,
-    tag_ids: data.tagIds ?? [],
   };
 
   const res = await api.post<PostResponse>('/posts', payload);
@@ -60,11 +55,6 @@ export const getPublicPostsRequest = async (filters?: PostFilters) => {
   const res = await api.get<PostResponse[]>('/posts/public', {
     params: buildPostParams(filters),
   });
-  return res.data;
-};
-
-export const getAvailableTagsRequest = async () => {
-  const res = await api.get<TagResponse[]>('/posts/tags');
   return res.data;
 };
 

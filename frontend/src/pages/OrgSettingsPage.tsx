@@ -94,14 +94,6 @@ const PrivacyDataSection = ({
   </SettingsSection>
 );
 
-const SecuritySection = () => (
-  <SettingsSection title="Security">
-    <SettingsRow label="Require Two-Factor Authentication">
-      <Toggle />
-    </SettingsRow>
-  </SettingsSection>
-);
-
 const DangerZoneSection = ({
   onDeleteClick,
 }: {
@@ -160,7 +152,6 @@ const OrgSettingsPage = () => {
           exportError={exportError}
           onExport={() => void exportOrganizationData()}
         />
-        <SecuritySection />
         <DangerZoneSection onDeleteClick={() => setIsDeleteAccountOpen(true)} />
       </div>
 
