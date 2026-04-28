@@ -8,12 +8,18 @@ export interface AuthPayload {
 export interface RegisterInput {
   email: string;
   password: string;
-  orgName: string;
+  orgName?: string;
+  inviteToken?: string;
 }
 
 export interface LoginInput {
   email: string;
   password: string;
 }
+
+export type EmailTokenPayload = {
+  user_id: string;
+  inviteToken?: string;
+};
 
 export type TokenType = 'REFRESH' | 'EMAIL';

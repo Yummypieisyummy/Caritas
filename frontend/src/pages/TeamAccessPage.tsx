@@ -1,18 +1,44 @@
-import InviteMemberModal from '../components/dashboard/InviteMemberModal';
-import Button from '../components/ui/Button';
-import Select from '../components/ui/Select';
-import Input from '../components/ui/Input';
-import { Plus, Search, Ellipsis, Users } from 'lucide-react'; // Added Users icon
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
-import { useTeamMember } from '../hooks/useTeamMembers';
-import { formatUIDate } from '../utils/formatDate';
+import InviteMemberModal from '../components/dashboard/InviteMemberModal';
+import PendingInvitesList from '../components/dashboard/PendingInvitesList';
+import TeamMemberList from '../components/dashboard/TeamMemberList';
+import Button from '../components/ui/Button';
+import Spinner from '../components/ui/Spinner';
+import { useAuth } from '../contexts/AuthContext';
+import { useTeamMembers } from '../hooks/useTeamMembers';
+import { TeamInviteInput } from '../types/team';
 
 const TeamAccessPage = () => {
-  const { teamMembers, addTeamMember } = useTeamMember();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const { user } = useAuth();
+  const {
+    teamQuery,
+    inviteMutation,
+    removeMemberMutation,
+    revokeInviteMutation,
+    teamMembers,
+    pendingInvites,
+  } = useTeamMembers();
+
+  const currentMember = teamMembers.find((member) => member.id === user?.id);
+  const currentUserRole = currentMember?.role;
+  const currentUserIsAdmin = currentUserRole === 'admin';
+
+  const handleInvite = async (input: TeamInviteInput) => {
+    await inviteMutation.mutateAsync(input);
+  };
+
+  const handleRemoveMember = async (targetUserId: string) => {
+    await removeMemberMutation.mutateAsync(targetUserId);
+  };
+
+  const handleRevokeInvite = async (inviteId: string) => {
+    await revokeInviteMutation.mutateAsync(inviteId);
+  };
 
   return (
-    <main className="min-h-screen w-full flex p-6 flex-col items-center justify-center">
+    <main className="min-h-screen w-full flex p-6 flex-col items-center">
       <div className="w-full max-w-4xl flex items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-semibold">Your Team</h1>
@@ -21,108 +47,56 @@ const TeamAccessPage = () => {
           </p>
         </div>
 
-        <div className="flex gap-4">
+        {currentUserIsAdmin && (
           <Button onClick={() => setIsInviteOpen(true)} variant="primary">
             <Plus strokeWidth={3} className="w-4 h-4 mr-2" />
             Invite members
           </Button>
-        </div>
+        )}
       </div>
 
-      <section className="flex flex-col justify-center gap-4 bg-white max-w-4xl w-full shadow-card-shadow p-8 rounded-2xl">
-        <div className="flex gap-6 mb-6 justify-between items-center">
-          <div className="flex gap-2">
-            <Select
-              options={['All roles', 'Admins', 'Members']}
-              variant="gray"
-            />
-            <Select
-              options={['All Status', 'Active', 'Pending', 'Deactivated']}
-              variant="gray"
-            />
+      <section className="flex flex-col gap-5 bg-white max-w-4xl w-full shadow-card-shadow p-8 rounded-2xl">
+        {teamQuery.isPending && (
+          <div className="flex justify-center py-16">
+            <Spinner />
           </div>
+        )}
 
-          <div className="relative flex items-center w-80">
-            <Input id="searchPosts" placeholder="Search" variant="secondary" />
-            <Button as="button" variant="icon" className="absolute right-0">
-              <Search className="text-text-muted/80 w-5 h-5" />
-            </Button>
+        {teamQuery.isError && (
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            Unable to load team access details.
           </div>
-        </div>
+        )}
 
-        <div className="w-full">
-          {teamMembers.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center border-2 border-dashed border-accent-green rounded-xl bg-gray-50/50">
-              <div className="bg-white p-3 rounded-full shadow-sm mb-4 border border-filter-stroke">
-                <Users className="w-6 h-6 text-text-muted" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                No team members yet
-              </h3>
-              <p className="text-sm text-text-muted mb-6 max-w-sm">
-                Build your organization by inviting your first team member.
-                They'll receive an email link to join.
-              </p>
-              <Button variant="primary" onClick={() => setIsInviteOpen(true)}>
-                <Plus strokeWidth={3} className="w-4 h-4 mr-2" />
-                Invite a member
-              </Button>
+        {teamQuery.isSuccess && (
+          <>
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Active Members</h2>
+              <TeamMemberList
+                members={teamMembers}
+                currentUserId={user?.id}
+                currentUserRole={currentUserRole}
+                onRemove={handleRemoveMember}
+                isRemoving={removeMemberMutation.isPending}
+              />
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-50 border-b border-filter-stroke">
-                    <th className="text-left py-3 px-4 font-semibold">Email</th>
-                    <th className="text-left py-3 px-4 font-semibold">Role</th>
-                    <th className="text-left py-3 px-4 font-semibold">
-                      Status
-                    </th>
-                    <th className="text-left py-3 px-4 font-semibold">
-                      Date Added
-                    </th>
-                    <th className="text-left py-3 px-4 font-semibold">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
 
-                <tbody>
-                  {teamMembers.map((member) => (
-                    <tr
-                      key={member.role}
-                      className="border-b border-filter-stroke hover:bg-gray-50"
-                    >
-                      <td className="p-4">{member.email}</td>
-                      <td className="p-4 capitalize">{member.role}</td>
-                      <td className="p-4 text-text-muted capitalize">
-                        {member.status}
-                      </td>
-                      <td className="p-4 text-text-muted">
-                        {formatUIDate(member.invitedAt)}
-                      </td>
-                      <td className="p-4 text-center">
-                        <Button size="sm" variant="icon">
-                          <Ellipsis
-                            strokeWidth={1.5}
-                            className="w-5 h-5 text-text-muted"
-                          />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Pending Invites</h2>
+              <PendingInvitesList
+                invites={pendingInvites}
+                onRevoke={handleRevokeInvite}
+                isRevoking={revokeInviteMutation.isPending}
+              />
             </div>
-          )}
-        </div>
+          </>
+        )}
       </section>
 
-      {/* Invite Member Modal */}
       <InviteMemberModal
         isOpen={isInviteOpen}
         onClose={() => setIsInviteOpen(false)}
-        onSubmit={addTeamMember}
+        onSubmit={handleInvite}
       />
     </main>
   );

@@ -114,16 +114,18 @@ const DirectoryPage = () => {
           <p>Failed to load opportunities</p>
         </div>
       ) : (
-        <section className="md:ml-80 flex flex-col flex-1 p-6">
-          <header className="mb-6 flex items-center justify-between">
-            <h1 className="font-semibold text-3xl">Local Charity Posts</h1>
+        <section className="flex flex-1 flex-col p-4 sm:p-6 md:ml-80">
+          <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-2xl font-semibold sm:text-3xl">
+              Local Charity Posts
+            </h1>
             <div className="md:hidden">
               <Button
                 as="button"
                 variant="primary"
                 size="md"
                 onClick={() => setIsFiltersOpen((prev) => !prev)}
-                className="px-4 py-2"
+                className="w-full px-4 py-2 sm:w-auto"
               >
                 {isFiltersOpen ? 'Hide Filters' : 'Show Filters'}
               </Button>

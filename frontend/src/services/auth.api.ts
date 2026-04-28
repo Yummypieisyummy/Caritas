@@ -32,3 +32,7 @@ export const refreshRequest = async () => {
 export const verifyEmailRequest = async (emailToken: string): Promise<void> => {
   await api.get('/auth/verify-email', { params: { emailToken } });
 };
+
+export const acceptInviteRequest = async (token: string): Promise<void> => {
+  await api.post('/auth/accept-invite', { token });
+};

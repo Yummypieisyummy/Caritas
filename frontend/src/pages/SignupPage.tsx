@@ -3,32 +3,40 @@ import Button from '../components/ui/Button';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { RegisterInput } from '../types/auth';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Turnstile from '../components/ui/Turnstile';
 
+export const signupSchema = z
+  .object({
+    orgName: z.string().trim().optional(),
+    inviteToken: z.string().trim().optional(),
+    email: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .pipe(z.email('Please enter a valid email')),
+    password: z
+      .string()
+      .min(10, 'Password must be at least 10 characters')
+      .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+      .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+      .regex(/[0-9]/, 'Must contain at least one number')
+      .regex(/[^A-Za-z0-9]/, 'Must contain at least one special character'),
+  })
+  .superRefine(({ orgName, inviteToken }, ctx) => {
+    if (!inviteToken && (!orgName || orgName.length < 2)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['orgName'],
+        message: 'Organization name must be at least 2 characters',
+      });
+    }
+  });
 
-export const signupSchema = z.object({
-  orgName: z
-    .string()
-    .trim()
-    .min(2, 'Organization name must be at least 2 characters'),
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .pipe(z.email('Please enter a valid email')),
-  password: z
-    .string()
-    .min(10, 'Password must be at least 10 characters')
-    .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Must contain at least one number')
-    .regex(/[^A-Za-z0-9]/, 'Must contain at least one special character'),
-});
+type SignupFormValues = z.infer<typeof signupSchema>;
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,36 +44,43 @@ const SignupPage = () => {
 
   const { register: signup } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const inviteToken = searchParams.get('inviteToken') || undefined;
+  const isInviteSignup = Boolean(inviteToken);
 
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterInput>({
+  } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     mode: 'onBlur',
+    defaultValues: {
+      inviteToken,
+    },
   });
 
-  const onSignup: SubmitHandler<RegisterInput> = async (data) => {
-     try {
+  const onSignup: SubmitHandler<SignupFormValues> = async (data) => {
+    try {
       if (!turnstileToken) {
-        setError("root", {
-          type: "manual",
-          message: "Please complete the CAPTCHA.",
+        setError('root', {
+          type: 'manual',
+          message: 'Please complete the CAPTCHA.',
         });
         return;
       }
-      await signup({...data, turnstileToken });
+
+      await signup({ ...data, inviteToken, turnstileToken });
       navigate('/signup-success', { state: { email: data.email } });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err); // add custom error message later
       setTurnstileToken(null);
 
-      setError("root", {
-      type: "server",
-      message: "Unable to create account",
-    });
+      setError('root', {
+        type: 'server',
+        message: err.response?.data?.error || 'Unable to create account',
+      });
     }
   };
 
@@ -73,19 +88,23 @@ const SignupPage = () => {
     <main className="flex flex-col justify-center items-center min-h-screen w-full">
       <section className="flex flex-col gap-6 max-w-md w-full bg-white rounded-2xl p-8 shadow-card-shadow">
         <h1 className="mx-auto font-semibold text-3xl text-text-green">
-          Signup
+          {isInviteSignup ? 'Create Your Account' : 'Signup'}
         </h1>
 
         <form onSubmit={handleSubmit(onSignup)} className="flex flex-col gap-4">
-          <Input
-            {...register('orgName')}
-            type="text"
-            name="orgName"
-            id="orgName"
-            label="Organization Name"
-            placeholder="Enter your organization name"
-            error={errors.orgName?.message}
-          />
+          {isInviteSignup ? (
+            <input type="hidden" {...register('inviteToken')} />
+          ) : (
+            <Input
+              {...register('orgName')}
+              type="text"
+              name="orgName"
+              id="orgName"
+              label="Organization Name"
+              placeholder="Enter your organization name"
+              error={errors.orgName?.message}
+            />
+          )}
           <Input
             {...register('email')}
             type="email"
@@ -120,7 +139,7 @@ const SignupPage = () => {
             </Button>
           </div>
 
-           <div className="mt-2">
+          <div className="mt-2">
             <Turnstile onToken={setTurnstileToken} />
           </div>
 

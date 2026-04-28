@@ -8,16 +8,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 const inviteMemberSchema = z.object({
-  // name: z
-  //   .string()
-  //   .min(2, 'Full name is required')
-  //   .regex(/^[a-zA-Z\s'-]+$/, 'Please enter a valid name'),
   email: z
     .string()
     .trim()
     .toLowerCase()
     .pipe(z.email('Please enter a valid email')),
-  role: z.string().min(1, 'Role is Required'),
+  role: z.enum(['admin', 'member']),
 });
 
 type InviteMemberForm = z.infer<typeof inviteMemberSchema>;
@@ -30,20 +26,28 @@ const InviteMemberModal = ({
   const {
     register,
     handleSubmit,
+    reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<InviteMemberForm>({
     resolver: zodResolver(inviteMemberSchema),
     mode: 'onBlur',
+    defaultValues: {
+      email: '',
+      role: 'member',
+    },
   });
 
   const onInvite: SubmitHandler<InviteMemberForm> = async (data) => {
     try {
       await onSubmit(data);
-      // reset();
+      reset();
       onClose();
     } catch (err) {
       console.error('Failed to invite member', err);
-      // set a root error here
+      setError('root', {
+        message: 'Unable to send this invitation. Please try again.',
+      });
     }
   };
 
@@ -58,14 +62,6 @@ const InviteMemberModal = ({
         </div>
 
         <form onSubmit={handleSubmit(onInvite)} className="flex flex-col gap-4">
-          {/* <Input
-            {...register('name')}
-            variant="secondary"
-            label="Full Name"
-            id="name"
-            error={errors.name?.message}
-          ></Input> */}
-
           <Input
             {...register('email')}
             variant="secondary"
@@ -79,14 +75,17 @@ const InviteMemberModal = ({
             variant="gray"
             label="Role"
             id="role"
-            options={['Member', 'Admin']}
+            options={['member', 'admin']}
+            error={errors.role?.message}
+            className="capitalize"
           />
-          {errors.role && (
-            <span className="text-red-500 text-sm">{errors.role.message}</span>
+
+          {errors.root?.message && (
+            <span className="text-sm text-red-500">{errors.root.message}</span>
           )}
 
           <div className="flex justify-end gap-4 mt-4">
-            <Button variant="secondary" onClick={onClose}>
+            <Button type="button" variant="secondary" onClick={onClose}>
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>

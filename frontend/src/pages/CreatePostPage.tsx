@@ -108,8 +108,8 @@ const CreatePostPage = () => {
   };
 
   return (
-    <main className="min-h-screen w-full flex flex-col items-center p-6">
-      <section className="w-full max-w-4xl bg-white rounded-2xl p-8 my-8 shadow-card-shadow">
+    <main className="flex min-h-screen w-full flex-col items-center p-4 sm:p-6">
+      <section className="my-4 w-full max-w-4xl rounded-2xl bg-white p-5 shadow-card-shadow sm:my-8 sm:p-8">
         <h2 className="font-semibold text-2xl mb-6">Create New Post</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -154,11 +154,11 @@ const CreatePostPage = () => {
           {/* Event Type Selection */}
           <div className="flex flex-col gap-3">
             <label className="font-medium">Event Schedule</label>
-            <div className="bg-text-muted/15 p-1 rounded-xl flex w-fit gap-1">
+            <div className="flex w-full flex-col gap-1 rounded-xl bg-text-muted/15 p-1 sm:w-fit sm:flex-row">
               <button
                 type="button"
                 onClick={() => handleEventTypeChange('one-time')}
-                className={`px-6 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 ${
+                className={`rounded-xl px-6 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
                   eventType === 'one-time'
                     ? 'bg-accent-green text-white'
                     : 'text-text-muted hover:text-text-base'
@@ -170,7 +170,7 @@ const CreatePostPage = () => {
               <button
                 type="button"
                 onClick={() => handleEventTypeChange('recurring')}
-                className={`px-6 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 ${
+                className={`rounded-xl px-6 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
                   eventType === 'recurring'
                     ? 'bg-accent-green text-white'
                     : 'text-text-muted hover:text-text-base'
@@ -183,7 +183,7 @@ const CreatePostPage = () => {
           </div>
 
           {/* Date Selection */}
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <Input
               {...register('startDate')}
               id="startDate"
@@ -210,7 +210,7 @@ const CreatePostPage = () => {
           {eventType === 'recurring' && (
             <div className="flex flex-col gap-3">
               <label className="font-medium">Select Days</label>
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {DAYS_OF_WEEK.map((day) => (
                   <label
                     key={day}
@@ -240,7 +240,7 @@ const CreatePostPage = () => {
             name="address"
             label="Address"
             variant="primary"
-            placeholder="Street address, City, State"
+            placeholder="123 Main St, Latrobe, PA 15650"
             error={errors.address?.message}
           />
 
@@ -300,8 +300,13 @@ const CreatePostPage = () => {
             />
           </div>
 
-          <div className="flex gap-4 justify-end mt-4">
-            <Button as="link" to="/dashboard/posts" variant="secondary">
+          <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <Button
+              as="link"
+              to="/dashboard/posts"
+              variant="secondary"
+              className="w-full sm:w-auto"
+            >
               Cancel
             </Button>
             <Button
@@ -309,6 +314,7 @@ const CreatePostPage = () => {
               variant="primary"
               type="submit"
               disabled={isSubmitting}
+              className="w-full sm:w-auto"
             >
               {isSubmitting ? 'Creating...' : 'Create Post'}
             </Button>

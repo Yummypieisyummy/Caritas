@@ -1,7 +1,8 @@
 export type RegisterInput = {
   email: string;
   password: string;
-  orgName: string;
+  orgName?: string;
+  inviteToken?: string;
   turnstileToken: string;
 };
 

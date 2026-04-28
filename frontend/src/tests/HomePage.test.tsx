@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, test, vi, it } from "vitest";
 import HomePage from "../pages/HomePage";
 
@@ -17,7 +18,11 @@ vi.mock("../components/home/FunctionCards", () => ({
 
 describe("HomePage", () => {
   it("renders the FunctionCards component", () => {
-    render(<HomePage />);
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    );
     const functionCards = screen.getByTestId("function-cards");
     expect(functionCards).toBeInTheDocument();
   });

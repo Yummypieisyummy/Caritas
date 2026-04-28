@@ -69,11 +69,12 @@ const Button = (props: ButtonProps) => {
 
   // Render links
   if (props.as === 'link') {
-    const { to, children, className = '' } = props;
+    const { to, children, className = '', onClick } = props;
 
     return (
       <NavLink
         to={to}
+        onClick={onClick}
         className={
           typeof className === 'function'
             ? (navProps) =>

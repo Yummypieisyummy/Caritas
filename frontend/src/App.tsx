@@ -19,6 +19,7 @@ import { FiltersProvider } from './contexts/FiltersContext';
 import TeamAccessPage from './pages/TeamAccessPage';
 import ManageOrgProfilePage from './pages/ManageOrgProfilePage';
 import ProtectedRoutes from './components/layout/ProtectedRoutes';
+import AcceptInvite from './pages/AcceptInvite';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             </Route>
             {/* Pages without navbar */}
             <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/accept-invite" element={<AcceptInvite />} />
             <Route path="/signup-success" element={<SignupSuccessPage />} />
 
             {/* Organization dashboard pages + Private routes */}

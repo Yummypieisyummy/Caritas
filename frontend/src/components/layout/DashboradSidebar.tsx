@@ -26,17 +26,39 @@ const DashboradSidebar = () => {
   ];
 
   return (
-    <aside className="fixed h-screen w-80 flex flex-col bg-text-logo p-6 justify-between">
-      <Button
-        as="link"
-        to="/"
-        variant="textOnly"
-        className="text-4xl font-semibold text-white justify-start"
-      >
-        Caritas
-      </Button>
+    <aside className="fixed left-0 top-0 z-50 flex h-40 w-full flex-col gap-3 bg-text-logo p-3 md:h-screen md:w-80 md:justify-between md:p-6">
+      <div className="flex items-center justify-between gap-3 md:block">
+        <Button
+          as="link"
+          to="/"
+          variant="textOnly"
+          className="justify-start text-2xl font-semibold text-white md:text-4xl"
+        >
+          Caritas
+        </Button>
 
-      <section className="flex flex-col gap-6">
+        <footer className="flex items-center gap-2 md:hidden">
+          <Button
+            as="link"
+            to={publicProfilePath}
+            variant="textOnly"
+            size="sm"
+            className="text-white"
+          >
+            Profile
+          </Button>
+          <Button
+            variant="textOnly"
+            size="sm"
+            className="text-white"
+            onClick={logout}
+          >
+            Logout
+          </Button>
+        </footer>
+      </div>
+
+      <section className="flex gap-2 overflow-x-auto pb-1 md:flex-col md:gap-6 md:overflow-visible md:pb-0">
         {sidebarLinks.map((link) => {
           const isLocked = link.requiresVerifiedOrg && !isOrgVerified;
 
@@ -51,7 +73,7 @@ const DashboradSidebar = () => {
               }}
               className={({ isActive }) =>
                 [
-                  'rounded-xl inline-flex items-center justify-between p-4 text-lg font-medium transition-opacity duration-200',
+                  'rounded-xl inline-flex shrink-0 items-center justify-between gap-3 whitespace-nowrap p-3 text-sm font-medium transition-opacity duration-200 md:p-4 md:text-lg',
                   isLocked
                     ? 'cursor-not-allowed text-white/35 hover:opacity-100'
                     : 'cursor-pointer text-white hover:opacity-100 hover:bg-white/10',
@@ -66,7 +88,7 @@ const DashboradSidebar = () => {
         })}
       </section>
 
-      <footer className="flex flex-col gap-4">
+      <footer className="hidden flex-col gap-4 md:flex">
         <Button
           as="link"
           to={publicProfilePath}

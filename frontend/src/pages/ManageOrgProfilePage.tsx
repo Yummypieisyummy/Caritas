@@ -105,7 +105,7 @@ const ManageOrgProfilePage = () => {
   }
 
   return (
-    <main className="min-h-screen w-full p-6 flex items-center">
+    <main className="min-h-screen w-full p-6">
       <FormProvider {...methods}>
         <form
           noValidate

@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Spinner from '../ui/Spinner';
 
 const ProtectedRoutes = () => {
-  const { status } = useAuth();
+  const { org, status } = useAuth();
   const location = useLocation();
 
   if (status === 'loading') {
@@ -16,6 +16,10 @@ const ProtectedRoutes = () => {
 
   if (status === 'unauthenticated') {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (!org) {
+    return <Navigate to="/directory" replace />;
   }
 
   return <Outlet />;

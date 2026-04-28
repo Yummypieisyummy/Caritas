@@ -19,9 +19,16 @@ const Navbar = () => {
     <nav className="fixed top-0 w-full h-20 bg-nav-bg border-b border-nav-stroke z-50">
       <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         <div className="flex items-center gap-12">
-          <h1 className="text-text-logo font-bold text-3xl tracking-tight">
-            Caritas
-          </h1>
+          <Button
+            as="link"
+            to="/"
+            variant="icon"
+            // !p-0 strips the button's default padding so it aligns flush left with your layout
+            className="text-3xl font-bold tracking-tight text-text-logo"
+          >
+            {/* Wrapping it in an h1 is best practice for screen readers and SEO */}
+            <h1 className="m-0 leading-none">Caritas</h1>
+          </Button>
 
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
@@ -194,7 +201,7 @@ const Navbar = () => {
                     variant="secondary"
                     size="md"
                     onClick={() => {
-                      logout;
+                      logout();
                       setIsMenuOpen(false);
                     }}
                   >

@@ -15,18 +15,39 @@ import { pool } from '../config/db';
 
 const FRONTEND = process.env.FRONTEND_URL;
 
-export async function register({ email, password, orgName }: RegisterInput) {
-  if (!email || !password || !orgName) {
-    throw new Error('Email, Password, and Org are required');
+export async function register({
+  email,
+  password,
+  orgName,
+  inviteToken,
+}: RegisterInput) {
+  const normalizedEmail = email?.trim().toLowerCase();
+
+  if (!normalizedEmail || !password) {
+    throw new Error('Email and Password are required');
   }
 
-  if (!isValidEmail(email) || !isValidPassword(password)) {
+  if (!inviteToken && !orgName) {
+    throw new Error('Organization is required');
+  }
+
+  if (!isValidEmail(normalizedEmail) || !isValidPassword(password)) {
     throw new Error('Email and Password are invalid');
   }
 
-  const existingUser = await usersService.getUserByEmail(email);
+  const existingUser = await usersService.getUserByEmail(normalizedEmail);
   if (existingUser) {
     throw new Error('User with this email already exists');
+  }
+
+  if (!inviteToken) {
+    const existingInvite = await usersService.getPendingInviteByEmail(
+      normalizedEmail,
+    );
+
+    if (existingInvite) {
+      throw new Error('This email has a pending invite. Use your invite link.');
+    }
   }
 
   const password_hash = await bcrypt.hash(password, 10);
@@ -51,38 +72,94 @@ export async function register({ email, password, orgName }: RegisterInput) {
   try {
     await client.query('BEGIN'); // Start Transaction
 
-    const orgResult = await client.query(
-      `INSERT INTO organizations (name, email) VALUES ($1, $2) RETURNING *`,
-      [orgName, email],
-    );
-    org = orgResult.rows[0];
+    if (inviteToken) {
+      const inviteResult = await client.query(
+        `
+        SELECT oi.org_id, oi.email, oi.expires_at, o.name, o.verified
+        FROM organization_invites oi
+        JOIN organizations o ON o.id = oi.org_id
+        WHERE oi.token = $1
+        LIMIT 1
+        `,
+        [inviteToken],
+      );
+
+      const invite = inviteResult.rows[0];
+
+      if (!invite) {
+        throw new Error('Invite not found or already accepted');
+      }
+
+      if (new Date(invite.expires_at).getTime() < Date.now()) {
+        throw new Error('This invite has expired');
+      }
+
+      const inviteEmail = String(invite.email || '').toLowerCase().trim();
+      const registeredEmail = String(normalizedEmail || '')
+        .toLowerCase()
+        .trim();
+
+      if (inviteEmail !== registeredEmail) {
+        console.log(
+          'Invite Email:',
+          `"${invite.email}"`,
+          'RegisteredEmail:',
+          `"${email}"`,
+        );
+        throw new Error('Invite email must match the signup email');
+      }
+
+      org = {
+        id: invite.org_id,
+        name: invite.name,
+        verified: invite.verified,
+      };
+    } else {
+      const orgResult = await client.query(
+        `INSERT INTO organizations (name, email) VALUES ($1, $2) RETURNING *`,
+        [orgName, normalizedEmail],
+      );
+      org = orgResult.rows[0];
+    }
 
     const userResult = await client.query(
       `INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING *`,
-      [email, password_hash],
+      [normalizedEmail, password_hash],
     );
     user = userResult.rows[0];
 
-    await client.query(
-      `INSERT INTO org_users (org_id, user_id, role) VALUES ($1, $2, $3)`,
-      [org.id, user.id, 'admin'],
-    );
+    if (!inviteToken) {
+      await client.query(
+        `INSERT INTO org_users (org_id, user_id, role) VALUES ($1, $2, $3)`,
+        [org.id, user.id, 'admin'],
+      );
+    }
 
     await client.query('COMMIT'); // Save changes
   } catch (error) {
     await client.query('ROLLBACK'); // Undo everything if it fails
     console.error('Registration transaction failed:', error);
+
+    if (
+      error instanceof Error &&
+      (error.message.startsWith('Invite') ||
+        error.message.startsWith('This invite') ||
+        error.message.startsWith('Invite email'))
+    ) {
+      throw error;
+    }
+
     throw new Error('Failed to register account. Please try again.');
   } finally {
     client.release(); // Return client to pool
   }
 
-  const emailToken = signEmailToken({ user_id: user.id });
+  const emailToken = signEmailToken({ user_id: user.id, inviteToken });
   const verifyURL = `${FRONTEND}/verify-email?token=${emailToken}`;
 
   const subject = 'Caritas Account Verification';
   const message = `
-  <p>Hi ${orgName},</p>
+  <p>Hi ${orgName || 'there'},</p>
 
   <p>Thank you for creating an account with Caritas!</p>
 
@@ -95,7 +172,11 @@ export async function register({ email, password, orgName }: RegisterInput) {
   </p>
 
   <p>
-    Once verified, our admins will review your organization's documentation before granting full access.
+    ${
+      inviteToken
+        ? 'Once verified, you will be added to the organization that invited you.'
+        : "Once verified, our admins will review your organization's documentation before granting full access."
+    }
   </p>
 
   <p>
@@ -103,7 +184,7 @@ export async function register({ email, password, orgName }: RegisterInput) {
     The Caritas Team
   </p>
 `;
-  await sendEmail(email, subject, message);
+  await sendEmail(normalizedEmail, subject, message);
 
   return {
     user: {
@@ -220,8 +301,19 @@ export async function verifyEmail(emailToken: string) {
   }
 
   if (user.email_verified_at) {
+    await usersService.processPendingInviteForVerifiedUser(
+      user.id,
+      user.email,
+      decoded.inviteToken,
+    );
     return;
   }
 
-  await usersService.verifyUserEmail(user.id);
+  const verifiedUser = await usersService.verifyUserEmail(user.id);
+
+  await usersService.processPendingInviteForVerifiedUser(
+    verifiedUser.id,
+    verifiedUser.email,
+    decoded.inviteToken,
+  );
 }

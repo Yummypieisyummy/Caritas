@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { AuthPayload, TokenType } from '../types/auth';
+import { AuthPayload, EmailTokenPayload, TokenType } from '../types/auth';
 
 const JWT_ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const JWT_REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET;
@@ -13,7 +13,7 @@ export function signRefreshToken(payload: Pick<AuthPayload, 'user_id'>) {
   return jwt.sign(payload, JWT_REFRESH_SECRET!, { expiresIn: '30d' });
 }
 
-export function signEmailToken(payload: Pick<AuthPayload, 'user_id'>) {
+export function signEmailToken(payload: EmailTokenPayload) {
   return jwt.sign(payload, JWT_EMAIL_SECRET!, { expiresIn: '10m' });
 }
 
@@ -25,7 +25,7 @@ export function verifyToken(token: string, type: TokenType) {
   }
 
   try {
-    return jwt.verify(token, secret) as { user_id: string };
+    return jwt.verify(token, secret) as EmailTokenPayload;
   } catch (err) {
     throw new Error('Invalid or expired refresh token');
   }

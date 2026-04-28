@@ -15,6 +15,7 @@ type AuthContextValue = {
   login: (input: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
   verifyEmail: (emailToken: string) => Promise<void>;
+  acceptInvite: (inviteToken: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -51,6 +52,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await authServices.verifyEmailRequest(emailToken);
   };
 
+  const acceptInvite = async (inviteToken: string) => {
+    await authServices.acceptInviteRequest(inviteToken);
+  };
+
   // Map the React Query status to your App's AuthStatus
   let appStatus: AuthStatus = 'loading';
 
@@ -72,6 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         verifyEmail,
+        acceptInvite,
       }}
     >
       {children}

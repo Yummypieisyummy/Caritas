@@ -1,27 +1,34 @@
-import { UserRoundCheck, Ban, MessageSquareWarning, HeartHandshake } from 'lucide-react';
+import {
+  Ban,
+  HeartHandshake,
+  MessageSquareWarning,
+  UserRoundCheck,
+} from 'lucide-react';
+
+const points = [
+  { label: 'Verified organizations', Icon: UserRoundCheck },
+  { label: 'No advertisements', Icon: Ban },
+  { label: 'Safe, anonymous reporting', Icon: MessageSquareWarning },
+  { label: '100% charity-focused', Icon: HeartHandshake },
+];
 
 const SellingPoints = () => {
-    return (
-        <article className="flex flex-col bg-filter-bg w-full h-full rounded-xl mb-2">
-            <header className="mb-8 ml-4"/>
-            <p className="mb-6 ml-4 flex flex-row items-center">
-              <UserRoundCheck className="h-10 w-10 text-text-green mr-4 flex-shrink-0" />
-              <span className="text-text-green text-lg sm:text-2xl md:text-2xl lg:text-3xl"> Verified organizations </span>
-            </p>
-            <p className="mb-6 ml-4 flex flex-row items-center">
-              <Ban className="h-10 w-10 text-text-green mr-4 flex-shrink-0" />
-              <span className="text-text-green text-lg sm:text-2xl md:text-2xl lg:text-3xl"> No advertisements </span>
-            </p>
-            <p className="mb-6 ml-4 flex flex-row items-center">
-              <MessageSquareWarning className="h-10 w-10 text-text-green mr-4 flex-shrink-0" />
-              <span className="text-text-green text-lg sm:text-2xl md:text-2xl lg:text-3xl"> Safe, anonymous reporting </span>
-            </p>
-            <p className="mb-12 ml-4 flex flex-row items-center">
-              <HeartHandshake className="h-10 w-10 text-text-green mr-4 flex-shrink-0" />
-              <span className="text-text-green text-lg sm:text-2xl md:text-2xl lg:text-3xl"> 100% charity-focused </span>
-            </p>
+  return (
+    <section
+      aria-label="Caritas principles"
+      className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      {points.map(({ label, Icon }) => (
+        <article
+          key={label}
+          className="flex items-center gap-3 rounded-xl bg-filter-bg p-4 text-text-green shadow-card-shadow"
+        >
+          <Icon className="h-6 w-6 flex-shrink-0" aria-hidden="true" />
+          <span className="text-sm font-semibold sm:text-base">{label}</span>
         </article>
-    );
+      ))}
+    </section>
+  );
 };
 
 export default SellingPoints;

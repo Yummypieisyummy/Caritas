@@ -13,6 +13,7 @@ router.post(
 router.post('/login', asyncHandler(authController.login));
 router.post('/logout', asyncHandler(authController.logout));
 router.post('/refresh', asyncHandler(authController.refresh));
+router.post('/accept-invite', asyncHandler(authController.acceptInvite));
 router.get('/verify-email', asyncHandler(authController.verifyEmail));
 
 export default router;

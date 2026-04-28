@@ -81,3 +81,86 @@ export async function verifyUserEmail(user_id: string) {
   // if (!rows.length) throw new Error('User not found during verification update');
   return rows[0] || null;
 }
+
+export async function getPendingInviteByEmail(email: string) {
+  if (!email) {
+    throw new Error('Email is required');
+  }
+
+  const { rows } = await query(
+    `
+    SELECT *
+    FROM organization_invites
+    WHERE LOWER(email) = LOWER($1)
+      AND expires_at > NOW()
+    ORDER BY created_at DESC
+    LIMIT 1
+    `,
+    [email.trim().toLowerCase()],
+  );
+
+  return rows[0] || null;
+}
+
+export async function processPendingInviteForVerifiedUser(
+  user_id: string,
+  email: string,
+  inviteToken?: string,
+) {
+  if (!user_id || !email) {
+    throw new Error('User ID and email are required');
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const params: unknown[] = [normalizedEmail];
+  const tokenCondition = inviteToken ? 'AND token = $2' : '';
+
+  if (inviteToken) {
+    params.push(inviteToken);
+  }
+
+  const { rows: inviteRows } = await query(
+    `
+    SELECT id, org_id, role, expires_at
+    FROM organization_invites
+    WHERE LOWER(email) = LOWER($1)
+      ${tokenCondition}
+    ORDER BY created_at DESC
+    LIMIT 1
+    `,
+    params,
+  );
+
+  const invite = inviteRows[0];
+
+  if (!invite) {
+    return null;
+  }
+
+  if (new Date(invite.expires_at).getTime() < Date.now()) {
+    await query(`DELETE FROM organization_invites WHERE id = $1`, [invite.id]);
+    throw new Error('This invite has expired');
+  }
+
+  const { rows: existingMembership } = await query(
+    `SELECT 1 FROM org_users WHERE user_id = $1 LIMIT 1`,
+    [user_id],
+  );
+
+  if (existingMembership.length) {
+    return null;
+  }
+
+  const { rows: orgUserRows } = await query(
+    `
+    INSERT INTO org_users (org_id, user_id, role)
+    VALUES ($1, $2, $3)
+    RETURNING *
+    `,
+    [invite.org_id, user_id, invite.role],
+  );
+
+  await query(`DELETE FROM organization_invites WHERE id = $1`, [invite.id]);
+
+  return orgUserRows[0] || null;
+}

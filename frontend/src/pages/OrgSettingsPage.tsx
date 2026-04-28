@@ -25,7 +25,7 @@ const SettingsSection = ({
   className = '',
 }: SettingsSectionProps) => (
   <section
-    className={`flex flex-col gap-6 bg-white shadow-card-shadow p-8 rounded-2xl ${className}`}
+    className={`flex flex-col gap-6 rounded-2xl bg-white p-5 shadow-card-shadow sm:p-8 ${className}`}
   >
     <h2 className="font-medium text-lg mb-2">{title}</h2>
     {children}
@@ -59,6 +59,9 @@ const AccountSection = ({
 const PreferencesSection = () => (
   <SettingsSection title="Notifications">
     <SettingsRow label="Enable Notifications">
+      <Toggle />
+    </SettingsRow>
+    <SettingsRow label="Weekly Summary Emails">
       <Toggle />
     </SettingsRow>
   </SettingsSection>
@@ -99,7 +102,7 @@ const DangerZoneSection = ({
 }: {
   onDeleteClick: () => void;
 }) => (
-  <section className="flex flex-col gap-6 bg-red-500/8 shadow-card-shadow p-8 rounded-2xl border-2 border-red-500">
+  <section className="flex flex-col gap-6 rounded-2xl border-2 border-red-500 bg-red-500/8 p-5 shadow-card-shadow sm:p-8">
     <h2 className="font-medium text-lg mb-2">Account Deletion</h2>
     <SettingsRow label="Delete Organization Account and Data">
       <Button
@@ -133,7 +136,7 @@ const OrgSettingsPage = () => {
   });
 
   return (
-    <main className="min-h-screen w-full flex flex-col p-6 items-center justify-center">
+    <main className="flex min-h-screen w-full flex-col items-center p-4 sm:p-6">
       <div className="w-full max-w-3xl flex flex-col justify-start mb-6">
         <h1 className="text-3xl font-semibold">Manage Settings</h1>
         <p className="mt-1 text-sm text-text-muted">
