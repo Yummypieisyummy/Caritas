@@ -9,6 +9,7 @@ type RequestWithUser = Request & {
 type PostQueryFilters = {
   post_type?: string;
   event_type?: string;
+  searchQuery?: string;
   daysNeeded?: string[];
   requirements?: string[];
   userLat?: number;
@@ -89,6 +90,7 @@ function getPostFilters(query: Request['query']): PostQueryFilters {
   return {
     post_type: parseEnumValue(query.post_type, POST_TYPES),
     event_type: parseEnumValue(query.event_type, EVENT_TYPES),
+    searchQuery: singleQueryValue(query.searchQuery),
     daysNeeded: parseStringList(query.daysNeeded),
     requirements: parseStringList(query.requirements),
     userLat: parseNumber(query.userLat, { min: -90, max: 90 }),
@@ -124,7 +126,7 @@ export const getOrgPosts = async (req: RequestWithUser, res: Response) => {
 };
 
 export const getPublicPosts = async (req: Request, res: Response) => {
-  const posts = await postsService.listPosts(getPostFilters(req.query));
+  const posts = await postsService.listPublicPosts(getPostFilters(req.query));
   res.status(200).json(posts);
 };
 

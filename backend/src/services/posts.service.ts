@@ -65,6 +65,12 @@
 import { pool, query } from '../config/db';
 import * as orgsServices from './org.service';
 import { geocodeAddress } from './geocode.service';
+import {
+  addPostDocument,
+  deletePostDocument,
+  searchPostIds,
+  updatePostDocument,
+} from '../config/search_engine';
 
 type CreatePostInput = {
   org_id: string;
@@ -85,6 +91,8 @@ type CreatePostInput = {
 type PostFilters = {
   post_type?: string;
   event_type?: string;
+  searchQuery?: string;
+  postIds?: string[];
   daysNeeded?: unknown;
   requirements?: unknown;
   userLat?: string | number;
@@ -126,6 +134,7 @@ export async function createPost(data: CreatePostInput) {
   const requirements = normalizeStringArray(data.requirements);
   const coordinates = await geocodeAddress(data.location);
   const client = await pool.connect();
+  let committed = false;
 
   try {
     await client.query('BEGIN');
@@ -174,9 +183,13 @@ export async function createPost(data: CreatePostInput) {
     const post = rows[0];
 
     await client.query('COMMIT');
+    committed = true;
+    await addPostDocument(post);
     return withCoordinates(post);
   } catch (error) {
-    await client.query('ROLLBACK');
+    if (!committed) {
+      await client.query('ROLLBACK');
+    }
     throw error;
   } finally {
     client.release();
@@ -261,6 +274,11 @@ function buildListPostsQuery(filters: PostFilters = {}, orgId?: string) {
   if (filters.event_type) {
     values.push(filters.event_type);
     whereClauses.push(`posts.event_type = $${values.length}`);
+  }
+
+  if (filters.postIds?.length) {
+    values.push(filters.postIds);
+    whereClauses.push(`posts.id = ANY($${values.length}::uuid[])`);
   }
 
   const daysNeeded = normalizeStringArray(filters.daysNeeded);
@@ -363,7 +381,23 @@ export async function listPosts(filters: PostFilters = {}) {
 
 // Add pagination later
 export async function listPublicPosts(filters: PostFilters = {}) {
-  const { text, values } = buildListPostsQuery(filters);
+  let postIds = filters.postIds;
+
+  if (filters.searchQuery) {
+    postIds = await searchPostIds(filters.searchQuery);
+
+    if (!postIds.length) {
+      return [];
+    }
+  }
+
+  const { searchQuery, ...sqlFilters } = filters;
+  void searchQuery;
+
+  const { text, values } = buildListPostsQuery({
+    ...sqlFilters,
+    postIds,
+  });
   const { rows } = await query(text, values);
 
   return withCoordinatesForMany(rows);
@@ -396,6 +430,8 @@ export async function deletePostById(orgId: string, postId: string) {
       'Post not found or you do not have permission to delete it',
     );
   }
+
+  await deletePostDocument(postId);
 }
 
 export async function updatePostStatus(
@@ -419,6 +455,8 @@ export async function updatePostStatus(
       'Post not found or you do not have permission to update it',
     );
   }
+
+  await updatePostDocument({ id: postId, status });
 
   return withCoordinates(rows[0]);
 }

@@ -63,6 +63,7 @@ export type PostRequest = {
 export type PostFilters = {
   post_type?: PostResponse['post_type'];
   event_type?: PostResponse['event_type'];
+  searchQuery?: string;
   daysNeeded?: string[];
   requirements?: string[];
   userLat?: number;

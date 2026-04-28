@@ -1,11 +1,16 @@
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { useState } from 'react';
+import type { FormEvent } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useFilters } from '../../contexts/FiltersContext';
 import { Search, Building2, User, Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const { user, org, logout } = useAuth();
+  const { filters, setSearchQuery } = useFilters();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -14,6 +19,34 @@ const Navbar = () => {
     { id: 'Directory', to: '/directory' },
     { id: 'About', to: '/about' },
   ];
+
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    navigate('/directory');
+    setIsSearchOpen(false);
+  };
+
+  const renderSearchInput = (id: string, buttonSize: 'sm' | 'md' = 'md') => (
+    <>
+      <Input
+        type="search"
+        id={id}
+        placeholder="Find charities, causes, or volunteer events..."
+        className="rounded-full"
+        value={filters.searchQuery}
+        onChange={(event) => setSearchQuery(event.target.value)}
+      />
+      <Button
+        type="submit"
+        variant="icon"
+        size={buttonSize}
+        className="absolute right-2"
+        aria-label="Search posts"
+      >
+        <Search className="text-text-muted/80 w-5 h-5 hover:opacity-100 group-hover:text-accent-green transition-colors" />
+      </Button>
+    </>
+  );
 
   return (
     <nav className="fixed top-0 w-full h-20 bg-nav-bg border-b border-nav-stroke z-50">
@@ -51,17 +84,12 @@ const Navbar = () => {
         </div>
 
         <div className="hidden lg:flex flex-1 max-w-md mx-8">
-          <div className="flex items-center relative w-full group">
-            <Input
-              type="search"
-              id="search"
-              placeholder="Find charities, causes, or volunteer events..."
-              className="rounded-full"
-            ></Input>
-            <Button variant="icon" className="absolute right-2">
-              <Search className="text-text-muted/80 w-5 h-5 hover:opacity-100 group-hover:text-accent-green transition-colors" />
-            </Button>
-          </div>
+          <form
+            onSubmit={handleSearchSubmit}
+            className="flex items-center relative w-full group"
+          >
+            {renderSearchInput('desktop-post-search')}
+          </form>
         </div>
 
         {/* Desktop Auth Buttons */}
@@ -137,17 +165,12 @@ const Navbar = () => {
       {/* Mobile Search Bar */}
       {isSearchOpen && (
         <div className="lg:hidden bg-nav-bg border-b border-nav-stroke px-6 py-3">
-          <div className="flex items-center relative group">
-            <Input
-              type="search"
-              id="search"
-              placeholder="Find charities, causes, or volunteer events..."
-              className="rounded-full"
-            ></Input>
-            <Button className="absolute right-2" variant="icon" size="sm">
-              <Search className="text-text-muted/80 w-5 h-5 hover:opacity-100 group-hover:text-accent-green transition-colors" />
-            </Button>
-          </div>
+          <form
+            onSubmit={handleSearchSubmit}
+            className="flex items-center relative group"
+          >
+            {renderSearchInput('mobile-post-search', 'sm')}
+          </form>
         </div>
       )}
 

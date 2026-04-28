@@ -1,8 +1,7 @@
 import { PostResponse } from '../types/posts';
-import { FiltersType } from '../types/filters';
 import * as postsServices from '../services/posts.api';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useFilters } from '../contexts/FiltersContext';
 
 const POST_TYPES = [
@@ -30,6 +29,17 @@ const getPositiveNumber = (value: string) => {
 
 export const usePublicPosts = () => {
   const { filters } = useFilters();
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(
+    filters.searchQuery,
+  );
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearchQuery(filters.searchQuery.trim());
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [filters.searchQuery]);
 
   const postFilters = useMemo(
     () => ({
@@ -39,11 +49,21 @@ export const usePublicPosts = () => {
       requirements: filters.requirements.length
         ? filters.requirements
         : undefined,
+      searchQuery: debouncedSearchQuery || undefined,
       userLat: filters.userLat ?? undefined,
       userLng: filters.userLng ?? undefined,
       maxDistanceMiles: getPositiveNumber(filters.maxDistanceMiles),
     }),
-    [filters],
+    [
+      debouncedSearchQuery,
+      filters.daysNeeded,
+      filters.event_type,
+      filters.maxDistanceMiles,
+      filters.post_type,
+      filters.requirements,
+      filters.userLat,
+      filters.userLng,
+    ],
   );
 
   const { data: publicPosts = [], status } = useQuery<PostResponse[]>({

@@ -8,6 +8,10 @@ type FiltersAction =
       value: string | null;
     }
   | {
+      type: 'SET_SEARCH_QUERY';
+      value: string;
+    }
+  | {
       type: 'TOGGLE_OPTION';
       key: 'daysNeeded' | 'requirements';
       value: string;
@@ -33,6 +37,13 @@ const filtersReducer = (
       return {
         ...state,
         [action.key]: action.value ?? '',
+      };
+    }
+
+    case 'SET_SEARCH_QUERY': {
+      return {
+        ...state,
+        searchQuery: action.value,
       };
     }
 
@@ -67,6 +78,7 @@ type FiltersContextValue = {
     key: 'post_type' | 'event_type' | 'maxDistanceMiles',
     value: string | null,
   ) => void;
+  setSearchQuery: (value: string) => void;
   toggleOption: (key: 'daysNeeded' | 'requirements', value: string) => void;
   setLocation: (latitude: number, longitude: number) => void;
   clearFilters: () => void;
@@ -84,6 +96,10 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
     value: string | null,
   ) => {
     dispatch({ type: 'SET_SELECT', key, value });
+  }, []);
+
+  const setSearchQuery = useCallback((value: string) => {
+    dispatch({ type: 'SET_SEARCH_QUERY', value });
   }, []);
 
   const toggleOption = useCallback(
@@ -106,6 +122,7 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
       value={{
         filters,
         setSelect,
+        setSearchQuery,
         toggleOption,
         setLocation,
         clearFilters,

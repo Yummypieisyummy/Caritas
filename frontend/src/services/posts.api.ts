@@ -39,6 +39,7 @@ const buildPostParams = (filters?: PostFilters) => ({
   requirements: filters?.requirements?.length
     ? filters.requirements.join(',')
     : undefined,
+  searchQuery: filters?.searchQuery,
   userLat: filters?.userLat,
   userLng: filters?.userLng,
   maxDistanceMiles: filters?.maxDistanceMiles,
