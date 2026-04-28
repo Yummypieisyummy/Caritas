@@ -13,6 +13,7 @@ import ManagePostsPage from './pages/ManagePostsPage';
 import CreatePostPage from './pages/CreatePostPage';
 import SignupSuccessPage from './pages/SignupSuccessPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
+import SetupVerificationPage from './pages/SetupVerificationPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { FiltersProvider } from './contexts/FiltersContext';
 import TeamAccessPage from './pages/TeamAccessPage';
@@ -53,6 +54,10 @@ function App() {
                 <Route
                   path="/dashboard/profile"
                   element={<ManageOrgProfilePage />}
+                />
+                <Route
+                  path="/dashboard/setup-verification"
+                  element={<SetupVerificationPage />}
                 />
                 <Route
                   path="/dashboard/posts/create"

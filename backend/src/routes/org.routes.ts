@@ -11,6 +11,12 @@ const router = Router();
 router.post('/', asyncHandler(orgsController.createOrg));
 router.get('/', asyncHandler(orgsController.listOrgs));
 router.get('/:id', asyncHandler(orgsController.getOrgById));
+router.patch(
+  '/:id',
+  verifyAccessToken,
+  requireAdminRole,
+  asyncHandler(orgsController.updateOrgProfile),
+);
 router.post(
   '/:id/verification',
   verifyAccessToken,

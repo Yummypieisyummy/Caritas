@@ -23,6 +23,15 @@ export type Org = {
   pfp_url?: string | null;
   banner_url?: string | null;
   about?: string | null;
+  email?: string | null;
+  contact_info?: {
+    phone?: string | null;
+    public_email?: string | null;
+    email?: string | null;
+    website?: string | null;
+    address?: string | null;
+    hours?: string | null;
+  } | null;
 };
 
 export type RegisterResponse = {

@@ -21,7 +21,7 @@ const getWebsiteHref = (website?: string | null) => {
 
 const OrgAbout = ({ organization }: OrgAboutProps) => {
   const contact = organization.contact_info;
-  const email = contact?.email || organization.email;
+  const email = contact?.public_email || contact?.email || organization.email;
   const websiteHref = getWebsiteHref(contact?.website);
 
   return (

@@ -1,6 +1,18 @@
 import api from './axios';
 import { Org } from '../types/auth';
 
+export type UpdateOrgProfileRequest = {
+  about: string;
+  contact_info: {
+    phone: string;
+    public_email: string;
+  };
+  pfp_url?: string | null;
+  banner_url?: string | null;
+};
+
+export type UpdateOrgProfilePayload = UpdateOrgProfileRequest;
+
 export const getOrgDataRequest = async (): Promise<Org> => {
   try {
     const res = await api.get<Org>('/organizations');
@@ -15,6 +27,18 @@ export const deleteOrganizationRequest = async (
 ): Promise<void> => {
   try {
     await api.delete(`/organizations/${orgId}`);
+  } catch (err: any) {
+    throw err.response?.data || err;
+  }
+};
+
+export const updateOrgProfileRequest = async (
+  orgId: string,
+  data: UpdateOrgProfilePayload,
+): Promise<Org> => {
+  try {
+    const res = await api.patch<Org>(`/orgs/${orgId}`, data);
+    return res.data;
   } catch (err: any) {
     throw err.response?.data || err;
   }

@@ -24,9 +24,9 @@ app.use(
 );
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes
 app.use('/api/users', usersRoutes);

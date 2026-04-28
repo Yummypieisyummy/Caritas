@@ -28,12 +28,12 @@ const DashboardOverviewPage = () => {
             </div>
             <Button
               as="link"
-              to="/dashboard/profile"
+              to="/dashboard/setup-verification"
               variant="primary"
               size="md"
               className="shrink-0"
             >
-              Manage Org Profile
+              Complete Verification
             </Button>
           </div>
         </section>

@@ -14,6 +14,16 @@ type OrgProfilePostRow = {
   [key: string]: unknown;
 };
 
+type UpdateOrgProfileInput = {
+  about?: string;
+  pfp_url?: string | null;
+  banner_url?: string | null;
+  contact_info?: {
+    phone?: string;
+    public_email?: string;
+  };
+};
+
 export async function createOrg(data: any) {
   const { name, email, about, contact_info, pfp_url, banner_url } = data;
 
@@ -75,6 +85,73 @@ export async function getOrgProfileById(id: string) {
     organization,
     activePosts: activePosts.map(withPostCoordinates),
   };
+}
+
+export async function updateOrgProfile(
+  id: string,
+  data: UpdateOrgProfileInput,
+) {
+  if (!id) {
+    throw serviceError('OrgId is required', 400);
+  }
+
+  if (!data || typeof data !== 'object') {
+    throw serviceError('Profile data is required', 400);
+  }
+
+  const updates: string[] = [];
+  const values: unknown[] = [];
+
+  if (data.about !== undefined) {
+    values.push(data.about);
+    updates.push(`about = $${values.length}`);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(data, 'pfp_url')) {
+    values.push(data.pfp_url ?? null);
+    updates.push(`pfp_url = $${values.length}`);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(data, 'banner_url')) {
+    values.push(data.banner_url ?? null);
+    updates.push(`banner_url = $${values.length}`);
+  }
+
+  if (data.contact_info !== undefined) {
+    if (!data.contact_info || typeof data.contact_info !== 'object') {
+      throw serviceError('Contact info must be an object', 400);
+    }
+
+    values.push({
+      phone: data.contact_info.phone ?? '',
+      public_email: data.contact_info.public_email ?? '',
+    });
+    updates.push(
+      `contact_info = COALESCE(contact_info, '{}'::jsonb) || $${values.length}::jsonb`,
+    );
+  }
+
+  if (!updates.length) {
+    throw serviceError('No profile fields provided', 400);
+  }
+
+  values.push(id);
+  const { rows } = await query(
+    `
+    UPDATE organizations
+    SET ${updates.join(', ')},
+        updated_at = now()
+    WHERE id = $${values.length}
+    RETURNING *
+    `,
+    values,
+  );
+
+  if (!rows.length) {
+    throw serviceError('Organization not found', 404);
+  }
+
+  return rows[0];
 }
 
 export async function listOrgs() {
@@ -151,11 +228,7 @@ export async function submitForVerification(orgId: string, documents: any) {
   }
 
   const org = orgResult.rows[0];
-  const missingFields = [
-    !org.pfp_url && 'profile photo',
-    !org.banner_url && 'banner image',
-    !org.about?.trim() && 'about',
-  ].filter(Boolean);
+  const missingFields = [!org.about?.trim() && 'about'].filter(Boolean);
 
   if (missingFields.length) {
     throw serviceError(

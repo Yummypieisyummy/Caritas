@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 const DashboradSidebar = () => {
   const { org, logout } = useAuth();
   const isOrgVerified = org?.verified === true;
+  const publicProfilePath = org?.id ? `/organization/${org.id}` : '/directory';
 
   const sidebarLinks = [
     { id: 'Overview', to: '/dashboard/overview', requiresVerifiedOrg: false },
@@ -68,12 +69,12 @@ const DashboradSidebar = () => {
       <footer className="flex flex-col gap-4">
         <Button
           as="link"
-          to="/organization/:id"
+          to={publicProfilePath}
           variant="textOnly"
           size="md"
           className="text-white"
         >
-          View Public page
+          View Public Profile
         </Button>
         <Button
           variant="textOnly"

@@ -6,6 +6,7 @@ import { PostResponse } from '../types/posts';
 export type OrgContactInfo = {
   address?: string | null;
   phone?: string | null;
+  public_email?: string | null;
   email?: string | null;
   website?: string | null;
   hours?: string | null;
